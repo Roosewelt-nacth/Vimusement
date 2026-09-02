@@ -36,12 +36,30 @@ Add in **Project Settings ▸ Script properties**:
 | `ADMIN_KEY` | fallback secret for the on-stage draw (optional — an `admin` staff login also works) |
 | `LD_PRICE` | ticket price in rupees, e.g. `50` |
 | `LD_MAX` | max tickets per **online** buyer (default 25) |
+| `ENABLE_EMAIL_RECONCILE` | `yes` to turn on the optional auto-confirm from bank-alert emails |
+| `RECONCILE_LABEL` | the Gmail label your bank alerts get filtered to, e.g. `vim-bank-alerts` |
+| `BANK_SENDER` | only trust alerts from this address, e.g. `alerts@icicibank.com` (comma-separate for more) |
+
+### Optional: auto-confirm from bank alerts
+
+Only if your bank sends an **email** for every credit:
+
+1. Turn on email alerts for received/credit transactions in ICICI net-banking or iMobile.
+   (SMS-only? Use an SMS-to-email forwarding app pointed at the same Gmail.)
+2. In the Apps Script account's Gmail, create a filter: `from:(alerts@icicibank.com)` →
+   **Apply label** `vim-bank-alerts` (and optionally "Skip inbox").
+3. Set `ENABLE_EMAIL_RECONCILE=yes`, `RECONCILE_LABEL=vim-bank-alerts`,
+   `BANK_SENDER=alerts@icicibank.com`.
+4. The 15-minute `houseKeeping` trigger runs the match. To go faster, add a separate
+   time trigger on `reconcileFromEmail` every 5 minutes.
+5. **Send me one real alert email** so the amount/UTR regex can be tightened to ICICI's
+   exact wording — the generic version works but a tuned one matches more.
 
 ## Redeploy
 
 1. Paste the current `apps-script/Code.gs`, **Save**.
-2. In the sheet, **delete the old `Donations` tab** (its columns changed — added `Channel`,
-   `By`). Also make sure there's no stale `LuckyDraw` tab.
+2. The `LuckyDraw` tab gains a `Donor UPI ref` column (added at the end) — the script
+   repairs the header automatically on the next call, no need to delete the tab.
 3. **Deploy ▸ Manage deployments ▸ ✏️ ▸ Version: New version ▸ Deploy.**
 4. Run **`_selfTest`** → recreates `Donations` + `LuckyDraw` with the right columns and a
    hidden `_Counters` tab.
@@ -54,9 +72,26 @@ Add in **Project Settings ▸ Script properties**:
 
 ### Online (`draw.html`)
 `drawPledge` → creates N `Pending` rows sharing one `Reference` → returns a `upi://pay`
-link → buyer pays → taps "I've paid" → rows go `Paid?`. A volunteer confirms **one row of
-that reference** → the script confirms the whole reference, generates the ticket numbers,
-and emails the designed PDF.
+link → buyer pays → taps "I've paid" → **enters their 12-digit UPI reference (UTR)** →
+rows go `Paid?` with that UTR saved in the `Donor UPI ref` column.
+
+**Confirming the payment** (any of these — pick what suits you):
+
+1. **Staff desk → "Confirm UPI" tab.** When you see the money land in your bank app,
+   open the desk on your phone, paste the same UPI reference, tap **Confirm payment**.
+   The script finds the matching `Paid?` row(s), confirms the whole reference, issues the
+   ticket numbers, emails the PDF, and logs who did it. *This is the quick everyday path.*
+2. **In the sheet.** Filter `LuckyDraw` to `Status = Paid?`; each row shows the buyer's
+   name, amount and their UPI reference. Cross-check against the bank statement, set
+   **one row** of a reference to `Confirmed` → the whole reference confirms and emails.
+3. **Automatic (optional).** If your bank emails you a credit alert for every payment,
+   forward those to the Apps Script Gmail, label them, and set the three script
+   properties below. A trigger then matches `UTR + amount` and confirms automatically.
+   Anything it can't match just waits for path 1 or 2.
+
+Buyers who genuinely can't find their reference tap "I can't find my reference number" —
+their row still becomes `Paid?` (no UTR), and you confirm it by hand against the statement
+by end of day.
 
 ### Cash counter — the "Staff desk"
 The counter is **built into every money page**. On `draw.html` and `donate.html` there's a

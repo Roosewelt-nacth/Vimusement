@@ -9,6 +9,7 @@
   position:relative;overflow:hidden;
 }
 .pagehead .wrap{position:relative;z-index:1}
+.pagehead .hero__org{margin-bottom:1.6rem}
 .pagehead h1{
   font-family:var(--font-display);font-weight:var(--weight-bold);
   font-size:var(--fs-2xl);letter-spacing:var(--track-display);

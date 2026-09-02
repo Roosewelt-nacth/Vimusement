@@ -26,7 +26,7 @@
   }
   function currentFile() {
     var p = location.pathname.split("/").pop();
-    return (!p || p === "" ) ? "index.html" : p;
+    return (!p || p.indexOf(".html") === -1) ? "index.html" : p;
   }
 
   Vim.register("chrome", function (ctx) {
@@ -74,6 +74,14 @@
       var nav = pages.map(function (p) {
         return '<a href="' + p.file + '">' + p.label + '</a>';
       }).join("");
+      var org = S.org || {};
+      var orgBlock = org.name ? (
+        '<a class="footer__org" href="' + (org.url || '#') + '"' + (org.url ? ' target="_blank" rel="noopener"' : '') + '>' +
+          (org.logo ? '<img src="' + org.logo + '" alt="' + org.name + '" class="footer__org-logo" onerror="this.remove()">' : '') +
+          '<span>' + (org.tagline || ('An initiative of ' + org.name)) + '</span>' +
+        '</a>'
+      ) : '';
+
       foot.className = "footer";
       foot.innerHTML =
         '<div class="wrap">' +
@@ -81,6 +89,7 @@
             '<div>' +
               '<a href="index.html" class="footer__brand">Vimu<b>sement</b></a>' +
               '<p class="footer__blurb">An annual fundraiser by the parish community. One night of games and films, turned into scholarships, care and dignity all year.</p>' +
+              orgBlock +
             '</div>' +
             '<div><h4>Pages</h4>' + nav + '</div>' +
             '<div><h4>Reach us</h4>' +
@@ -92,6 +101,19 @@
           '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote || "An annual parish fundraiser.") + '</p>' +
           '<p class="footer__staff">For volunteers · <a href="counter.html">Staff desk</a> · <a href="stage.html">Live draw screen</a></p>' +
         '</div>';
+    }
+
+    /* ---------- org lockup at the top of subpage headers ---------- */
+    if (org.name && org.logo) {
+      ctx.$$(".pagehead .wrap").forEach(function (w) {
+        if (w.querySelector(".hero__org")) return;
+        var a = document.createElement("a");
+        a.className = "hero__org";
+        if (org.url) { a.href = org.url; a.target = "_blank"; a.rel = "noopener"; }
+        a.innerHTML = '<img src="' + org.logo + '" alt="" height="44">' +
+          '<span>An initiative of<br>' + org.name + '</span>';
+        w.insertBefore(a, w.firstChild);
+      });
     }
   });
 })();

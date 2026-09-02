@@ -51,7 +51,10 @@
 .stage__btn{
   display:block;width:100%;padding:.9rem;border:0;border-radius:999px;cursor:pointer;
   background:var(--a1);color:var(--ink-on-tint);font-weight:700;font-size:1rem;
+  transition:filter .2s,box-shadow .2s,transform .12s;
 }
+.stage__btn:hover{filter:brightness(1.06);box-shadow:0 8px 30px -6px color-mix(in srgb,var(--a1) 65%,transparent),0 0 20px color-mix(in srgb,var(--a1) 42%,transparent)}
+.stage__btn:active{transform:scale(.98);box-shadow:0 0 30px color-mix(in srgb,var(--a1) 60%,transparent)}
 .stage__msg{margin-top:.8rem;font-size:.85rem;color:var(--a1);min-height:1.2em;text-align:center}
 
 /* ---- app ---- */
@@ -174,8 +177,9 @@
   font-weight:700;font-size:1.05rem;background:var(--a1);color:var(--ink-on-tint);
   transition:transform .15s,filter .2s;
 }
-.stage__act:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.05)}
-.stage__act:active:not(:disabled){transform:translateY(0)}
+.stage__act{transition:transform .15s,filter .2s,box-shadow .2s}
+.stage__act:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 8px 30px -6px color-mix(in srgb,var(--a1) 65%,transparent),0 0 20px color-mix(in srgb,var(--a1) 42%,transparent)}
+.stage__act:active:not(:disabled){transform:translateY(0);box-shadow:0 0 30px color-mix(in srgb,var(--a1) 60%,transparent)}
 .stage__act--ghost{background:transparent;color:var(--ink);border:1.5px solid var(--edge-soft)}
 .stage__act:disabled{opacity:.4;cursor:not-allowed}
 .stage__count{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--dim)}

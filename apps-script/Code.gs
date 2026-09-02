@@ -51,8 +51,8 @@ var DC = { TS:1, REF:2, NAME:3, EMAIL:4, AMOUNT:5, CHANNEL:6, BY:7, UTR:8, STATU
 
 var T_LD = 'LuckyDraw';
 var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
-  'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes'];
-var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13 };
+  'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes', 'Donor UPI ref'];
+var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13, UTR:14 };
 
 var STATUS_LIST = ['Pending', 'Paid?', 'Confirmed', 'Cancelled'];
 var T_COUNTERS = '_Counters';
@@ -79,6 +79,7 @@ function doGet(e) {
       /* donations */
       case 'pledge':          return _json(pledge(e.parameter));
       case 'ipaid':           return _json(iPaid(e.parameter));
+      case 'confirmByUtr':    return _json(confirmByUtr(e.parameter));
       case 'donateCash':      return _json(donateCash(e.parameter));
       case 'donors':          return _json(getDonors());
       case 'stats':           return _json(getStats());
@@ -277,11 +278,60 @@ function pledge(p) {
 function iPaid(p) {
   var ref = String(p.ref || '').trim().toUpperCase();
   if (!ref) return { error: 'missing reference' };
-  var utr = String(p.utr || '').trim().slice(0, 40);
+  var utr = String(p.utr || '').replace(/\D/g, '').slice(0, 20);
   var hit = _markPaid(_donations(), DC.REF, DC.STATUS, DC.UTR, ref, utr);
-  hit = _markPaid(_luckydraw(), LC.REF, LC.STATUS, null, ref, null) || hit;
+  hit = _markPaid(_luckydraw(), LC.REF, LC.STATUS, LC.UTR, ref, utr) || hit;
   return hit ? { ok: true } : { error: 'reference not found' };
 }
+/** staff: "I can see this UPI reference landed in the bank app" — confirm the
+    matching Pending / Paid? donation or ticket-reference. The buyer must have
+    entered the same reference on "I've paid". Every use is logged. */
+function confirmByUtr(p) {
+  var st = _auth(p);
+  var key = String(p.utr || '').replace(/\D/g, '').slice(-12);
+  if (key.length < 10) return { error: 'Enter the 12-digit UPI reference' };
+  var out = [];
+
+  var don = _donations(), dl = don.getLastRow();
+  if (dl > 1) {
+    var dv = don.getRange(2, 1, dl - 1, DON_HEADER.length).getValues();
+    for (var i = 0; i < dv.length; i++) {
+      var s = String(dv[i][DC.STATUS - 1]).trim();
+      if ((s === 'Pending' || s === 'Paid?') &&
+          String(dv[i][DC.UTR - 1]).replace(/\D/g, '').slice(-12) === key) {
+        don.getRange(i + 2, DC.STATUS).setValue('Confirmed');
+        out.push('Donation ' + dv[i][DC.REF - 1] + ' (₹' + dv[i][DC.AMOUNT - 1] + ')');
+      }
+    }
+  }
+
+  var ld = _luckydraw(), ll = ld.getLastRow();
+  if (ll > 1) {
+    var lv = ld.getRange(2, 1, ll - 1, LD_HEADER.length).getValues();
+    var refs = {};
+    for (var j = 0; j < lv.length; j++) {
+      var ls = String(lv[j][LC.STATUS - 1]).trim();
+      if ((ls === 'Pending' || ls === 'Paid?') &&
+          String(lv[j][LC.UTR - 1]).replace(/\D/g, '').slice(-12) === key) refs[lv[j][LC.REF - 1]] = 1;
+    }
+    Object.keys(refs).forEach(function (rf) {
+      var n = 0, amt = 0;
+      for (var k = 0; k < lv.length; k++) {
+        if (String(lv[k][LC.REF - 1]) !== rf) continue;
+        if (String(lv[k][LC.STATUS - 1]).trim() === 'Cancelled') continue;
+        ld.getRange(k + 2, LC.STATUS).setValue('Confirmed');
+        n++; amt += Number(lv[k][LC.PRICE - 1]) || 0;
+      }
+      out.push(n + ' ticket' + (n === 1 ? '' : 's') + ' ' + rf + ' (₹' + amt + ')');
+    });
+  }
+
+  if (!out.length) return { error: 'No pending payment found with that reference' };
+  _log(st.user, 'confirm by UTR', key + ' → ' + out.join('; '));
+  processConfirmations(); processLuckyDraw();
+  return { ok: true, confirmed: out };
+}
+
 function _markPaid(sh, refCol, statusCol, utrCol, ref, utr) {
   var last = sh.getLastRow();
   if (last < 2) return false;
@@ -377,7 +427,7 @@ function drawPledge(p) {
   var sh = _luckydraw();
   var now = new Date();
   var rows = [];
-  for (var i = 0; i < qty; i++) rows.push([now, '', ref, name, email, phone, price, 'UPI', '', 'Pending', '', '', '']);
+  for (var i = 0; i < qty; i++) rows.push([now, '', ref, name, email, phone, price, 'UPI', '', 'Pending', '', '', '', '']);
   sh.getRange(sh.getLastRow() + 1, 1, qty, LD_HEADER.length).setValues(rows);
   return { ref: ref, qty: qty, amount: amount, vpa: u.vpa, payeeName: u.payeeName, upiUri: u.upiUri };
 }
@@ -401,7 +451,7 @@ function drawIssueCash(p) {
   for (var i = 0; i < qty; i++) {
     var id = _nextId('LD');
     ids.push(id);
-    rows.push([now, id, ref, name, email, phone, price, 'Cash', st.user, 'Confirmed', now, '', '']);
+    rows.push([now, id, ref, name, email, phone, price, 'Cash', st.user, 'Confirmed', now, '', '', '']);
   }
   sh.getRange(sh.getLastRow() + 1, 1, qty, LD_HEADER.length).setValues(rows);
   _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
@@ -664,38 +714,101 @@ function cleanupStale(sh, statusCol, tsCol) {
   }
 }
 
-/* optional phase-2 — auto-confirm donations from forwarded bank-alert emails */
+/* ============================================================
+   AUTO-RECONCILE from forwarded bank-alert emails
+   Matches an incoming payment to a Pending / Paid? row by the
+   buyer-entered UTR (12-digit UPI reference) AND the amount.
+   One UTR confirms one payment. Anything it can't match is left
+   for a human to check against the bank statement.
+
+   Script properties:
+     ENABLE_EMAIL_RECONCILE = yes
+     RECONCILE_LABEL        = vim-bank-alerts        (the Gmail label)
+     BANK_SENDER            = alerts@icicibank.com   (only trust this sender;
+                               comma-separate for more than one)
+   ============================================================ */
 function reconcileFromEmail() {
-  var label = PROPS.getProperty('RECONCILE_LABEL') || 'bank-alerts';
-  var threads = GmailApp.search('label:' + label + ' is:unread newer_than:3d', 0, 30);
-  if (!threads.length) return;
-  var sh = _donations();
-  var last = sh.getLastRow();
-  if (last < 2) return;
-  var data = sh.getRange(2, 1, last - 1, DON_HEADER.length).getValues();
+  if (PROPS.getProperty('ENABLE_EMAIL_RECONCILE') !== 'yes') return 0;
+  var label  = PROPS.getProperty('RECONCILE_LABEL') || 'vim-bank-alerts';
+  var sender = String(PROPS.getProperty('BANK_SENDER') || '').trim();
+
+  var q = 'label:' + label + ' is:unread newer_than:5d';
+  if (sender) q += ' (' + sender.split(',').map(function (s) { return 'from:' + s.trim(); }).join(' OR ') + ')';
+  var threads = GmailApp.search(q, 0, 50);
+  if (!threads.length) return 0;
+
+  var don = _donations(), ld = _luckydraw();
+  var dRows = don.getLastRow() > 1 ? don.getRange(2, 1, don.getLastRow() - 1, DON_HEADER.length).getValues() : [];
+  var lRows = ld.getLastRow()  > 1 ? ld.getRange(2, 1, ld.getLastRow()  - 1, LD_HEADER.length).getValues()  : [];
+
+  var used = {};   // UTRs already tied to a Confirmed row
+  dRows.forEach(function (r) { var u = _utrKey(r[DC.UTR - 1]); if (u && String(r[DC.STATUS - 1]).trim() === 'Confirmed') used[u] = 1; });
+  lRows.forEach(function (r) { var u = _utrKey(r[LC.UTR - 1]); if (u && String(r[LC.STATUS - 1]).trim() === 'Confirmed') used[u] = 1; });
+
+  var done = 0;
   threads.forEach(function (t) {
     t.getMessages().forEach(function (m) {
       if (!m.isUnread()) return;
-      var text = m.getPlainBody().replace(/,/g, '');
-      var mAmt = text.match(/(?:INR|Rs\.?|₹)\s*([0-9]+(?:\.[0-9]{1,2})?)/i);
-      var mRef = text.match(/VIM\d{2}-?[A-Z0-9]{5}/i);
-      var amt = mAmt ? Math.round(parseFloat(mAmt[1])) : null;
-      var ref = mRef ? mRef[0].toUpperCase() : null;
-      for (var i = 0; i < data.length; i++) {
-        var st = String(data[i][DC.STATUS - 1]).trim();
-        if (st !== 'Pending' && st !== 'Paid?') continue;
-        if ((ref && String(data[i][DC.REF - 1]).toUpperCase() === ref) ||
-            (amt && Number(data[i][DC.AMOUNT - 1]) === amt)) {
-          sh.getRange(i + 2, DC.STATUS).setValue('Confirmed');
-          sh.getRange(i + 2, DC.NOTES).setValue('auto-confirmed ' + m.getDate());
-          data[i][DC.STATUS - 1] = 'Confirmed';
-          break;
-        }
+      var body = (m.getPlainBody() || '').replace(/ /g, ' ');
+      var utr = _utrKey(_extractUtr(body));
+      var amt = _extractAmount(body);
+      if (!utr || used[utr]) return;
+      var matched = false;
+
+      // ---- donations ----
+      for (var i = 0; i < dRows.length && !matched; i++) {
+        var dst = String(dRows[i][DC.STATUS - 1]).trim();
+        if (dst !== 'Pending' && dst !== 'Paid?') continue;
+        if (_utrKey(dRows[i][DC.UTR - 1]) !== utr) continue;
+        if (amt && Math.round(Number(dRows[i][DC.AMOUNT - 1])) !== amt) continue;
+        don.getRange(i + 2, DC.STATUS).setValue('Confirmed');
+        don.getRange(i + 2, DC.NOTES).setValue('auto ' + Utilities.formatDate(m.getDate(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm'));
+        dRows[i][DC.STATUS - 1] = 'Confirmed'; matched = true;
       }
-      m.markRead();
+
+      // ---- lucky draw: confirm the whole reference ----
+      for (var j = 0; j < lRows.length && !matched; j++) {
+        var lst = String(lRows[j][LC.STATUS - 1]).trim();
+        if (lst !== 'Pending' && lst !== 'Paid?') continue;
+        if (_utrKey(lRows[j][LC.UTR - 1]) !== utr) continue;
+        var refv = String(lRows[j][LC.REF - 1]);
+        var sum = 0;
+        for (var k = 0; k < lRows.length; k++) if (String(lRows[k][LC.REF - 1]) === refv) sum += Number(lRows[k][LC.PRICE - 1]) || 0;
+        if (amt && sum !== amt) continue;
+        for (var k2 = 0; k2 < lRows.length; k2++) {
+          if (String(lRows[k2][LC.REF - 1]) !== refv) continue;
+          if (String(lRows[k2][LC.STATUS - 1]).trim() === 'Cancelled') continue;
+          ld.getRange(k2 + 2, LC.STATUS).setValue('Confirmed');
+          lRows[k2][LC.STATUS - 1] = 'Confirmed';
+        }
+        matched = true;
+      }
+
+      if (matched) {
+        used[utr] = 1; done++;
+        m.markRead();
+        _log('reconcile', 'auto-confirm', 'UTR ' + utr + ' · ₹' + (amt || '?'));
+      }
     });
   });
-  processConfirmations();
+
+  if (done) { processConfirmations(); processLuckyDraw(); }
+  return done;
+}
+
+function _utrKey(v) {
+  var s = String(v || '').replace(/\D/g, '');
+  return s.length >= 10 ? s.slice(-12) : '';
+}
+function _extractUtr(body) {
+  var m = body.match(/(?:UPI(?:[\s\-]*(?:Ref(?:erence)?|transaction))?[\s\-]*(?:No\.?|ID|Id)?|UTR|RRN)\s*[:#\-]?\s*([0-9]{12})\b/i);
+  if (m) return m[1];
+  m = body.match(/\b([0-9]{12})\b/);          // fall back to any bare 12-digit number
+  return m ? m[1] : '';
+}
+function _extractAmount(body) {
+  var m = body.replace(/,/g, '').match(/(?:INR|Rs\.?|₹)\s*([0-9]+(?:\.[0-9]{1,2})?)/i);
+  return m ? Math.round(parseFloat(m[1])) : null;
 }
 
 /* ============================================================

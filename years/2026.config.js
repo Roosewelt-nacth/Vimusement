@@ -30,10 +30,17 @@ window.VIM_YEARS["2026"] = {
   contactEmail: "",                 // e.g. "vimusement@yourparish.org"  ("" hides the link)
   donateUrl: "",                    // leave "" — the Donate links point to donate.html (see donation{} below)
 
-  /* Banner-reveal (interactive counter opens near the date) */
+  /* Banner reveal — the community mosaic on the home page.
+     It stays hidden until `opensOn`, then wakes up on its own: the section
+     appears and visitors can tap tiles to help fill in the banner.
+     - live:    force it on now (for a look before the date). Normally false.
+     - opensOn: the moment it turns itself on. Full ISO 8601 with timezone.
+     - goalTaps: tiles the community places together before it's "complete".
+     Preview it any time with  ?reveal=preview  on the URL. */
   reveal: {
-    goalTaps: 500,
-    teaserPercent: 62               // the demo bar fill shown before it's live
+    live: false,
+    opensOn: "2026-12-19T00:00:00+05:30",
+    goalTaps: 500
   },
 
   /* Where the three "Get Involved" buttons go. Any URL works — a page
@@ -140,6 +147,18 @@ window.VIM_YEARS["2026"] = {
   ],
 
   causeNote: "// Last year’s figures and disbursements will be published on the Impact page.",
+
+  /* Home-page impact strip (the #why section). Numbers count up when
+     scrolled into view. Add last year's total once you have it:
+       { n: 420000, prefix: "₹", label: "raised last year for the cause" }
+     Set `text` instead of `n` for a non-numeric stat. `hide: true` skips one. */
+  impact: {
+    stats: [
+      { n: 100, suffix: "%", label: "of what’s raised, after event costs, goes to the cause" },
+      { n: 3,               label: "funds it feeds: scholarships, medical emergencies, hardship" },
+      { text: "₹0",         label: "in payment fees. You pay the parish directly by UPI" }
+    ]
+  },
 
   involve: [
     { theme: "kids",   icon: "hands", title: "Volunteer",

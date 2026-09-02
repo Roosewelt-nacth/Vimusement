@@ -18,7 +18,19 @@
   background-size:126px 44px;
 }
 .hero__photo{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;opacity:.1;filter:saturate(.9)}
+.hero__fx{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.92}
+@media (prefers-reduced-motion:reduce){ .hero__fx{opacity:.7} }
 
+.hero__org{
+  display:flex;width:fit-content;align-items:center;gap:.85rem;margin-bottom:1.8rem;
+  text-decoration:none;color:var(--c-ink-soft);
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;line-height:1.55;
+}
+.hero__org img{display:block;height:44px;width:auto;flex:none}
+.hero__org span{padding-left:.85rem;border-left:1px solid var(--c-line)}
+:root:not([data-theme="light"]) .hero__org img,
+:root[data-theme="dark"] .hero__org img{filter:invert(1) brightness(1.6)}
+.hero__org:hover{color:var(--c-primary-ink)}
 .hero h1,.hero h2{color:var(--c-ink)}
 .hero__title{font-size:var(--fs-3xl);font-weight:var(--weight-bold);letter-spacing:var(--track-display);margin-top:.5rem}
 .hero__year{
@@ -56,6 +68,12 @@
 .home-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
 .tile--c .home-cta .btn--ghost{color:var(--c-on-dark);border-color:rgba(255,255,255,.4)}
 
+/* ---------- HOME — impact numbers ---------- */
+.impact-strip{--col:210px;margin:2.2rem 0 2.4rem;gap:1px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);overflow:hidden}
+.impact-strip .stat{display:flex;flex-direction:column;gap:.5rem;padding:1.5rem 1.4rem;background:rgba(255,255,255,.03)}
+.impact-strip .stat__num{font-family:var(--font-display);font-weight:var(--weight-bold);font-size:clamp(2rem,4vw,2.7rem);line-height:1;color:var(--c-gold);font-variant-numeric:tabular-nums}
+.impact-strip .stat__label{font-size:var(--fs-sm);color:var(--c-on-dark-soft);line-height:1.45}
+
 .explore-grid{--col:250px;margin-top:2.4rem}
 .card--link{
   display:flex;flex-direction:column;text-decoration:none;
@@ -92,6 +110,31 @@
 .reveal-card p{color:var(--c-on-dark-soft);max-width:52ch}
 .reveal-card .progress{margin-top:1.5rem}
 .reveal-card__cap{margin-top:.55rem;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;color:var(--c-on-dark-soft);opacity:.75}
+
+/* ---------- BANNER REVEAL — the community mosaic ---------- */
+.mosaic{
+  display:grid;grid-template-columns:repeat(var(--mx,14),1fr);
+  gap:3px;margin-top:1.5rem;width:100%;max-width:400px;
+}
+.mosaic--live{cursor:pointer;border-radius:4px}
+.mosaic--live:focus-visible{outline:2px solid var(--c-gold);outline-offset:4px}
+.mosaic__t{
+  aspect-ratio:1;border-radius:2px;background:rgba(255,255,255,.05);
+  opacity:0;transform:scale(.35);
+  transition:opacity .45s var(--ease-out),transform .45s var(--ease-out),box-shadow .45s;
+}
+.mosaic__t.is-on{opacity:1;transform:none}
+.mosaic__t.is-mark{background:var(--c-gold)}
+.mosaic__t.is-on.is-mark{box-shadow:0 0 9px color-mix(in srgb,var(--c-gold) 45%,transparent)}
+.mosaic--live:hover .mosaic__t:not(.is-on){opacity:.4;transform:none}
+.is-complete .mosaic__t.is-mark{box-shadow:0 0 14px color-mix(in srgb,var(--c-gold) 60%,transparent)}
+/* dormant: a faint static "V" holding the space until the feature day */
+.mosaic--dormant{cursor:default;pointer-events:none}
+.mosaic--dormant .mosaic__t.is-on{opacity:.2}
+.mosaic--dormant .mosaic__t.is-on.is-mark{box-shadow:none}
+@media (prefers-reduced-motion:reduce){
+  .mosaic__t{transition:none}
+}
 
 /* ---------- GALLERY (imagery gets the one shadow) ---------- */
 .gallery{--col:210px;margin-top:2.2rem}
@@ -317,8 +360,9 @@
 /* ---------- VISIT ---------- */
 .venue__grid{display:grid;gap:26px;margin-top:1.4rem;align-items:center}
 @media (min-width:820px){ .venue__grid{grid-template-columns:1fr 1.15fr} }
-.venue__info .lead{margin-top:.5rem}
-.venue__info .btn{margin-top:1.3rem}
+.venue__name{margin-top:.7rem;font-weight:var(--weight-semi);font-size:var(--fs-md);color:var(--c-ink);line-height:1.3}
+.venue__address{margin-top:.35rem;font-size:var(--fs-sm);color:var(--c-ink-mute);line-height:1.55;max-width:34ch}
+.venue__info .btn{margin-top:1.4rem}
 .venue__map{
   border-radius:var(--r-lg);overflow:hidden;
   box-shadow:var(--shadow-image);              /* imagery on a surface — the one shadow */

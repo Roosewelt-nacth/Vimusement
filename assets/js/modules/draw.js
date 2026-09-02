@@ -88,12 +88,23 @@ Vim.register("draw", function (ctx) {
       '<div class="upi__paid">' +
         '<button type="button" class="btn btn--outline btn--block" data-ipaid>I’ve paid</button>' +
         '<div class="upi__utr" hidden>' +
-          '<label class="field field--text"><input data-utr type="text" placeholder="UPI reference / UTR (optional)"></label>' +
-          '<button type="button" class="btn btn--gold btn--block" data-ipaid-done>Done</button>' +
+          '<p class="upi__utr-help">Almost there. Please enter the <b>12-digit UPI reference number</b> for your payment so we can match it and send your ticket' + (res.qty === 1 ? "" : "s") + ' quickly.</p>' +
+          '<ul class="upi__utr-where">' +
+            '<li>Google Pay: “UPI transaction ID”</li>' +
+            '<li>PhonePe / Paytm: “UTR” or “UPI Ref. No.”</li>' +
+            '<li>BHIM / bank apps: “UPI Ref. ID”</li>' +
+          '</ul>' +
+          '<label class="field field--text"><input data-utr type="text" inputmode="numeric" autocomplete="off" maxlength="22" placeholder="12-digit reference number"></label>' +
+          '<p class="upi__utr-msg" data-utr-msg hidden></p>' +
+          '<button type="button" class="btn btn--gold btn--block" data-ipaid-done>Send my ticket' + (res.qty === 1 ? "" : "s") + '</button>' +
+          '<button type="button" class="upi__utr-skip" data-ipaid-skip>I can’t find my reference number</button>' +
         '</div>' +
       '</div>';
     panel.hidden = false;
     panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+    var first = esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]);
+    var mailTo = esc((emailEl && emailEl.value) || "");
 
     panel.querySelector("[data-copy]").addEventListener("click", function () {
       var v = this.getAttribute("data-copy"), self = this;
@@ -101,19 +112,28 @@ Vim.register("draw", function (ctx) {
         .then(function () { self.textContent = "copied"; }).catch(function () {});
     });
     var paidBtn = panel.querySelector("[data-ipaid]"), utrBox = panel.querySelector(".upi__utr");
-    paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; });
-    panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
-      var utr = (panel.querySelector("[data-utr]").value || "").trim();
+    paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; panel.querySelector("[data-utr]").focus(); });
+
+    function finish(utr) {
       var p = { action: "ipaid", ref: res.ref }; if (utr) p.utr = utr;
-      jsonp(p).catch(function () { return {}; })
-        .then(function () {
-          panel.innerHTML = '<div class="upi__done">' +
-            '<p>You’re in, ' + esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]) + '. ' +
-            'Your <b>' + res.qty + '</b> ticket number' + (res.qty === 1 ? "" : "s") +
-            ' will be emailed to <b>' + esc((emailEl && emailEl.value) || "") + '</b> once your payment is confirmed, ' + esc(within) + '.</p>' +
-            '<p class="upi__note">Winners are drawn live on stage on the night.</p></div>';
-        });
+      jsonp(p).catch(function () { return {}; }).then(function () {
+        panel.innerHTML = '<div class="upi__done">' +
+          '<p>Thank you, ' + first + '. Once we’ve checked your payment against our records, your <b>' + res.qty + '</b> ticket number' + (res.qty === 1 ? "" : "s") +
+          ' ' + (res.qty === 1 ? "is" : "are") + ' emailed to <b>' + mailTo + '</b>' + (utr ? ', usually within a few hours' : '') + ', and by the end of the day at the latest.</p>' +
+          '<p class="upi__note">Winners are drawn live on stage on the night.</p></div>';
+      });
+    }
+    var msg = panel.querySelector("[data-utr-msg]");
+    panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
+      var digits = (panel.querySelector("[data-utr]").value || "").replace(/\D/g, "");
+      if (digits.length < 12) {
+        msg.hidden = false;
+        msg.textContent = "That isn’t a 12-digit reference yet. Check your payment confirmation screen.";
+        return;
+      }
+      finish(digits.slice(-12));
     });
+    panel.querySelector("[data-ipaid-skip]").addEventListener("click", function () { finish(""); });
   }
 
   function begin() {

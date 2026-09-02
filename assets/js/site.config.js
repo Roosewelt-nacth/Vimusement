@@ -20,6 +20,19 @@ window.VIM_SITE = {
     { label: "Donate",        file: "donate.html",    icon: "gift", cta: true }
   ],
 
+  /* The organising group. Save two files under assets/img/shared/ :
+       victorians.svg        — the logo as-is (black), for light backgrounds
+       victorians-light.svg  — a white/cream version, for dark backgrounds
+     (PNG with transparency is fine too — just match the file names.) */
+  org: {
+    name: "Victorians Youth",
+    tagline: "An initiative of Victorians Youth",
+    url: "https://www.instagram.com/victorians.youth/",
+    logo: "assets/img/shared/victorians-mark.png",         // the V mark, black — light backgrounds
+    logoLight: "assets/img/shared/victorians-mark-light.png", // the V mark, cream — dark backgrounds
+    logoFull: "assets/img/shared/victorians.png"            // full lockup with the wordmark
+  },
+
   /* Optional — leave "" to hide.
      instagram: full profile URL, e.g. "https://instagram.com/yourparish" —
      used for the gallery's "Follow on Instagram" link and the footer. */

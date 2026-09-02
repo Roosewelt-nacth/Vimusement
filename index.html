@@ -8,11 +8,11 @@
 <meta property="og:title" content="Vimusement 2026">
 <meta property="og:description" content="Carnival games, food stalls and movie screenings on the church grounds, for a good cause. Save the date.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A1%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 
 <script>
 document.documentElement.className+=" js";
-(function(){try{var m=localStorage.getItem("vim-theme");if(m)document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,8 +34,13 @@ document.documentElement.className+=" js";
 <!-- ================= HERO ================= -->
 <header class="hero cv-auto">
   <img class="hero__photo" data-hero-photo alt="" hidden>
+  <canvas class="hero__fx" data-hero-fx aria-hidden="true"></canvas>
   <div class="hero__bunting anim-bob" aria-hidden="true"></div>
   <div class="wrap">
+    <a class="hero__org" href="https://www.instagram.com/victorians.youth/" target="_blank" rel="noopener" data-animate="fade-up">
+      <img src="assets/img/shared/victorians-mark.png" alt="" width="52" height="46">
+      <span>An initiative of<br>Victorians Youth</span>
+    </a>
     <p class="eyebrow" data-animate="fade-up">Annual Parish Fundraiser · Church Grounds</p>
     <h1 class="hero__title" data-animate="fade-up" data-animate-delay="0.07">Vimusement <span class="hero__year" data-bind="year">2026</span></h1>
     <p class="hero__tag" data-animate="fade-up" data-animate-delay="0.14">One evening of games, food stalls and movie screenings, turned into scholarships, a medical-emergency fund, and help for neighbours in need.</p>
@@ -66,6 +71,7 @@ document.documentElement.className+=" js";
       <h2 class="section__title" data-animate="fade-up">One night of fun. A year of difference.</h2>
       <p class="lead" data-animate="fade-up">Every rupee raised after event costs goes straight to scholarships, a medical-emergency fund, and hardship support, decided by the parish committee and published in full.</p>
     </div>
+    <div class="grid grid--auto impact-strip" data-list="impact"></div>
     <div class="home-cta" data-animate="fade-up">
       <a class="btn btn--gold btn--lg" href="donate.html">Donate to the cause</a>
       <a class="btn btn--ghost btn--lg" href="cause.html">See where it goes</a>
@@ -101,14 +107,15 @@ document.documentElement.className+=" js";
 </section>
 
 <!-- ================= BANNER REVEAL (compact, parchment) ================= -->
-<section class="tile tile--b tile--tight cv-auto" id="reveal">
+<section class="tile tile--b tile--tight cv-auto" id="reveal" hidden>
   <div class="wrap">
     <div class="reveal-card reveal-card--compact" data-animate="zoom-in">
-      <p class="eyebrow">Coming soon</p>
+      <p class="eyebrow">The community banner</p>
       <h3>The banner drops when <em>the community</em> builds it</h3>
-      <p>In the final week, every tap on this site adds a name to a giant mosaic. On the night, the real banner on the grounds is unveiled the moment it completes.</p>
+      <p>Every tap adds a tile to the banner. When the grid fills, it is unveiled on the grounds.</p>
+      <div class="mosaic" data-mosaic aria-hidden="true"></div>
       <div class="progress"><i class="progress__fill" data-reveal-bar data-progress="0"></i></div>
-      <p class="reveal-card__cap">PREVIEW · the live counter opens closer to the date</p>
+      <p class="reveal-card__cap" data-reveal-count>Opens closer to the night.</p>
     </div>
   </div>
 </section>
@@ -120,7 +127,8 @@ document.documentElement.className+=" js";
       <div class="venue__info">
         <p class="eyebrow" data-animate="fade-up">The venue</p>
         <h2 class="section__title" data-animate="fade-up" data-venue-quote>See you there.</h2>
-        <p class="lead" data-animate="fade-up" data-venue-address>Address to be announced.</p>
+        <p class="venue__name" data-animate="fade-up" data-venue-name>Ascension Church, Aminjikkarai</p>
+        <p class="venue__address" data-animate="fade-up" data-venue-address>Address to be announced.</p>
         <a class="btn btn--gold" data-animate="fade-up" data-venue-directions href="#" target="_blank" rel="noopener">Get directions</a>
       </div>
       <div class="venue__map" data-venue-map data-animate="zoom-in"></div>
@@ -146,6 +154,8 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/counters.js"></script>
 <script defer src="assets/js/modules/countdown.js"></script>
 <script defer src="assets/js/modules/marquee.js"></script>
+<script defer src="assets/js/modules/herofx.js"></script>
+<script defer src="assets/js/modules/mosaic.js"></script>
 <script defer src="assets/js/main.js"></script>
 </body>
 </html>

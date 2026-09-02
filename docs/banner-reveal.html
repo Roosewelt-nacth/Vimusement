@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Community Banner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+  /* Vimusement crimson world — matches the live #reveal section */
+  :root{
+    --void:#150A0E; --card:#1A0C11; --panel:#20121A;
+    --ink:#FBEEEA; --soft:#DBB9BE; --mute:#A98E94;
+    --gold:#E88A54; --crimson-lift:#FF7A88;
+    --line:rgba(255,255,255,.14); --fill:rgba(255,255,255,.05);
+    --font-display:"Bricolage Grotesque",-apple-system,system-ui,sans-serif;
+    --font-body:"Hanken Grotesk",-apple-system,system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink);font-family:var(--font-body);line-height:1.55}
+  .wrap{max-width:720px;margin:0 auto;padding:56px 22px 80px}
+
+  h1{font-family:var(--font-display);font-weight:700;font-size:clamp(1.9rem,5vw,2.7rem);margin:.4rem 0 .3rem;text-wrap:balance}
+  h2{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:2.6rem 0 .6rem}
+  .kicker{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+  p{max-width:62ch;color:var(--soft)}
+  p b{color:var(--ink);font-weight:600}
+  code{font-family:var(--font-mono);font-size:.86em;color:var(--gold);background:var(--fill);padding:.1rem .35rem;border-radius:4px}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;font-family:var(--font-mono);font-size:.82rem;color:var(--ink);line-height:1.6}
+  pre .c{color:var(--mute)}
+  pre .k{color:var(--crimson-lift)}
+  ul{color:var(--soft);max-width:62ch;padding-left:1.1rem}
+  li{margin:.3rem 0}
+  a{color:var(--gold)}
+
+  /* ---- playground ---- */
+  .demo{margin:1.4rem 0 0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .demo__bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .demo__bar button{font-family:var(--font-body);font-weight:600;font-size:.8rem;color:var(--ink);background:var(--fill);border:1px solid var(--line);padding:.45rem .85rem;border-radius:999px;cursor:pointer;transition:background .24s,box-shadow .42s}
+  .demo__bar button:hover{background:rgba(255,255,255,.1);box-shadow:0 0 15px rgba(232,138,84,.25)}
+  .demo__bar button[aria-pressed=true]{background:var(--gold);color:#2a1109;border-color:var(--gold)}
+  .demo__bar button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .demo__state{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-left:auto}
+
+  .demo__stage{padding:26px 20px 30px;background:var(--card)}
+  .demo__stage[hidden]{display:none}
+  .demo__dormant{padding:40px 20px;text-align:center;background:var(--card);color:var(--mute);font-family:var(--font-mono);font-size:.78rem;letter-spacing:.06em}
+  .demo__dormant[hidden]{display:none}
+
+  .rc .kicker::before{content:"";display:inline-block;width:16px;height:2px;background:var(--gold);vertical-align:middle;margin-right:10px}
+  .rc h3{font-family:var(--font-display);font-weight:600;font-size:1.3rem;margin:.5rem 0;text-wrap:balance}
+  .rc h3 em{color:var(--gold);font-style:italic}
+  .rc p{font-size:.92rem;margin:.2rem 0 0}
+
+  .mosaic{display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin-top:1.4rem;width:100%;max-width:380px;cursor:pointer;border-radius:4px}
+  .mosaic:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+  .mosaic i{aspect-ratio:1;border-radius:2px;background:var(--fill);opacity:0;transform:scale(.35);transition:opacity .45s cubic-bezier(.22,.68,.32,1),transform .45s cubic-bezier(.22,.68,.32,1),box-shadow .45s}
+  .mosaic i.on{opacity:1;transform:none}
+  .mosaic i.mark{background:var(--gold)}
+  .mosaic i.on.mark{box-shadow:0 0 9px rgba(232,138,84,.45)}
+  .mosaic:hover i:not(.on){opacity:.4;transform:none}
+  .is-complete .mosaic i.on.mark{box-shadow:0 0 14px rgba(232,138,84,.62)}
+
+  .progress{margin-top:1.4rem;height:6px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+  .progress i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(100deg,var(--gold),var(--crimson-lift));transition:width .3s cubic-bezier(.22,.68,.32,1)}
+  .cap{margin-top:.55rem;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;color:var(--soft);opacity:.8}
+
+  @media (prefers-reduced-motion:reduce){ .mosaic i,.progress i{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="kicker">Vimusement · reference</p>
+  <h1>The community banner</h1>
+  <p>The <code>#reveal</code> section on the home page. It has two stages, and it moves between them on its own.</p>
+
+  <h2>1 · Dormant</h2>
+  <p>Until the date in the config, the whole section is <b>hidden</b>. Nothing renders, nothing animates. Visitors don't see it at all.</p>
+
+  <h2>2 · Live</h2>
+  <p>On <code>reveal.opensOn</code> the section appears by itself, no deploy needed. Then:</p>
+  <ul>
+    <li>as the section scrolls up the screen, a 14×9 grid assembles into the Victorians “V” (ambient, driven by scroll position)</li>
+    <li>visitors <b>tap tiles</b> to place their own, and the grid fills toward <code>reveal.goalTaps</code></li>
+    <li>each visitor's contribution is remembered in their browser until the shared backend counter is added</li>
+    <li>when the goal is reached the grid locks into a full glowing “V” and the caption changes</li>
+  </ul>
+
+  <h2>The config</h2>
+  <p>All of it lives in <code>years/2026.config.js</code>:</p>
+<pre><span class="c">/* Banner reveal. Hidden until opensOn, then it wakes up on its own. */</span>
+reveal: {
+  live: <span class="k">false</span>,                        <span class="c">// force on now, for a look before the date</span>
+  opensOn: <span class="k">"2026-12-19T00:00:00+05:30"</span>, <span class="c">// when it turns itself on (IST)</span>
+  goalTaps: <span class="k">500</span>                        <span class="c">// tiles placed together</span>
+}</pre>
+  <p>To see it before the date without touching the config, add <code>?reveal=preview</code> to the URL. Logic and rendering are in <code>assets/js/modules/mosaic.js</code>; styling is under <code>/* BANNER REVEAL */</code> in <code>assets/css/pages/home.css</code>.</p>
+
+  <h2>Try it</h2>
+  <p>This playground runs the real module logic. Flip the date, tap the grid, scroll it.</p>
+
+  <div class="demo">
+    <div class="demo__bar">
+      <button id="d-before" type="button" aria-pressed="false">Before opensOn</button>
+      <button id="d-after" type="button" aria-pressed="true">On / after opensOn</button>
+      <button id="d-reset" type="button">Reset taps</button>
+      <span class="demo__state" id="d-state">live</span>
+    </div>
+
+    <div class="demo__dormant" id="d-dormant" hidden>section hidden — visitors see nothing here</div>
+
+    <div class="demo__stage" id="d-stage">
+      <div class="rc">
+        <p class="kicker">The community banner</p>
+        <h3>The banner drops when <em>the community</em> builds it</h3>
+        <p>Every tap places a tile. When the grid fills, the banner on the grounds is unveiled.</p>
+        <div class="mosaic" id="d-mosaic" role="button" tabindex="0" aria-label="Place a tile"></div>
+        <div class="progress"><i id="d-bar"></i></div>
+        <p class="cap" id="d-cap">Tap a tile to add yours.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var MX = 14, MY = 9, N = MX * MY, GOAL = 500;
+  var host = document.getElementById("d-mosaic");
+  var bar = document.getElementById("d-bar");
+  var cap = document.getElementById("d-cap");
+  var stage = document.getElementById("d-stage");
+  var dormant = document.getElementById("d-dormant");
+  var stateLbl = document.getElementById("d-state");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var seed = 20260214;
+  function rnd() { seed = (seed * 48271) % 2147483647; return (seed - 1) / 2147483646; }
+  function isMark(c, r) {
+    var rr = r / (MY - 1);
+    var lx = rr * (MX / 2 - 1.5) + 0.5;
+    var rx = (MX - 1) - rr * (MX / 2 - 1.5) - 0.5;
+    return Math.abs(c - lx) < 1.15 || Math.abs(c - rx) < 1.15;
+  }
+
+  var nodes = [], marks = [], field = [];
+  for (var i = 0; i < N; i++) {
+    var c = i % MX, r = (i / MX) | 0, mk = isMark(c, r);
+    var t = document.createElement("i");
+    if (mk) t.className = "mark";
+    host.appendChild(t);
+    var node = { el: t, on: false, tapped: false };
+    nodes.push(node);
+    (mk ? marks : field).push(node);
+  }
+  function shuffle(a) { for (var j = a.length - 1; j > 0; j--) { var k = (rnd() * (j + 1)) | 0, x = a[j]; a[j] = a[k]; a[k] = x; } }
+  shuffle(marks); shuffle(field);
+  var order = marks.concat(field);
+
+  function paint() { nodes.forEach(function (n) { n.el.classList.toggle("on", n.on || n.tapped); }); }
+
+  var scrollShown = -1;
+  function applyScroll(p) {
+    p = Math.max(0, Math.min(1, p));
+    var mShow = Math.round(marks.length * Math.min(1, p / 0.8));
+    var fShow = Math.round(field.length * 0.4 * p);
+    var key = mShow * 1000 + fShow;
+    if (key === scrollShown) return;
+    scrollShown = key;
+    marks.forEach(function (n, i) { n.on = i < mShow; });
+    field.forEach(function (n, i) { n.on = i < fShow; });
+    paint();
+  }
+  function onScroll() {
+    if (stage.hidden) return;
+    var rect = stage.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    applyScroll((vh - rect.top) / (vh * 0.9));
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+
+  var STORE = "vim-reveal-demo-taps";
+  var placed = 0;
+  try { placed = Math.max(0, parseInt(localStorage.getItem(STORE), 10) || 0); } catch (e) {}
+
+  function render() {
+    var lit = Math.round(order.length * Math.min(1, placed / GOAL));
+    order.forEach(function (n, i) { n.tapped = i < lit; });
+    paint();
+    var pct = Math.max(0, Math.min(100, Math.round(placed / GOAL * 100)));
+    bar.style.width = pct + "%";
+    cap.textContent = placed >= GOAL
+      ? "The grid is full. See it on the grounds on the night."
+      : placed
+        ? placed.toLocaleString("en-IN") + " of " + GOAL.toLocaleString("en-IN") + " tiles placed"
+        : "Tap a tile to add yours.";
+    stage.parentElement.classList.toggle("is-complete", placed >= GOAL);
+  }
+  function place() {
+    if (stage.hidden) return;
+    placed = Math.min(GOAL, placed + 7);       // ~1 name ≈ a few taps, for a quick demo
+    try { localStorage.setItem(STORE, String(placed)); } catch (e) {}
+    render();
+  }
+  host.addEventListener("click", function (e) { if (e.target !== host) place(); });
+  host.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); place(); }
+  });
+
+  var bBefore = document.getElementById("d-before");
+  var bAfter = document.getElementById("d-after");
+  function setStage(live) {
+    stage.hidden = !live;
+    dormant.hidden = live;
+    bBefore.setAttribute("aria-pressed", String(!live));
+    bAfter.setAttribute("aria-pressed", String(live));
+    stateLbl.textContent = live ? "live" : "dormant";
+    if (live) { scrollShown = -1; onScroll(); render(); }
+  }
+  bBefore.addEventListener("click", function () { setStage(false); });
+  bAfter.addEventListener("click", function () { setStage(true); });
+  document.getElementById("d-reset").addEventListener("click", function () {
+    placed = 0;
+    try { localStorage.removeItem(STORE); } catch (e) {}
+    render();
+  });
+
+  if (reduce) applyScroll(1);
+  setStage(true);
+})();
+</script>
+</body>
+</html>

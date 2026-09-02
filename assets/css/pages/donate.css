@@ -101,8 +101,20 @@
 .upi__note{font-size:.82rem;color:var(--c-ink-mute);line-height:1.5;margin-bottom:1rem;max-width:38ch;margin-inline:auto}
 .upi__note b{color:var(--c-ink-soft)}
 .upi__paid{border-top:1px solid var(--c-line);padding-top:1rem}
-.upi__utr{margin-top:.7rem;display:flex;flex-direction:column;gap:.6rem}
+.upi__utr{margin-top:.7rem;display:flex;flex-direction:column;gap:.6rem;text-align:left}
 .upi__utr .field{background:var(--c-surface)}
+.upi__utr-help{font-size:var(--fs-sm);color:var(--c-ink-soft);line-height:1.5;margin:0}
+.upi__utr-where{
+  margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.25rem;
+  font-size:.8rem;color:var(--c-ink-mute);
+}
+.upi__utr-where li::before{content:"•";margin-right:.4rem;color:var(--c-primary-ink)}
+.upi__utr-msg{margin:0;font-size:.8rem;color:var(--c-primary-ink)}
+.upi__utr-skip{
+  background:none;border:0;cursor:pointer;padding:.2rem;
+  font:inherit;font-size:.78rem;color:var(--c-ink-mute);text-decoration:underline;
+}
+.upi__utr-skip:hover{color:var(--c-primary-ink)}
 .upi__done{color:var(--c-ink-soft);line-height:1.55}
 .upi__done p + p{margin-top:.6rem}
 @keyframes upi-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}

@@ -57,7 +57,15 @@
     (function venue() {
       var v = Y.venue || {};
       var q = encodeURIComponent(v.mapQuery || v.address || v.name || "");
-      ctx.$$("[data-venue-address]").forEach(function (el) { el.textContent = v.address || v.name || ""; });
+      ctx.$$("[data-venue-name]").forEach(function (el) { if (v.name) el.textContent = v.name; });
+      ctx.$$("[data-venue-address]").forEach(function (el) {
+        var a = v.address || "";
+        // don't repeat the venue name if the address starts with it
+        if (v.name && a.toLowerCase().indexOf(v.name.split(",")[0].toLowerCase()) === 0) {
+          a = a.replace(/^[^,]+,\s*/, "");
+        }
+        el.textContent = a || v.name || "";
+      });
       ctx.$$("[data-venue-quote]").forEach(function (el) { if (v.quote) el.textContent = v.quote; });
 
       var dir = ctx.$("[data-venue-directions]");
@@ -196,10 +204,23 @@
       return galleryLocalHTML(g.items);
     }
 
+    function statHTML(s) {
+      var num = s.text != null
+        ? esc(s.text)
+        : '<span data-count-to="' + (Number(s.n) || 0) + '"' +
+          (s.prefix ? ' data-count-prefix="' + esc(s.prefix) + '"' : '') +
+          (s.suffix ? ' data-count-suffix="' + esc(s.suffix) + '"' : '') + '>' +
+          (s.prefix ? esc(s.prefix) : '') + '0' + (s.suffix ? esc(s.suffix) : '') + '</span>';
+      return '<div class="stat" data-animate="fade-up">' +
+        '<span class="stat__num">' + num + '</span>' +
+        '<span class="stat__label">' + esc(s.label) + '</span></div>';
+    }
+
     var lists = {
       whatsOn: function () { return (Y.whatsOn || []).map(function (i) { return cardHTML(i, "whatsOn"); }).join(""); },
       causes:  function () { return (Y.causes  || []).map(pillarHTML).join(""); },
       involve: function () { return (Y.involve || []).map(function (i) { return cardHTML(i, "involve"); }).join(""); },
+      impact:  function () { return ((Y.impact && Y.impact.stats) || []).filter(function (s) { return !s.hide; }).map(statHTML).join(""); },
       gallery: galleryHTML
     };
     ctx.$$("[data-list]").forEach(function (el) {
@@ -219,9 +240,7 @@
       heroImg.removeAttribute("hidden");
     }
 
-    /* ---- reveal teaser bar ---- */
-    var bar = ctx.$("[data-reveal-bar]");
-    if (bar && Y.reveal) bar.setAttribute("data-progress", Y.reveal.teaserPercent || 0);
+    /* ---- (banner reveal owns its own bar — see modules/mosaic.js) ---- */
 
     /* ---- document title / year echoes ---- */
     if (Y.year) {

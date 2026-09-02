@@ -106,12 +106,23 @@ Vim.register("donate", function (ctx) {
       '<div class="upi__paid">' +
         '<button type="button" class="btn btn--outline btn--block" data-ipaid>I’ve paid</button>' +
         '<div class="upi__utr" hidden>' +
-          '<label class="field field--text"><input data-utr type="text" placeholder="UPI reference / UTR (optional, speeds it up)"></label>' +
-          '<button type="button" class="btn btn--gold btn--block" data-ipaid-done>Done</button>' +
+          '<p class="upi__utr-help">Almost there. Please enter the <b>12-digit UPI reference number</b> for your payment so we can confirm your gift quickly.</p>' +
+          '<ul class="upi__utr-where">' +
+            '<li>Google Pay: “UPI transaction ID”</li>' +
+            '<li>PhonePe / Paytm: “UTR” or “UPI Ref. No.”</li>' +
+            '<li>BHIM / bank apps: “UPI Ref. ID”</li>' +
+          '</ul>' +
+          '<label class="field field--text"><input data-utr type="text" inputmode="numeric" autocomplete="off" maxlength="22" placeholder="12-digit reference number"></label>' +
+          '<p class="upi__utr-msg" data-utr-msg hidden></p>' +
+          '<button type="button" class="btn btn--gold btn--block" data-ipaid-done>Confirm my gift</button>' +
+          '<button type="button" class="upi__utr-skip" data-ipaid-skip>I can’t find my reference number</button>' +
         '</div>' +
       '</div>';
     panel.hidden = false;
     panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+    var first = esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]);
+    var mailTo = esc((emailEl && emailEl.value) || "");
 
     panel.querySelector("[data-copy]").addEventListener("click", function () {
       var v = this.getAttribute("data-copy");
@@ -122,21 +133,29 @@ Vim.register("donate", function (ctx) {
 
     var paidBtn = panel.querySelector("[data-ipaid]");
     var utrBox = panel.querySelector(".upi__utr");
-    paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; });
-    panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
-      var utr = (panel.querySelector("[data-utr]").value || "").trim();
+    var msg = panel.querySelector("[data-utr-msg]");
+    paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; panel.querySelector("[data-utr]").focus(); });
+
+    function finish(utr) {
       var pp = { action: "ipaid", ref: res.ref }; if (utr) pp.utr = utr;
-      jsonp(pp)
-        .catch(function () { return {}; })
-        .then(function () {
-          panel.innerHTML = '<div class="upi__done">' +
-            '<p>Thank you, ' + esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]) + '. ' +
-            'We’ll verify your gift and email <b>' + esc((emailEl && emailEl.value) || "") + '</b> once it’s confirmed, ' + esc(within) + '.</p>' +
-            '<p class="upi__note">Your name joins the supporters wall the moment it’s confirmed.</p>' +
-            '</div>';
-          window.dispatchEvent(new Event("vim:donation"));
-        });
+      jsonp(pp).catch(function () { return {}; }).then(function () {
+        panel.innerHTML = '<div class="upi__done">' +
+          '<p>Thank you, ' + first + '. Once we’ve checked your payment against our records, we’ll email <b>' + mailTo + '</b> to confirm your gift' +
+          (utr ? ', usually within a few hours' : '') + ', and by the end of the day at the latest.</p>' +
+          '<p class="upi__note">Your name joins the supporters wall the moment it’s confirmed.</p></div>';
+        window.dispatchEvent(new Event("vim:donation"));
+      });
+    }
+    panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
+      var digits = (panel.querySelector("[data-utr]").value || "").replace(/\D/g, "");
+      if (digits.length < 12) {
+        msg.hidden = false;
+        msg.textContent = "That isn’t a 12-digit reference yet. Check your payment confirmation screen.";
+        return;
+      }
+      finish(digits.slice(-12));
     });
+    panel.querySelector("[data-ipaid-skip]").addEventListener("click", function () { finish(""); });
   }
 
   function begin() {

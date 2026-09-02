@@ -100,7 +100,8 @@ Vim.register("desk", function (ctx) {
         '<button type="button" class="btn btn--outline" data-end>End shift</button></div>' +
       '<div class="desk__tabs" role="tablist">' +
         '<button type="button" role="tab" data-tab="draw" aria-selected="true">Lucky Draw</button>' +
-        '<button type="button" role="tab" data-tab="cash" aria-selected="false">Cash Donation</button></div>' +
+        '<button type="button" role="tab" data-tab="cash" aria-selected="false">Cash Donation</button>' +
+        '<button type="button" role="tab" data-tab="confirm" aria-selected="false">Confirm UPI</button></div>' +
       '<div data-panel="draw">' +
         '<p class="desk__price">' + money(PRICE) + ' a ticket</p>' +
         '<div class="qty"><button type="button" class="qty__btn" data-qd>−</button>' +
@@ -118,6 +119,11 @@ Vim.register("desk", function (ctx) {
         '<label class="field field--text"><input data-ce type="email" inputmode="email" placeholder="Email for a receipt (optional)"></label>' +
         '<label class="donate-check"><input data-cw type="checkbox" checked><span>Show name on the supporters wall</span></label>' +
         '<button type="button" class="btn btn--gold btn--block btn--lg" data-cashgo>Record donation</button>' +
+      '</div>' +
+      '<div data-panel="confirm" hidden>' +
+        '<p class="desk__price">Paste a UPI reference you can see landed in the bank app to confirm that payment.</p>' +
+        '<label class="field field--text"><input data-cu type="text" inputmode="numeric" maxlength="22" placeholder="12-digit UPI reference"></label>' +
+        '<button type="button" class="btn btn--gold btn--block btn--lg" data-cugo>Confirm payment</button>' +
       '</div>' +
       '<div class="desk__result glass-panel" data-result hidden></div>');
     wireX();
@@ -182,10 +188,27 @@ Vim.register("desk", function (ctx) {
         .catch(function () { btn.disabled = false; btn.textContent = "Record donation"; alert("Network problem. Try again."); });
     });
 
+    mount.querySelector("[data-cugo]").addEventListener("click", function () {
+      var utr = (mount.querySelector("[data-cu]").value || "").replace(/\D/g, "");
+      if (utr.length < 12) { alert("Enter the 12-digit UPI reference."); return; }
+      var btn = this; btn.disabled = true; btn.textContent = "Confirming…";
+      call({ action: "confirmByUtr", token: s.token, utr: utr })
+        .then(function (res) {
+          btn.disabled = false; btn.textContent = "Confirm payment";
+          if (res.error) { alert(res.error); return; }
+          result('<p class="res__label">Confirmed</p>' +
+            '<div class="res__ids">' + res.confirmed.map(function (c) { return "<b>" + esc(c) + "</b>"; }).join("") + '</div>' +
+            '<p class="res__note">The buyer’s ticket / receipt email is on its way.</p>');
+          mount.querySelector("[data-cu]").value = "";
+        })
+        .catch(function () { btn.disabled = false; btn.textContent = "Confirm payment"; alert("Network problem. Try again."); });
+    });
+
     function tab(t) {
       mount.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
       mount.querySelector('[data-panel="draw"]').hidden = t !== "draw";
       mount.querySelector('[data-panel="cash"]').hidden = t !== "cash";
+      mount.querySelector('[data-panel="confirm"]').hidden = t !== "confirm";
       var r = mount.querySelector("[data-result]"); r.hidden = true; r.innerHTML = "";
     }
     function result(html) {
