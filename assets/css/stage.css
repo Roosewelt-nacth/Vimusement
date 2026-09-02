@@ -5,11 +5,23 @@
 .stage{
   --bg:#140a26; --bg2:#241241; --ink:#f6eefa; --dim:#b7a6d6;
   --gold:#f2b84e; --rose:#f27e97; --teal:#3fd9c6;
-  margin:0;min-height:100dvh;background:radial-gradient(120% 80% at 50% 0%,var(--bg2),var(--bg));
+  margin:0;min-height:100dvh;position:relative;isolation:isolate;
+  background:radial-gradient(120% 80% at 50% 0%,var(--bg2),var(--bg));
   color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;
   overflow:hidden;
 }
+/* slow drifting colour haze behind everything */
+.stage::before{
+  content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38% 38% at 22% 28%,rgba(242,184,78,.16),transparent 70%),
+    radial-gradient(42% 42% at 82% 22%,rgba(242,126,151,.15),transparent 70%),
+    radial-gradient(46% 46% at 60% 88%,rgba(63,217,198,.13),transparent 70%);
+  animation:stageDrift 26s ease-in-out infinite alternate;
+}
+@keyframes stageDrift{to{transform:translate3d(0,-3%,0) rotate(6deg) scale(1.08)}}
 .stage *{box-sizing:border-box}
+.stage [hidden]{display:none!important}   /* beat .stage__gate/.stage__app display rules */
 
 /* ---- gate ---- */
 .stage__gate{min-height:100dvh;display:grid;place-items:center;padding:24px}
@@ -43,36 +55,112 @@
 /* ---- app ---- */
 .stage__app{min-height:100dvh;display:flex;flex-direction:column;position:relative}
 .stage__head{
+  position:relative;
   padding:clamp(1rem,3vw,2rem);text-align:center;
   font-family:"IBM Plex Mono",monospace;letter-spacing:.22em;text-transform:uppercase;
   font-size:clamp(.7rem,1.6vw,1rem);color:var(--dim);
 }
 .stage__head b{color:var(--gold);letter-spacing:.16em}
+.stage__signout{
+  position:absolute;right:clamp(1rem,3vw,2rem);top:50%;transform:translateY(-50%);
+  padding:.45rem .9rem;border-radius:999px;cursor:pointer;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);color:var(--dim);
+  font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  transition:color .2s,border-color .2s;
+}
+.stage__signout:hover{color:var(--gold);border-color:var(--gold)}
+
+/* ---- prize track (a countdown of prizes, one chip each) ---- */
+.stage__prizes{
+  list-style:none;margin:0 auto;padding:0 clamp(1rem,4vw,2rem);
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:stretch;
+  max-width:1100px;
+}
+.stage__prize{
+  --edge:rgba(255,255,255,.16);
+  position:relative;display:flex;flex-direction:column;gap:2px;
+  padding:.55rem 1rem;border-radius:14px;min-width:120px;
+  background:rgba(255,255,255,.05);border:1px solid var(--edge);
+  transition:transform .35s cubic-bezier(.34,1.4,.44,1),border-color .35s,background .35s,box-shadow .35s;
+}
+.stage__prize-place{
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:.95rem;
+  letter-spacing:.01em;
+}
+.stage__prize-detail{font-size:.72rem;color:var(--dim);letter-spacing:.02em}
+.stage__prize-won{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--teal);letter-spacing:.04em}
+.stage__prize-won:empty{display:none}
+.stage__prize.is-current{
+  --edge:var(--gold);background:rgba(242,184,78,.14);transform:translateY(-3px) scale(1.04);
+  box-shadow:0 10px 30px -12px rgba(242,184,78,.5);
+}
+.stage__prize.is-won{--edge:rgba(63,217,198,.5);background:rgba(63,217,198,.08);opacity:.9}
+.stage__prize.is-won .stage__prize-place{color:var(--teal)}
+.stage__prize.is-won::after{
+  content:"✓";position:absolute;top:-8px;right:-8px;width:20px;height:20px;
+  display:grid;place-items:center;border-radius:50%;
+  background:var(--teal);color:#08312c;font-size:.7rem;font-weight:900;
+}
 
 .stage__stagearea{flex:1;display:grid;place-items:center;position:relative;padding:1rem}
+.stage__stack{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+
+/* the reel sits on a soft glass slab with a glow */
+.stage__reelwrap{
+  position:relative;padding:.2em .55em;border-radius:28px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 40px 120px -40px rgba(242,126,151,.4), inset 0 1px 0 rgba(255,255,255,.08);
+}
+@supports (backdrop-filter:blur(1px)){.stage__reelwrap{backdrop-filter:blur(8px)}}
 .stage__reel{
   font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
   font-size:clamp(5rem,22vw,16rem);line-height:.9;letter-spacing:-.03em;
   font-variant-numeric:tabular-nums;
-  background:linear-gradient(100deg,var(--gold),var(--rose) 60%,var(--teal));
+  background:linear-gradient(100deg,var(--gold),var(--rose) 55%,var(--teal));
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  text-align:center;
+  text-align:center;transition:filter .3s,opacity .3s,transform .5s cubic-bezier(.34,1.56,.44,1);
 }
-.stage__reel.is-spinning{filter:blur(2px);opacity:.9}
+.stage__reel.is-spinning{filter:blur(3px) saturate(1.3);opacity:.92}
+.stage__reel.is-hushed{filter:blur(6px);opacity:.35;transform:scale(.9)}
+.stage__reel.is-winner{animation:reelPop .55s cubic-bezier(.34,1.6,.44,1)}
+@keyframes reelPop{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:none}}
+
+/* ---- 3·2·1 countdown ---- */
+.stage__count3{
+  position:absolute;inset:0;z-index:3;display:grid;place-items:center;pointer-events:none;
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
+  font-size:clamp(9rem,32vw,26rem);line-height:1;
+  color:var(--ink);text-shadow:0 0 60px rgba(242,184,78,.6);
+}
+.stage__count3.is-go{
+  background:linear-gradient(100deg,var(--gold),var(--teal));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:clamp(6rem,20vw,16rem);letter-spacing:.02em;
+}
+.stage__count3.is-pop{animation:count3 1s ease-out}
+@keyframes count3{
+  0%{transform:scale(1.6);opacity:0;filter:blur(8px)}
+  16%{transform:scale(1);opacity:1;filter:blur(0)}
+  78%{transform:scale(1);opacity:1;filter:blur(0)}
+  100%{transform:scale(.82);opacity:0}
+}
+
 .stage__caption{
   margin-top:clamp(.5rem,2vw,1.5rem);text-align:center;
   font-family:"IBM Plex Mono",monospace;font-size:clamp(.9rem,2.4vw,1.6rem);
   letter-spacing:.14em;color:var(--dim);min-height:1.4em;
 }
 .stage__winner{
-  margin-top:.5rem;text-align:center;
+  margin-top:.7rem;text-align:center;
   font-family:"Bricolage Grotesque",sans-serif;font-weight:700;
-  font-size:clamp(1.6rem,5vw,3.4rem);color:var(--ink);
+  font-size:clamp(1.4rem,4.4vw,3rem);color:var(--ink);
+  padding:.5rem 1.4rem;border-radius:999px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
   animation:pop .5s cubic-bezier(.34,1.56,.44,1);
 }
 @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
 
-.stage__confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stage__confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 
 /* ---- controls ---- */
 .stage__controls{
@@ -86,12 +174,18 @@
 .stage__act{
   padding:.9rem 2rem;border:0;border-radius:999px;cursor:pointer;
   font-weight:700;font-size:1.05rem;background:var(--gold);color:#241a2e;
+  transition:transform .15s,box-shadow .2s,filter .2s;
+  box-shadow:0 10px 28px -12px rgba(242,184,78,.6);
 }
-.stage__act--ghost{background:transparent;color:var(--ink);border:1.5px solid rgba(255,255,255,.35)}
-.stage__act:disabled{opacity:.4;cursor:not-allowed}
+.stage__act:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.05)}
+.stage__act:active:not(:disabled){transform:translateY(0)}
+.stage__act--ghost{background:transparent;color:var(--ink);border:1.5px solid rgba(255,255,255,.35);box-shadow:none}
+.stage__act:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 .stage__count{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--dim)}
 
 @media (prefers-reduced-motion:reduce){
-  .stage__reel.is-spinning{filter:none}
-  .stage__winner{animation:none}
+  .stage::before{animation:none}
+  .stage__reel.is-spinning,.stage__reel.is-hushed{filter:none;opacity:1;transform:none}
+  .stage__reel.is-winner,.stage__winner,.stage__count3.is-pop{animation:none}
+  .stage__prize{transition:none}
 }

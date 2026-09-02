@@ -12,22 +12,31 @@
 
   var $ = function (s) { return document.querySelector(s); };
   var SS = window.sessionStorage, KEY = "vim-stage";
-  var token = "";
-  try { token = JSON.parse(SS.getItem(KEY) || "{}").token || ""; } catch (e) {}
+  var token = "";                 // in-memory only — the screen always asks for login on load
+  try { SS.removeItem(KEY); } catch (e) {}
 
+  /* JSONP — Apps Script 302-redirects /exec to script.googleusercontent.com,
+     which browsers block for cross-origin fetch(). A <script> tag isn't. */
   function call(params) {
-    var q = Object.keys(params).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
-    return fetch(API + "?" + q, { cache: "no-store" }).then(function (r) {
-      return r.text().then(function (t) {
-        try { return JSON.parse(t); }
-        catch (e) { throw new Error("unexpected response (" + r.status + ") — check the page URL / server folder"); }
-      });
+    return new Promise(function (resolve, reject) {
+      if (!API) { reject(new Error("Config didn’t load.")); return; }
+      var cb = "vimcb_" + Math.random().toString(36).slice(2);
+      var q = Object.keys(params).map(function (k) {
+        return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+      }).join("&");
+      var s = document.createElement("script");
+      var t = setTimeout(function () { done(); reject(new Error("Can’t reach the server (timed out).")); }, 20000);
+      function done() { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } s.remove(); }
+      window[cb] = function (data) { done(); resolve(data); };
+      s.onerror = function () { done(); reject(new Error("Can’t reach the server.")); };
+      s.src = API + (API.indexOf("?") > -1 ? "&" : "?") + q + "&callback=" + cb;
+      document.head.appendChild(s);
     });
   }
 
   /* ---------- gate ---------- */
   var gate = $("[data-gate]"), app = $("[data-app]");
-  if (token) verifyAndStart(); else showGate();
+  showGate();
 
   function showGate() { gate.hidden = false; app.hidden = true; }
   var skReveal = $("[data-sk-reveal]");
@@ -45,22 +54,36 @@
       if (!res || !res.ok) { msg.textContent = (res && res.error) || "Not recognised."; return; }
       if (res.role !== "admin") { msg.textContent = "This screen is admin-only."; return; }
       token = res.token;
-      try { SS.setItem(KEY, JSON.stringify({ token: token })); } catch (e) {}
-      start();
-    }).catch(function (err) { msg.textContent = (err && err.message) || "Can’t reach the server."; });
+      try { start(); }
+      catch (e) {
+        console.error("stage start() failed:", e);
+        gate.hidden = false; app.hidden = true;
+        msg.textContent = "Opened, but the draw screen hit an error: " + (e && e.message || e);
+      }
+    }).catch(function (err) {
+      console.error("stage login failed:", err);
+      msg.textContent = (err && err.message) || "Can’t reach the server.";
+    });
   });
 
-  function verifyAndStart() {
-    call({ action: "drawPool", token: token }).then(function (res) {
-      if (res && res.pool) start(res); else { SS.removeItem(KEY); token = ""; showGate(); }
-    }).catch(showGate);
-  }
+  /* ---------- sign out ---------- */
+  var logoutBtn = $("[data-logout]");
+  if (logoutBtn) logoutBtn.addEventListener("click", function () {
+    var t = token;
+    token = ""; chosen = null; won = [];
+    try { SS.removeItem(KEY); } catch (e) {}
+    $("#su").value = ""; $("#sk").value = "";
+    $("[data-msg]").textContent = "Signed out.";
+    showGate();
+    if (t) call({ action: "staffLogout", token: t }).catch(function () {});
+  });
 
   /* ---------- app ---------- */
   var reel = $("[data-reel]"), caption = $("[data-caption]"), winnerEl = $("[data-winner]");
   var drawBtn = $("[data-draw]"), confirmBtn = $("[data-confirm]"), nextBtn = $("[data-next]");
   var prizeSel = $("[data-prize-select]"), prizeCustom = $("[data-prize-custom]"), countEl = $("[data-count]");
-  var pool = [], chosen = null;
+  var trackEl = $("[data-prize-track]"), countdownEl = $("[data-countdown]");
+  var pool = [], chosen = null, won = [];
 
   function start(preloaded) {
     gate.hidden = true; app.hidden = false;
@@ -71,12 +94,60 @@
     prizeSel.addEventListener("change", function () {
       prizeCustom.hidden = prizeSel.value !== "__custom";
       if (!prizeCustom.hidden) prizeCustom.focus();
+      syncTrack();
     });
+    renderTrack();
     if (preloaded) setPool(preloaded); else loadPool();
   }
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function prizeLabel() { return prizeSel.value === "__custom" ? (prizeCustom.value.trim() || "Prize") : prizeSel.value; }
+
+  /* ---------- prize track ---------- */
+  function renderTrack() {
+    if (!trackEl) return;
+    trackEl.innerHTML = PRIZES.map(function (p, i) {
+      return '<li class="stage__prize" data-i="' + i + '">' +
+        '<span class="stage__prize-place">' + esc(p.place) + '</span>' +
+        (p.detail ? '<span class="stage__prize-detail">' + esc(p.detail) + '</span>' : '') +
+        '<span class="stage__prize-won" data-won></span>' +
+      '</li>';
+    }).join("");
+    syncTrack();
+  }
+  function syncTrack() {
+    if (!trackEl) return;
+    [].forEach.call(trackEl.children, function (li, i) {
+      var isWon = !!won[i];
+      li.classList.toggle("is-won", isWon);
+      li.classList.toggle("is-current", !isWon && i === prizeSel.selectedIndex);
+      var w = li.querySelector("[data-won]");
+      if (w) w.textContent = isWon ? won[i] : "";
+    });
+  }
+
+  /* ---------- 3·2·1 countdown before a spin ---------- */
+  function countdown() {
+    return new Promise(function (resolve) {
+      if (!countdownEl || matchMedia("(prefers-reduced-motion: reduce)").matches) { resolve(); return; }
+      var seq = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "GO"], n = 0;
+      countdownEl.hidden = false;
+      reel.classList.add("is-hushed");
+      (function tick() {
+        countdownEl.textContent = seq[n];
+        countdownEl.classList.toggle("is-go", seq[n] === "GO");
+        countdownEl.classList.remove("is-pop"); void countdownEl.offsetWidth; countdownEl.classList.add("is-pop");
+        n++;
+        if (n < seq.length) { setTimeout(tick, 1000); }
+        else setTimeout(function () {
+          countdownEl.hidden = true;
+          countdownEl.classList.remove("is-go", "is-pop");
+          reel.classList.remove("is-hushed");
+          resolve();
+        }, 480);
+      })();
+    });
+  }
 
   function loadPool() {
     reel.textContent = "…"; caption.textContent = "loading tickets…";
@@ -94,7 +165,8 @@
     countEl.textContent = pool.length + (pool.length === 1 ? " ticket in the hat" : " tickets in the hat");
     reel.textContent = pool.length ? "—" : "no tickets yet";
     caption.textContent = pool.length ? "ready to draw" : "";
-    reel.classList.remove("is-spinning");
+    reel.classList.remove("is-spinning", "is-winner", "is-hushed");
+    syncTrack();
   }
 
   function last4(id) { var m = String(id).match(/(\d+)\s*$/); return m ? m[1] : String(id); }
@@ -102,8 +174,13 @@
   drawBtn.addEventListener("click", function () {
     if (!pool.length) return;
     drawBtn.disabled = true;
-    chosen = pool[Math.floor(Math.random() * pool.length)];
+    winnerEl.hidden = true; confirmBtn.hidden = true; nextBtn.hidden = true;
     caption.textContent = "drawing " + prizeLabel() + "…";
+    countdown().then(spin);
+  });
+
+  function spin() {
+    chosen = pool[Math.floor(Math.random() * pool.length)];
     reel.classList.add("is-spinning");
 
     var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -128,14 +205,15 @@
       landed = true;
       _land();
     }
-  });
+  }
 
   function _land() {
     reel.classList.remove("is-spinning");
+    reel.classList.add("is-winner");
     reel.textContent = last4(chosen.id);
     caption.textContent = chosen.id;
-    winnerEl.textContent = chosen.name ? chosen.name + " — is that you?" : "";
-    winnerEl.hidden = !chosen.name;
+    winnerEl.textContent = chosen.name ? chosen.name + " — is that you?" : "Whoever holds this ticket!";
+    winnerEl.hidden = false;
     confirmBtn.hidden = false;
     nextBtn.hidden = false;
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches) confetti();
@@ -150,8 +228,12 @@
         if (res && res.ok) {
           caption.textContent = "✓ " + prizeLabel() + " — " + chosen.id + (res.name ? " (" + res.name + ")" : "");
           confirmBtn.hidden = true;
+          // mark this prize as won on the track
+          var pi = prizeSel.selectedIndex;
+          if (pi > -1 && pi < PRIZES.length) won[pi] = res.name || chosen.id;
           // advance the prize selector to the next unused option
           if (prizeSel.selectedIndex < PRIZES.length - 1) prizeSel.selectedIndex++;
+          syncTrack();
         } else alert((res && res.error) || "Could not record — try again.");
       })
       .catch(function () { confirmBtn.disabled = false; confirmBtn.textContent = "Confirm winner"; alert("Network problem."); });

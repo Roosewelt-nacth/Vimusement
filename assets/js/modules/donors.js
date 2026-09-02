@@ -63,9 +63,25 @@ Vim.register("donors", function (ctx) {
     }
   }
 
+  /* JSONP — Apps Script redirects /exec off-origin; fetch() is CORS-blocked from GitHub Pages. */
+  function jsonp(params) {
+    return new Promise(function (resolve, reject) {
+      var cb = "vimcb_" + Math.random().toString(36).slice(2);
+      var q = Object.keys(params).map(function (k) {
+        return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+      }).join("&");
+      var sc = document.createElement("script");
+      var t = setTimeout(function () { done(); reject(new Error("timeout")); }, 20000);
+      function done() { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } sc.remove(); }
+      window[cb] = function (data) { done(); resolve(data); };
+      sc.onerror = function () { done(); reject(new Error("network")); };
+      sc.src = api + (api.indexOf("?") > -1 ? "&" : "?") + q + "&callback=" + cb;
+      document.head.appendChild(sc);
+    });
+  }
+
   function load() {
-    fetch(api + (api.indexOf("?") > -1 ? "&" : "?") + "action=donors", { cache: "no-store" })
-      .then(function (r) { return r.json(); })
+    jsonp({ action: "donors" })
       .then(function (data) {
         render(data && data.donors);
       })
@@ -74,8 +90,7 @@ Vim.register("donors", function (ctx) {
       });
 
     if (totalEl && d.showTotal) {
-      fetch(api + (api.indexOf("?") > -1 ? "&" : "?") + "action=stats", { cache: "no-store" })
-        .then(function (r) { return r.json(); })
+      jsonp({ action: "stats" })
         .then(function (s) {
           if (!s || typeof s.total !== "number") return;
           var total = "₹" + Number(s.total).toLocaleString("en-IN");

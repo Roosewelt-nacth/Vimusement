@@ -26,8 +26,20 @@ Vim.register("desk", function (ctx) {
   var money = function (n) { return "₹" + Number(n).toLocaleString("en-IN"); };
   function esc(x) { return String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function call(params) {
-    var q = Object.keys(params).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
-    return fetch(api + "?" + q, { cache: "no-store" }).then(function (r) { return r.json(); });
+    return new Promise(function (resolve, reject) {
+      if (!api) { reject(new Error("Config didn’t load.")); return; }
+      var cb = "vimcb_" + Math.random().toString(36).slice(2);
+      var q = Object.keys(params).map(function (k) {
+        return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+      }).join("&");
+      var sc = document.createElement("script");
+      var t = setTimeout(function () { done(); reject(new Error("Can’t reach the server (timed out).")); }, 20000);
+      function done() { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } sc.remove(); }
+      window[cb] = function (data) { done(); resolve(data); };
+      sc.onerror = function () { done(); reject(new Error("Can’t reach the server.")); };
+      sc.src = api + (api.indexOf("?") > -1 ? "&" : "?") + q + "&callback=" + cb;
+      document.head.appendChild(sc);
+    });
   }
 
   ctx.$$("[data-desk-toggle]").forEach(function (b) {

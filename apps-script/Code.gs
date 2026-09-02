@@ -41,6 +41,7 @@
  */
 
 var PROPS = PropertiesService.getScriptProperties();
+var _CB = '';   // JSONP callback name for the current request (set in doGet)
 
 /* ---------- tab schemas ---------- */
 var T_DON = 'Donations';
@@ -65,6 +66,7 @@ var LOG_HEADER = ['Timestamp', 'Username', 'Action', 'Detail'];
    WEB APP ROUTER
    ============================================================ */
 function doGet(e) {
+  _CB = (e && e.parameter && e.parameter.callback) || '';
   var a = (e && e.parameter && e.parameter.action) || 'donors';
   try {
     switch (a) {
@@ -98,7 +100,12 @@ function doGet(e) {
 function doPost(e) { return doGet(e); }
 
 function _json(o) {
-  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+  var s = JSON.stringify(o);
+  if (_CB && /^[A-Za-z_$][\w$]*$/.test(_CB)) {
+    return ContentService.createTextOutput(_CB + '(' + s + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(s).setMimeType(ContentService.MimeType.JSON);
 }
 
 /* ============================================================

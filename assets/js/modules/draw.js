@@ -40,6 +40,22 @@ Vim.register("draw", function (ctx) {
     });
   }
   function say(m, k) { if (status) { status.textContent = m || ""; status.dataset.kind = k || ""; status.hidden = !m; } }
+  /* JSONP — Apps Script redirects /exec off-origin; fetch() is CORS-blocked from GitHub Pages. */
+  function jsonp(params) {
+    return new Promise(function (resolve, reject) {
+      var cb = "vimcb_" + Math.random().toString(36).slice(2);
+      var q = Object.keys(params).map(function (k) {
+        return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+      }).join("&");
+      var sc = document.createElement("script");
+      var t = setTimeout(function () { done(); reject(new Error("timeout")); }, 20000);
+      function done() { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } sc.remove(); }
+      window[cb] = function (data) { done(); resolve(data); };
+      sc.onerror = function () { done(); reject(new Error("network")); };
+      sc.src = api + (api.indexOf("?") > -1 ? "&" : "?") + q + "&callback=" + cb;
+      document.head.appendChild(sc);
+    });
+  }
   function sync() {
     qtyEl.textContent = qty;
     if (totEl) totEl.textContent = fmt(qty * price) + " · " + qty + (qty === 1 ? " ticket" : " tickets");
@@ -88,8 +104,8 @@ Vim.register("draw", function (ctx) {
     paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; });
     panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
       var utr = (panel.querySelector("[data-utr]").value || "").trim();
-      fetch(api + "?action=ipaid&ref=" + encodeURIComponent(res.ref) + (utr ? "&utr=" + encodeURIComponent(utr) : ""), { cache: "no-store" })
-        .then(function (r) { return r.json(); }).catch(function () { return {}; })
+      var p = { action: "ipaid", ref: res.ref }; if (utr) p.utr = utr;
+      jsonp(p).catch(function () { return {}; })
         .then(function () {
           panel.innerHTML = '<div class="upi__done">' +
             '<p>You’re in, ' + esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]) + '. ' +
@@ -110,10 +126,7 @@ Vim.register("draw", function (ctx) {
     if (ph.replace(/\D/g, "").length < 10) { say("Please add a valid phone number.", "warn"); phoneEl && phoneEl.focus(); return; }
 
     go.disabled = true; say("Setting up your payment…");
-    fetch(api + "?action=drawPledge&qty=" + qty +
-          "&name=" + encodeURIComponent(nm) + "&email=" + encodeURIComponent(em) +
-          "&phone=" + encodeURIComponent(ph), { cache: "no-store" })
-      .then(function (r) { return r.json(); })
+    jsonp({ action: "drawPledge", qty: qty, name: nm, email: em, phone: ph })
       .then(function (res) {
         go.disabled = false;
         if (res.error || !res.upiUri) { say(res.error || "Could not start the payment.", "warn"); return; }

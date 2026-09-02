@@ -47,6 +47,22 @@ Vim.register("donate", function (ctx) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
+  /* JSONP — Apps Script redirects /exec off-origin; fetch() is CORS-blocked from GitHub Pages. */
+  function jsonp(params) {
+    return new Promise(function (resolve, reject) {
+      var cb = "vimcb_" + Math.random().toString(36).slice(2);
+      var q = Object.keys(params).map(function (k) {
+        return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+      }).join("&");
+      var sc = document.createElement("script");
+      var t = setTimeout(function () { done(); reject(new Error("timeout")); }, 20000);
+      function done() { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } sc.remove(); }
+      window[cb] = function (data) { done(); resolve(data); };
+      sc.onerror = function () { done(); reject(new Error("network")); };
+      sc.src = api + (api.indexOf("?") > -1 ? "&" : "?") + q + "&callback=" + cb;
+      document.head.appendChild(sc);
+    });
+  }
 
   if (wallEl && d.wallByDefault !== false) wallEl.checked = true;
 
@@ -109,8 +125,8 @@ Vim.register("donate", function (ctx) {
     paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; });
     panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
       var utr = (panel.querySelector("[data-utr]").value || "").trim();
-      fetch(api + "?action=ipaid&ref=" + encodeURIComponent(res.ref) + (utr ? "&utr=" + encodeURIComponent(utr) : ""), { cache: "no-store" })
-        .then(function (r) { return r.json(); })
+      var pp = { action: "ipaid", ref: res.ref }; if (utr) pp.utr = utr;
+      jsonp(pp)
         .catch(function () { return {}; })
         .then(function () {
           panel.innerHTML = '<div class="upi__done">' +
@@ -134,9 +150,7 @@ Vim.register("donate", function (ctx) {
     go.disabled = true;
     say("Setting up your payment…");
     var wall = wallEl && !wallEl.checked ? "no" : "yes";
-    fetch(api + "?action=pledge&amount=" + amount +
-          "&name=" + encodeURIComponent(nm) + "&email=" + encodeURIComponent(em) + "&wall=" + wall, { cache: "no-store" })
-      .then(function (r) { return r.json(); })
+    jsonp({ action: "pledge", amount: amount, name: nm, email: em, wall: wall })
       .then(function (res) {
         go.disabled = false;
         if (res.error || !res.upiUri) { say(res.error || "Could not start the payment.", "warn"); return; }
