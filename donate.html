@@ -31,7 +31,7 @@ document.documentElement.className+=" js";
   <div class="wrap wrap--narrow">
     <p class="eyebrow" data-animate="fade-up">Give any amount · from anywhere</p>
     <h1 data-animate="fade-up" data-animate-delay="0.07">Your gift keeps working long after the lights go out</h1>
-    <p data-animate="fade-up" data-animate-delay="0.14">The fair lasts one evening. What you give tonight pays a child’s school fees next term, meets a hospital bill a family can’t, and keeps a roof over someone this month.</p>
+    <p data-animate="fade-up" data-animate-delay="0.14">The fair lasts one day. What you give pays a child’s school fees next term, meets a hospital bill a family can’t, and keeps a roof over someone this month.</p>
   </div>
 </header>
 
@@ -63,6 +63,8 @@ document.documentElement.className+=" js";
         <span class="field__prefix">₹</span>
         <input id="customAmt" data-donate-custom type="number" inputmode="numeric" min="1" placeholder="Other amount">
       </label>
+
+      <p class="donate-funds" data-donate-funds aria-live="polite"></p>
 
       <label class="field field--text" for="donorName">
         <input id="donorName" data-donate-name type="text" autocomplete="name" placeholder="Your name (shown on the supporters wall)">
@@ -129,6 +131,8 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/donate.js"></script>
 <script defer src="assets/js/modules/donors.js"></script>
 <script defer src="assets/js/modules/desk.js"></script>
+<script defer src="assets/js/modules/victorian.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
 <script defer src="assets/js/main.js"></script>
 </body>
 </html>

@@ -25,7 +25,9 @@ Vim.register("donate", function (ctx) {
   var amount = Number(d.default || presets[0]);
   var within = d.confirmWithinText || "usually within a day";
 
+  var funds  = (d.funds || []).slice().sort(function (a, b) { return (a.upTo || 0) - (b.upTo || 0); });
   var custom = ctx.$("[data-donate-custom]");
+  var fundsEl = ctx.$("[data-donate-funds]");
   var nameEl = ctx.$("[data-donate-name]");
   var emailEl = ctx.$("[data-donate-email]");
   var wallEl = ctx.$("[data-donate-wall]");
@@ -35,7 +37,23 @@ Vim.register("donate", function (ctx) {
   var panel  = ctx.$("[data-upi-panel]");
 
   var fmt = function (n) { return "₹" + Number(n).toLocaleString("en-IN"); };
-  function sync() { if (out) out.textContent = fmt(amount); }
+  function updateFunds() {
+    if (!fundsEl || !funds.length) return;
+    if (!(amount > 0)) { fundsEl.textContent = ""; fundsEl.classList.remove("is-shown"); return; }
+    var row;
+    for (var i = 0; i < funds.length; i++) {
+      if (amount <= (funds[i].upTo || Infinity)) { row = funds[i]; break; }
+    }
+    if (!row) row = funds[funds.length - 1];
+    var next = "That's " + row.text + ".";
+    if (fundsEl.textContent === next && fundsEl.classList.contains("is-shown")) return;
+    fundsEl.textContent = next;
+    fundsEl.classList.add("is-shown");
+    fundsEl.classList.remove("is-swap");
+    void fundsEl.offsetWidth;            // restart the little swap pulse
+    fundsEl.classList.add("is-swap");
+  }
+  function sync() { if (out) out.textContent = fmt(amount); updateFunds(); }
   function say(msg, kind) {
     if (!status) return;
     status.textContent = msg || "";

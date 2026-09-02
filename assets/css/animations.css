@@ -22,6 +22,17 @@
 }
 .js [data-animate].is-in{opacity:1;transform:none;filter:none;will-change:auto}
 
+/* Hard reveal — the failsafe path (see modules/motion.js).
+   Wins over everything and kills the transition, so content can never stay
+   stuck at opacity 0 if a reveal transition freezes (tab hidden through the
+   reveal, bfcache restore, a stalled document timeline on some mobiles). */
+.js.reveal-now [data-animate]{
+  opacity:1 !important;
+  transform:none !important;
+  filter:none !important;
+  transition:none !important;
+}
+
 [data-animate="fade-up"]   { transform:translateY(22px); }
 [data-animate="fade-left"] { transform:translateX(28px); }
 [data-animate="fade-right"]{ transform:translateX(-28px); }

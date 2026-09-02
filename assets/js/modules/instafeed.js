@@ -107,26 +107,65 @@ Vim.register("instafeed", function (ctx) {
     io.observe(el);
   }
 
-  /* ================= lightbox ================= */
-  var lb, lastFocus;
+  /* ================= lightbox (filmstrip viewer) ================= */
+  var lb, lastFocus, REELS = [], cur = 0;
   function buildLightbox() {
     lb = document.createElement("div");
     lb.className = "lightbox";
     lb.hidden = true;
     lb.innerHTML =
       '<div class="lightbox__backdrop" data-close></div>' +
-      '<div class="lightbox__dialog" role="dialog" aria-modal="true" aria-label="Video">' +
+      '<div class="lightbox__dialog" role="dialog" aria-modal="true" aria-label="Recap reel">' +
         '<button class="lightbox__close" data-close aria-label="Close">' +
           '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>' +
         '</button>' +
-        '<div class="lightbox__frame"></div>' +
+        '<p class="lightbox__year" data-lb-year></p>' +
+        '<div class="lightbox__stage">' +
+          '<button class="lightbox__nav lightbox__nav--prev" data-lb-prev aria-label="Previous reel">' +
+            '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+          '</button>' +
+          '<div class="lightbox__frame"></div>' +
+          '<button class="lightbox__nav lightbox__nav--next" data-lb-next aria-label="Next reel">' +
+            '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="lightbox__strip" data-lb-strip role="tablist" aria-label="All reels"></div>' +
       '</div>';
     document.body.appendChild(lb);
-    lb.addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closeLightbox(); });
-    addEventListener("keydown", function (e) { if (e.key === "Escape" && !lb.hidden) closeLightbox(); });
+
+    lb.addEventListener("click", function (e) {
+      if (e.target.closest("[data-close]")) return closeLightbox();
+      if (e.target.closest("[data-lb-prev]")) return go(cur - 1);
+      if (e.target.closest("[data-lb-next]")) return go(cur + 1);
+      var chip = e.target.closest("[data-lb-to]");
+      if (chip) go(+chip.getAttribute("data-lb-to"));
+    });
+    addEventListener("keydown", function (e) {
+      if (lb.hidden) return;
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") go(cur - 1);
+      else if (e.key === "ArrowRight") go(cur + 1);
+      else if (e.key === "Tab") trapTab(e);
+    });
+
+    var strip = ctx.$("[data-lb-strip]", lb);
+    strip.innerHTML = REELS.map(function (r, i) {
+      return '<button type="button" class="lightbox__thumb" data-lb-to="' + i + '" role="tab" aria-label="' +
+        esc(r.year) + ' recap">' + esc(r.year) + '</button>';
+    }).join("");
+    if (REELS.length < 2) strip.hidden = true;
   }
-  function openLightbox(reel) {
-    if (!lb) buildLightbox();
+
+  function trapTab(e) {
+    var f = ctx.$$('button, [href], [tabindex]:not([tabindex="-1"])', lb)
+      .filter(function (el) { return el.offsetParent !== null; });
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  function paintFrame(reel) {
     var frame = ctx.$(".lightbox__frame", lb);
     if (reel.video) {
       frame.innerHTML = '<video src="' + esc(reel.video) + '" controls autoplay playsinline></video>';
@@ -136,9 +175,26 @@ Vim.register("instafeed", function (ctx) {
         'title="Vimusement ' + esc(reel.year) + ' recap" allow="autoplay; encrypted-media; clipboard-write" ' +
         'allowfullscreen loading="lazy"></iframe>';
     }
+    ctx.$("[data-lb-year]", lb).textContent = "Vimusement " + reel.year;
+    ctx.$$("[data-lb-to]", lb).forEach(function (b, i) {
+      b.classList.toggle("is-current", i === cur);
+      b.setAttribute("aria-selected", String(i === cur));
+    });
+    var single = REELS.length < 2;
+    ctx.$("[data-lb-prev]", lb).hidden = single;
+    ctx.$("[data-lb-next]", lb).hidden = single;
+  }
+  function go(i) {
+    if (!REELS.length) return;
+    cur = (i % REELS.length + REELS.length) % REELS.length;   // wrap
+    paintFrame(REELS[cur]);
+  }
+  function openLightbox(idx) {
+    if (!lb) buildLightbox();
     lastFocus = document.activeElement;
     lb.hidden = false;
     document.documentElement.style.overflow = "hidden";
+    go(idx);
     ctx.$(".lightbox__close", lb).focus();
   }
   function closeLightbox() {
@@ -153,6 +209,7 @@ Vim.register("instafeed", function (ctx) {
   function loadReels() {
     var reels = (g.reels || []).filter(function (r) { return r && (r.url || r.video); });
     if (!reels.length) { followBlock(igUrl ? "Recap reels will appear here." : "Add reels to <code>images.gallery.reels</code>."); return; }
+    REELS = reels;
 
     el.classList.add("reel-wall");
     el.setAttribute("data-animate-stagger", "");
@@ -184,7 +241,7 @@ Vim.register("instafeed", function (ctx) {
 
     el.addEventListener("click", function (e) {
       var card = e.target.closest("[data-reel]");
-      if (card) openLightbox(reels[+card.getAttribute("data-reel")]);
+      if (card) openLightbox(+card.getAttribute("data-reel"));
     });
   }
 

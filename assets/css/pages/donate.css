@@ -65,6 +65,29 @@
 .donate-panel .chip-group{margin-block:1.3rem}
 .donate-panel .field{margin-bottom:1.3rem}
 
+/* "what your gift does" — swaps as the amount changes */
+.donate-funds{
+  margin:-.5rem 0 1.3rem;
+  display:flex;gap:.55rem;align-items:baseline;
+  font-size:var(--fs-sm);color:var(--c-ink-soft);line-height:1.5;
+  min-height:1.4em;
+  opacity:0;
+  transition:opacity .3s var(--ease-out);
+}
+.donate-funds.is-shown{opacity:1}
+.donate-funds::before{
+  content:"→";color:var(--c-gold);font-weight:var(--weight-semi);flex:none;
+}
+.donate-funds.is-swap{animation:donate-fund-swap .34s var(--ease-out)}
+@keyframes donate-fund-swap{
+  from{opacity:.2;transform:translateY(3px)}
+  to{opacity:1;transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .donate-funds{transition:none}
+  .donate-funds.is-swap{animation:none}
+}
+
 .donate-note{margin-top:1rem;font-size:var(--fs-sm);color:var(--c-ink-mute)}
 .donate-setup{
   margin-top:1.3rem;border:1px solid var(--c-line);border-left:3px solid var(--c-gold);

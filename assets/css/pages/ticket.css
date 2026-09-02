@@ -1,0 +1,74 @@
+/* ============================================================
+   TICKET PREVIEW  (draw.html)
+   A live mock of the lucky-draw ticket that fills in as the
+   buyer types. The ticket keeps its own fixed dark identity —
+   it does not follow the site light/dark theme, because the
+   real emailed ticket looks the same for everyone.
+   ============================================================ */
+.ticket-preview{
+  --tk-field:#8E1E30;
+  --tk-stub:#5A1120;
+  --tk-ink:#F6EDE1;
+  --tk-mute:#C99AA4;
+  --tk-gold:#E7B85C;
+  margin:.2rem 0 1.4rem;
+}
+
+.ticket-preview__frame{
+  position:relative;
+  max-width:460px;
+  /* room for the stacked cards to sit behind without clipping */
+  margin-right:16px;margin-bottom:16px;
+}
+.ticket-preview__stack{position:absolute;inset:0;z-index:0}
+.ticket-preview__stack i{
+  position:absolute;inset:0;border-radius:14px;
+  background:var(--tk-stub);border:1px solid rgba(246,237,225,.12);
+}
+
+.ticket-preview__card{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 122px;
+  min-height:196px;border-radius:14px;overflow:hidden;
+  background:var(--tk-field);color:var(--tk-ink);
+  box-shadow:0 18px 42px -18px rgba(0,0,0,.55);
+}
+.ticket-preview__fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+.ticket-preview__field{
+  position:relative;z-index:1;
+  padding:16px 18px;display:flex;flex-direction:column;
+}
+.ticket-preview__stub{
+  position:relative;z-index:1;
+  background:var(--tk-stub);
+  border-left:2px dashed rgba(246,237,225,.4);
+  padding:14px 10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+}
+
+.tk-eyebrow{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tk-gold);margin:0}
+.tk-title{font-family:var(--font-display);font-weight:700;font-size:1.3rem;line-height:1;margin:.35rem 0 0}
+.tk-admit{margin:auto 0 0;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tk-mute)}
+.tk-name{display:block;margin-top:.2rem;font-family:var(--font-display);font-weight:600;font-size:1.02rem;line-height:1.2;letter-spacing:.01em;color:var(--tk-ink);word-break:break-word}
+.tk-name.is-empty{color:rgba(246,237,225,.4)}
+
+.tk-lockup{display:flex;align-items:center;gap:8px;margin-top:11px}
+.tk-lockup img{height:20px;width:auto;display:block;opacity:.92}
+.tk-lockup img.tk-lockup--fix{filter:brightness(0) invert(1)}
+.tk-lockup span{font-family:var(--font-mono);font-size:.52rem;letter-spacing:.1em;line-height:1.45;text-transform:uppercase;color:var(--tk-mute)}
+
+.tk-no{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tk-mute);margin:0}
+.tk-num{font-family:var(--font-display);font-style:italic;font-weight:700;font-size:2.3rem;line-height:1;color:var(--tk-gold);margin:.18rem 0;letter-spacing:.04em}
+.tk-tag{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tk-ink);border:1px solid rgba(246,237,225,.45);border-radius:999px;padding:.16rem .5rem;margin:0}
+.tk-meta{margin:.7rem 0 0;font-family:var(--font-mono);font-size:.6rem;color:var(--tk-mute);white-space:nowrap}
+
+.ticket-preview__hint{
+  margin:.7rem 0 0;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.02em;
+  color:var(--c-ink-mute);
+}
+
+@media (max-width:430px){
+  .ticket-preview__card{grid-template-columns:1fr 100px}
+  .tk-num{font-size:1.9rem}
+}

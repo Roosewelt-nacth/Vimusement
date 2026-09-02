@@ -260,13 +260,43 @@
 }
 .lightbox__dialog{
   position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:.7rem;
   animation:lb-in var(--dur-2) var(--ease-spring);
 }
 @keyframes lb-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.lightbox__dialog{animation:none}}
+.lightbox__year{
+  margin:0;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--glass-ink,#fff);opacity:.85;
+}
+.lightbox__stage{display:flex;align-items:center;gap:.5rem}
+.lightbox__nav{
+  flex:none;width:40px;height:40px;border-radius:50%;cursor:pointer;
+  border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--glass-ink,#fff);
+  display:grid;place-items:center;transition:background var(--dur-2),transform var(--dur-1);
+}
+.lightbox__nav:hover{background:var(--glass-bg-strong);transform:scale(1.06)}
+.lightbox__nav:active{transform:var(--press)}
+.lightbox__nav[hidden]{display:none}
 .lightbox__frame{
-  width:min(400px,92vw);height:min(84vh,680px);
+  width:min(400px,84vw);height:min(78vh,660px);
   border-radius:var(--r-lg);overflow:hidden;background:#000;
+}
+.lightbox__strip{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:min(560px,92vw)}
+.lightbox__strip[hidden]{display:none}
+.lightbox__thumb{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;cursor:pointer;
+  padding:.35rem .7rem;border-radius:var(--r-pill);
+  border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--glass-ink,#fff);
+  transition:background var(--dur-2),border-color var(--dur-2);
+}
+.lightbox__thumb:hover{background:var(--glass-bg-strong)}
+.lightbox__thumb.is-current{background:var(--c-primary);border-color:var(--c-primary);color:#fff;font-weight:600}
+@media (max-width:560px){
+  .lightbox__nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2}
+  .lightbox__nav--prev{left:-6px}
+  .lightbox__nav--next{right:-6px}
+  .lightbox__nav:hover{transform:translateY(-50%) scale(1.06)}
 }
 .lightbox__frame iframe,
 .lightbox__frame video{width:100%;height:100%;border:0;display:block;object-fit:contain;background:#000}

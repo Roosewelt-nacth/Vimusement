@@ -5,7 +5,7 @@
 window.VIM_SITE = {
   name: "Vimusement",
   shortName: "Vimusement",
-  tagline: "An annual parish fundraiser — games and films tonight; scholarships, care and dignity all year.",
+  tagline: "An annual parish fundraiser. Games and films for a day; scholarships, care and dignity all year.",
 
   /* The whole site's navigation — one page per purpose.
      `icon` keys are defined in assets/js/modules/chrome.js.

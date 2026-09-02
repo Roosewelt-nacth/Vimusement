@@ -54,10 +54,9 @@
 
       zoneRect("gate",     360, 474, 160, 66,  "Entry &amp; Tokens") +
       zoneRect("grounds",  300, 196, 280, 150, "Church Grounds") +
-      zoneRect("food",     628, 210, 200, 120, "Food Street") +
+      zoneRect("food",     628, 210, 200, 260, "Food Street") +
       zoneRect("stalls-a", 52,  210, 150, 120, "Stall Row A") +
       zoneRect("stalls-b", 52,  350, 150, 120, "Stall Row B") +
-      zoneRect("kids",     628, 350, 200, 120, "Kids&#39; Corner") +
       zoneRect("basement", 236, 366, 150, 104, "Basement") +
       zoneRect("av",       410, 366, 150, 104, "AV Room") +
     '</svg>';

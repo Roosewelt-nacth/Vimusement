@@ -131,7 +131,14 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .dock__brand b{color:var(--c-primary-ink)}
 .dock__mark{width:22px;height:22px;color:var(--c-primary-ink);flex:none}
 
-.dock__links{display:flex;align-items:center;gap:.1rem}
+.dock__links{display:flex;align-items:center;gap:.1rem;position:relative}
+.dock__link{position:relative;z-index:1}
+.dock__indicator{
+  position:absolute;left:0;bottom:3px;height:2px;width:0;z-index:0;
+  border-radius:2px;opacity:0;pointer-events:none;
+  background:linear-gradient(90deg,var(--c-gold),var(--c-primary));
+  transition:transform .34s var(--ease-spring),width .34s var(--ease-spring),opacity .2s var(--ease-out);
+}
 .dock__link{
   display:inline-flex;align-items:center;gap:.45rem;
   padding:.55rem .7rem;border-radius:var(--r-pill);
@@ -442,3 +449,107 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .footer__staff a:hover,.footer__staff-btn:hover{color:var(--c-primary-ink)}
 @media (max-width:760px){.footer__grid{grid-template-columns:1fr 1fr}}
 @media (max-width:440px){.footer__grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   SITE-WIDE POLISH  (see modules/polish.js)
+   ============================================================ */
+
+/* thin scroll-progress line across the very top */
+.scroll-progress{
+  position:fixed;inset:0 0 auto 0;height:2px;z-index:1000;
+  transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--c-gold),var(--c-rose) 55%,var(--c-primary));
+  will-change:transform;
+}
+@media (prefers-reduced-motion:no-preference){
+  .scroll-progress{transition:transform .12s linear}
+}
+
+/* (the eyebrow dash already marks each heading block — no title underline) */
+
+/* cross-document fade between pages (Chrome/Edge; silently ignored elsewhere) */
+@view-transition{ navigation:auto; }
+
+/* ============================================================
+   VICTORIAN — a small luminous angel who drifts around the page
+   (see modules/victorian.js). No frame; a warm aura keeps it
+   legible on any background.
+   ============================================================ */
+.vic{
+  position:absolute;left:0;top:0;z-index:280;
+  display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+}
+.vic.is-leaving{opacity:0;transform:translateY(10px) scale(.9);transition:opacity .35s,transform .35s}
+.vic.is-dragging{transition:none!important;cursor:grabbing}
+
+.vic__btn{
+  width:62px;height:62px;padding:0;cursor:grab;touch-action:none;
+  border:0;background:none;display:grid;place-items:center;overflow:visible;
+  transition:transform var(--dur-2) var(--ease-spring);
+}
+.vic.is-dragging .vic__btn{cursor:grabbing}
+.vic__btn:hover{transform:scale(1.08)}
+.vic__btn:active{transform:scale(.95)}
+.vic__btn:focus-visible{outline:2px solid var(--c-gold);outline-offset:4px;border-radius:50%}
+
+.vic__art{width:58px;height:58px;overflow:visible;display:block;
+  filter:drop-shadow(0 3px 6px rgba(20,12,30,.28))}
+.vic__art *{transform-box:fill-box}
+.vic__glow{fill:#F0A64B;opacity:.5;filter:blur(7px)}
+.vic__robe,.vic__head{fill:#FCF4E7}
+.vic__wing{fill:#FFFDF7;stroke:#E7B85C;stroke-width:.8;stroke-opacity:.55}
+.vic__robe{stroke:#E7B85C;stroke-width:.8;stroke-opacity:.5}
+.vic__halo{fill:#F2C879;stroke:#E7B85C;stroke-width:.8}
+.vic__wing--l{transform-origin:82% 42%}
+.vic__wing--r{transform-origin:18% 42%}
+
+@media (prefers-reduced-motion:no-preference){
+  .vic__float{animation:vic-bob 3.6s ease-in-out infinite}
+  .vic__wing--l{animation:vic-flap-l 1.7s ease-in-out infinite}
+  .vic__wing--r{animation:vic-flap-r 1.7s ease-in-out infinite}
+  .vic__glow{animation:vic-pulse 3.6s ease-in-out infinite}
+  .vic__halo{animation:vic-halo 3.6s ease-in-out infinite}
+  .vic{animation:vic-enter 1.1s var(--ease-spring)}
+  .vic.is-paused .vic__float,.vic.is-paused .vic__wing--l,.vic.is-paused .vic__wing--r,
+  .vic.is-paused .vic__glow,.vic.is-paused .vic__halo{animation-play-state:paused}
+}
+
+@keyframes vic-bob{0%,100%{translate:0 0}50%{translate:0 -4px}}
+@keyframes vic-flap-l{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-14deg)}}
+@keyframes vic-flap-r{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(14deg)}}
+@keyframes vic-pulse{0%,100%{opacity:.42;scale:1}50%{opacity:.62;scale:1.12}}
+@keyframes vic-halo{0%,100%{opacity:1;translate:0 0}50%{opacity:.7;translate:0 -1.5px}}
+@keyframes vic-enter{from{opacity:0;transform:translate(130px,10px)}to{opacity:1;transform:none}}
+
+.vic__bubble{
+  order:-1;max-width:230px;
+  background:#F6EDE1;color:#8E1E30;
+  font-size:.82rem;line-height:1.45;font-weight:var(--weight-semi);
+  padding:.6rem .8rem;border-radius:14px 14px 4px 14px;
+  box-shadow:0 12px 30px -10px rgba(20,12,30,.35);
+  animation:vic-pop .3s var(--ease-spring);
+}
+.vic__bubble[hidden]{display:none}
+@keyframes vic-pop{from{opacity:0;transform:translateY(6px) scale(.92)}to{opacity:1;transform:none}}
+
+/* when Victorian has roamed to the left half, flip the bubble + close to its right */
+.vic--left{align-items:flex-start}
+.vic--left .vic__bubble{border-radius:14px 14px 14px 4px}
+.vic--left .vic__x{right:auto;left:-6px}
+
+.vic__x{
+  position:absolute;top:-6px;right:-6px;width:20px;height:20px;padding:0;cursor:pointer;
+  border-radius:50%;border:1px solid var(--c-line);background:var(--c-surface);color:var(--c-ink-mute);
+  display:grid;place-items:center;opacity:0;transition:opacity var(--dur-2);
+}
+.vic:hover .vic__x,.vic:focus-within .vic__x{opacity:1}
+.vic__x:hover{color:var(--c-primary-ink)}
+
+.vic__confetti{position:fixed;inset:0;pointer-events:none;z-index:1200}
+
+@media (max-width:560px){
+  .vic{right:10px;bottom:96px}
+  .vic__btn{width:50px;height:50px}
+  .vic__art{width:44px;height:44px}
+  .vic__bubble{max-width:min(220px,60vw)}
+}

@@ -20,6 +20,7 @@ document.documentElement.className+=" js";
 <link rel="stylesheet" href="assets/css/pages/home.css">
 <link rel="stylesheet" href="assets/css/pages/subpage.css">
 <link rel="stylesheet" href="assets/css/pages/venuemap.css">
+<link rel="stylesheet" href="assets/css/pages/timeline.css">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -27,11 +28,21 @@ document.documentElement.className+=" js";
 <main id="main">
 <header class="pagehead">
   <div class="wrap">
-    <p class="eyebrow" data-animate="fade-up">The evening</p>
+    <p class="eyebrow" data-animate="fade-up">The day</p>
     <h1 data-animate="fade-up" data-animate-delay="0.06">Programme &amp; map</h1>
     <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12">Games for every age, movie screenings in the Basement and the AV room, and a plan of the grounds so nobody gets lost.</p>
   </div>
 </header>
+
+<section class="subsection">
+  <div class="wrap">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">How the day runs</h2>
+      <p class="lead" data-animate="fade-up">The shape of the day. On the day itself, this shows where we're up to.</p>
+    </div>
+    <div class="timeline" data-timeline data-animate="fade-up"></div>
+  </div>
+</section>
 
 <section class="subsection">
   <div class="wrap">
@@ -85,7 +96,10 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/render.js"></script>
 <script defer src="assets/js/modules/venuemap.js"></script>
+<script defer src="assets/js/modules/timeline.js"></script>
 <script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/modules/victorian.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
 <script defer src="assets/js/main.js"></script>
 </body>
 </html>

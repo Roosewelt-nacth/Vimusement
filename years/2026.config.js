@@ -16,8 +16,9 @@ window.VIM_YEARS["2026"] = {
      lucky draw and (later) movies. See apps-script/Code.gs. */
   api: "https://script.google.com/macros/s/AKfycbzA0T3Ccp2OjNS6WUXACM1G7UPT10lMZ4hVOiLGYihmDdN_OjvbHghkZRoO9DSrJijH/exec",
 
-  /* Full ISO 8601 with timezone. +05:30 = India Standard Time. PLACEHOLDER. */
-  eventDate: "2026-12-19T17:30:00+05:30",
+  /* Full ISO 8601 with timezone. +05:30 = India Standard Time.
+     Doors open 7:30am; the fair runs all day. Date still to be confirmed. */
+  eventDate: "2026-12-19T07:30:00+05:30",
 
   venue: {
     name: "Ascension Church, Aminjikkarai",
@@ -132,9 +133,7 @@ window.VIM_YEARS["2026"] = {
     { theme: "food",   icon: "food",  title: "Food Street",
       text: "Home kitchens and local vendors, from biryani to candy floss. Cashless UPI at every stall." },
     { theme: "movies", icon: "movie", title: "Movie Screenings",
-      text: "Screenings in the Basement and the AV room. Book a slot online, show your code at the door." },
-    { theme: "kids",   icon: "kids",  title: "Kids’ Corner",
-      text: "Craft tables and a story corner. A shaded spot for the little ones." }
+      text: "Screenings in the Basement and the AV room. Book a slot online, show your code at the door." }
   ],
 
   causes: [
@@ -161,8 +160,8 @@ window.VIM_YEARS["2026"] = {
   },
 
   involve: [
-    { theme: "kids",   icon: "hands", title: "Volunteer",
-      text: "Give an evening on the gates, stalls, kids’ corner or clean-up. Shifts as short as two hours. Message Austin on WhatsApp and we’ll find you a slot.",
+    { theme: "games",  icon: "hands", title: "Volunteer",
+      text: "Give a few hours on the gates, the stalls, the food street or clean-up. Shifts as short as two hours. Message Austin on WhatsApp and we’ll find you a slot.",
       cta: "Message Austin on WhatsApp", form: "volunteer" },
     { theme: "movies", icon: "star",  title: "Sponsor",
       text: "Back the fair as a business or a family. Your name goes on the site and the screens, and a sponsorship is a donation to the same cause.",
@@ -199,6 +198,16 @@ window.VIM_YEARS["2026"] = {
     presets: [250, 500, 1000, 2500, 5000, 10000],
     default: 500,
     minAmount: 10,
+    /* "What your gift does" — shown live under the amount as you pick.
+       First row whose `upTo` the amount is at or below wins; the last
+       row is the catch-all. Keep them concrete and in the parish's terms. */
+    funds: [
+      { upTo: 350,       text: "a week of groceries for a family having a hard month" },
+      { upTo: 800,       text: "exam fees and a set of textbooks for one student" },
+      { upTo: 1800,      text: "a term of school fees for a child who might have dropped out" },
+      { upTo: 6000,      text: "a real dent in a hospital bill a family can't meet alone" },
+      { upTo: Infinity,  text: "a full term of support for a student, or an emergency met the same day" }
+    ],
     wallByDefault: true,     // pre-tick "show my name on the wall"
     confirmWithinText: "usually within a day",
     showTotal: false,        // show the running total raised (aggregate, not per-person)
@@ -229,6 +238,16 @@ window.VIM_YEARS["2026"] = {
      leave them blank and the page just shows the count per room until
      the committee locks the line-up. ~9 screenings across the two rooms. */
   program: {
+    /* The shape of the day. Shown as a ribbon on the Programme page, with a
+       live "you are here" marker during the fair itself. Times are "HH:MM"
+       (24h, local). Adjust once the running order is set. */
+    timeline: [
+      { at: "07:30", label: "Doors open",       note: "Breakfast, food stalls, games and craft tables" },
+      { at: "10:00", label: "Screenings begin", note: "Basement and AV room, running through the day" },
+      { at: "18:00", label: "Evening mass",     note: "In the church" },
+      { at: "19:30", label: "Lucky draw",       note: "Drawn live on stage, right after mass" },
+      { at: "21:00", label: "Screenings close", note: "The last films wrap up" }
+    ],
     screeningsNote: "Nine films across the Basement and the AV room. The full line-up and times are announced closer to the date.",
     screenings: [
       { title: "", time: "", venue: "Basement", rating: "" },
@@ -275,9 +294,7 @@ window.VIM_YEARS["2026"] = {
       { id: "basement", label: "Basement", venue: "Basement",
         blurb: "Movie screenings and indoor games. Stairs by the side door." },
       { id: "av",       label: "AV Room", venue: "AV Room",
-        blurb: "More screenings and indoor games, on the first floor. Follow the signs." },
-      { id: "kids",     label: "Kids’ Corner", venue: "Kids’ Corner",
-        blurb: "Craft tables and a story corner. Shaded and supervised." }
+        blurb: "More screenings and indoor games, on the first floor. Follow the signs." }
     ]
   }
 };
