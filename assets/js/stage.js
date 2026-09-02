@@ -47,7 +47,7 @@
   });
   $("[data-gate-go]").addEventListener("click", function () {
     var u = $("#su").value.trim(), k = $("#sk").value.trim(), msg = $("[data-msg]");
-    if (!API) { msg.textContent = "Config didn’t load — open this page through the site URL, not the file directly."; return; }
+    if (!API) { msg.textContent = "Config didn’t load. Open this page through the site URL, not the file directly."; return; }
     if (!u || !k) { msg.textContent = "Enter both fields."; return; }
     msg.textContent = "Checking…";
     call({ action: "staffLogin", user: u, k: k }).then(function (res) {
@@ -163,7 +163,7 @@
     winnerEl.hidden = true; confirmBtn.hidden = true; nextBtn.hidden = true;
     drawBtn.hidden = false; drawBtn.disabled = pool.length === 0;
     countEl.textContent = pool.length + (pool.length === 1 ? " ticket in the hat" : " tickets in the hat");
-    reel.textContent = pool.length ? "—" : "no tickets yet";
+    reel.textContent = pool.length ? "·" : "no tickets yet";
     caption.textContent = pool.length ? "ready to draw" : "";
     reel.classList.remove("is-spinning", "is-winner", "is-hushed");
     syncTrack();
@@ -212,7 +212,7 @@
     reel.classList.add("is-winner");
     reel.textContent = last4(chosen.id);
     caption.textContent = chosen.id;
-    winnerEl.textContent = chosen.name ? chosen.name + " — is that you?" : "Whoever holds this ticket!";
+    winnerEl.textContent = chosen.name ? chosen.name + ", is that you?" : "Whoever holds this ticket!";
     winnerEl.hidden = false;
     confirmBtn.hidden = false;
     nextBtn.hidden = false;
@@ -226,7 +226,7 @@
       .then(function (res) {
         confirmBtn.disabled = false; confirmBtn.textContent = "Confirm winner";
         if (res && res.ok) {
-          caption.textContent = "✓ " + prizeLabel() + " — " + chosen.id + (res.name ? " (" + res.name + ")" : "");
+          caption.textContent = "✓ " + prizeLabel() + " · " + chosen.id + (res.name ? " (" + res.name + ")" : "");
           confirmBtn.hidden = true;
           // mark this prize as won on the track
           var pi = prizeSel.selectedIndex;
@@ -234,7 +234,7 @@
           // advance the prize selector to the next unused option
           if (prizeSel.selectedIndex < PRIZES.length - 1) prizeSel.selectedIndex++;
           syncTrack();
-        } else alert((res && res.error) || "Could not record — try again.");
+        } else alert((res && res.error) || "Could not record. Try again.");
       })
       .catch(function () { confirmBtn.disabled = false; confirmBtn.textContent = "Confirm winner"; alert("Network problem."); });
   });
@@ -246,7 +246,10 @@
     var cv = $("[data-confetti]"); if (!cv) return;
     var ctx = cv.getContext("2d");
     var w = cv.width = cv.clientWidth, h = cv.height = cv.clientHeight;
-    var cols = ["#f2b84e", "#f27e97", "#3fd9c6", "#b7a6f6", "#ffffff"];
+    var css = getComputedStyle(document.querySelector(".stage") || document.body);
+    var tok = function (n, f) { return (css.getPropertyValue(n) || "").trim() || f; };
+    var cols = [tok("--stage-a1", "#e0714e"), tok("--stage-a2", "#f0577a"),
+                tok("--stage-a3", "#c85a86"), "#ffd9c9", "#ffffff"];
     var bits = [];
     for (var i = 0; i < 140; i++) bits.push({
       x: w / 2, y: h * 0.4, vx: (Math.random() - 0.5) * 16, vy: (Math.random() - 1) * 14 - 4,

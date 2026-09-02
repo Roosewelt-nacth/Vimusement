@@ -110,19 +110,19 @@ Vim.register("draw", function (ctx) {
           panel.innerHTML = '<div class="upi__done">' +
             '<p>You’re in, ' + esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]) + '. ' +
             'Your <b>' + res.qty + '</b> ticket number' + (res.qty === 1 ? "" : "s") +
-            ' will be emailed to <b>' + esc((emailEl && emailEl.value) || "") + '</b> once your payment is confirmed — ' + esc(within) + '.</p>' +
+            ' will be emailed to <b>' + esc((emailEl && emailEl.value) || "") + '</b> once your payment is confirmed, ' + esc(within) + '.</p>' +
             '<p class="upi__note">Winners are drawn live on stage on the night.</p></div>';
         });
     });
   }
 
   function begin() {
-    if (!api) { say("Ticket sales aren’t switched on yet — please check back soon.", "warn"); return; }
+    if (!api) { say("Ticket sales aren’t switched on yet. Please check back soon.", "warn"); return; }
     var nm = ((nameEl && nameEl.value) || "").trim();
     var em = ((emailEl && emailEl.value) || "").trim();
     var ph = ((phoneEl && phoneEl.value) || "").trim();
     if (!nm) { say("Please add your name.", "warn"); nameEl && nameEl.focus(); return; }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { say("Please add a valid email — your tickets go there.", "warn"); emailEl && emailEl.focus(); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { say("Please add a valid email. Your tickets go there.", "warn"); emailEl && emailEl.focus(); return; }
     if (ph.replace(/\D/g, "").length < 10) { say("Please add a valid phone number.", "warn"); phoneEl && phoneEl.focus(); return; }
 
     go.disabled = true; say("Setting up your payment…");
@@ -132,7 +132,7 @@ Vim.register("draw", function (ctx) {
         if (res.error || !res.upiUri) { say(res.error || "Could not start the payment.", "warn"); return; }
         say(""); showUpiPanel(res);
       })
-      .catch(function () { go.disabled = false; say("Network problem — please try again.", "warn"); });
+      .catch(function () { go.disabled = false; say("Network problem. Please try again.", "warn"); });
   }
 
   if (go) go.addEventListener("click", function (e) { e.preventDefault(); begin(); });

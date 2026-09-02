@@ -7,11 +7,17 @@ window.VIM_SITE = {
   shortName: "Vimusement",
   tagline: "An annual parish fundraiser — games and films tonight; scholarships, care and dignity all year.",
 
-  nav: [
-    { label: "What’s On",     href: "#whats-on" },
-    { label: "The Cause",     href: "#cause" },
-    { label: "Banner Reveal", href: "#reveal" },
-    { label: "Get Involved",  href: "#involve" }
+  /* The whole site's navigation — one page per purpose.
+     `icon` keys are defined in assets/js/modules/chrome.js.
+     `cta: true` renders as the highlighted Donate pill on the right. */
+  pages: [
+    { label: "Home",         file: "index.html",     icon: "home" },
+    { label: "Programme",     file: "programme.html", icon: "screen" },
+    { label: "The Cause",     file: "cause.html",     icon: "heart" },
+    { label: "Lucky Draw",    file: "draw.html",      icon: "ticket" },
+    { label: "Gallery",       file: "gallery.html",   icon: "photos" },
+    { label: "Get Involved",  file: "involve.html",   icon: "people" },
+    { label: "Donate",        file: "donate.html",    icon: "gift", cta: true }
   ],
 
   /* Optional — leave "" to hide.
@@ -23,5 +29,5 @@ window.VIM_SITE = {
     whatsappChannel: ""
   },
 
-  footerNote: "Built to be reused every year. Placeholder content — event date, venue, artwork and figures to be confirmed."
+  footerNote: "An annual fundraiser by the parish community."
 };

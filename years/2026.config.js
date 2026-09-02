@@ -36,12 +36,17 @@ window.VIM_YEARS["2026"] = {
     teaserPercent: 62               // the demo bar fill shown before it's live
   },
 
-  /* Forms — paste URLs (Google Forms / Formspree / etc).
-     Blank falls back to a pre-filled email to contactEmail. */
+  /* Where the three "Get Involved" buttons go. Any URL works — a page
+     on this site, a WhatsApp link, a Google Form. Blank falls back to a
+     pre-filled email to contactEmail. */
   forms: {
-    volunteer: "",
-    sponsor: "",
-    stall: ""
+    // Volunteer → WhatsApp Austin directly (India +91). NOTE: this number
+    // is published on the public site.
+    volunteer: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20volunteer%20for%20Vimusement%202026.",
+    // Sponsor → the donate page.
+    sponsor: "donate.html",
+    // Run a stall → the stalls page (list + prices, still being finalised).
+    stall: "stalls.html"
   },
 
   /* -------- IMAGES (per-year folder: assets/img/2026/) --------
@@ -101,7 +106,7 @@ window.VIM_YEARS["2026"] = {
     photos: [
       { src: "assets/img/2026/crew/crew-01.jpg", alt: "The team at the parish hall" },
       { src: "assets/img/2026/crew/crew-02.jpg", alt: "Full group on the church steps with Father" },
-      { src: "assets/img/2026/crew/crew-03.jpg", alt: "Feast-night stage — the flower heart on the steps" },
+      { src: "assets/img/2026/crew/crew-03.jpg", alt: "Feast-night stage, the flower heart on the steps" },
       { src: "assets/img/2026/crew/crew-04.jpg", alt: "Gathered in the chapel with the Bishop" },
       { src: "assets/img/2026/crew/crew-05.jpg", alt: "Pilgrimage outing to the shrine" },
       { src: "assets/img/2026/crew/crew-06.jpg", alt: "Victorians Youth on the church steps" },
@@ -111,18 +116,18 @@ window.VIM_YEARS["2026"] = {
   },
 
   /* -------- CONTENT -------- */
-  marquee: ["Carnival Games", "Open-Air Cinema", "Food Street", "Kids’ Zone",
-            "Live Music", "Lucky Dip", "Cake Stall", "Face Painting"],
+  marquee: ["Carnival Games", "Movie Screenings", "Food Street", "Games Stalls",
+            "Live Music", "Lucky Dip", "Cake Stall", "Snack Bar"],
 
   whatsOn: [
-    { theme: "games",  icon: "games", title: "Games & Rides",
+    { theme: "games",  icon: "games", title: "Games & Stalls",
       text: "Ring toss, hoopla and stalls that pay out in giggles. Buy tokens at the gate." },
     { theme: "food",   icon: "food",  title: "Food Street",
-      text: "Home kitchens and local vendors — biryani to candy floss. Cashless UPI at every stall." },
-    { theme: "movies", icon: "movie", title: "Open-Air Cinema",
-      text: "Two screenings under the stars. Book a slot online, show your code at the lawn." },
-    { theme: "kids",   icon: "kids",  title: "Kids’ Zone",
-      text: "Face painting, craft tables and a story corner — a safe, shaded spot for the little ones." }
+      text: "Home kitchens and local vendors, from biryani to candy floss. Cashless UPI at every stall." },
+    { theme: "movies", icon: "movie", title: "Movie Screenings",
+      text: "Screenings in the Basement and the AV room. Book a slot online, show your code at the door." },
+    { theme: "kids",   icon: "kids",  title: "Kids’ Corner",
+      text: "Craft tables and a story corner. A shaded spot for the little ones." }
   ],
 
   causes: [
@@ -138,15 +143,32 @@ window.VIM_YEARS["2026"] = {
 
   involve: [
     { theme: "kids",   icon: "hands", title: "Volunteer",
-      text: "Give an evening — gates, stalls, kids’ zone, clean-up. Shifts as short as two hours.",
-      cta: "Sign up to help", form: "volunteer" },
+      text: "Give an evening on the gates, stalls, kids’ corner or clean-up. Shifts as short as two hours. Message Austin on WhatsApp and we’ll find you a slot.",
+      cta: "Message Austin on WhatsApp", form: "volunteer" },
     { theme: "movies", icon: "star",  title: "Sponsor",
-      text: "Back the fair as a business or a family. Your name on the site and the screens.",
+      text: "Back the fair as a business or a family. Your name goes on the site and the screens, and a sponsorship is a donation to the same cause.",
       cta: "Become a sponsor", form: "sponsor" },
     { theme: "food",   icon: "stall", title: "Run a Stall",
-      text: "Food, games or crafts — bring a stall and share the takings with the cause.",
-      cta: "Reach out about a stall", form: "stall" }
+      text: "Food, games or crafts. Bring a stall and share the takings with the cause, then see what’s open and the table rates.",
+      cta: "See stalls & rates", form: "stall" }
   ],
+
+  /* ---------- STALLS  (the stalls.html page) ----------
+     Fill `open[]` with the stalls still available and set the table
+     `rates` when the committee decides. The page renders whatever is here. */
+  stalls: {
+    intro: "Bring a stall to Vimusement: food, a game or a craft table. You keep it running on the night and share the takings with the cause.",
+    ratesNote: "Table rates are being finalised. Message to reserve a spot now.",
+    rates: [
+      // { name: "Food stall (own gas/electric)", price: "TBC" },
+      // { name: "Game or craft table",           price: "TBC" }
+    ],
+    open: [
+      // "Snack stall", "Craft table", "Game booth"
+    ],
+    contactWhatsApp: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20run%20a%20stall%20at%20Vimusement%202026.",
+    contactInstagram: "https://ig.me/m/victorians.youth"
+  },
 
   /* ---------- DONATIONS ----------
      Zero-fee UPI. The donor pays straight to the parish UPI id; a
@@ -162,7 +184,7 @@ window.VIM_YEARS["2026"] = {
     confirmWithinText: "usually within a day",
     showTotal: false,        // show the running total raised (aggregate, not per-person)
     goal: 0,                 // ₹ target for the thermometer (0 = hide the bar)
-    scrollerHint: "Amounts are never shown — every gift counts the same."
+    scrollerHint: "Amounts are never shown. Every gift counts the same."
   },
 
   /* ---------- LUCKY DRAW ----------
@@ -175,10 +197,68 @@ window.VIM_YEARS["2026"] = {
     maxOnline: 25,
     confirmWithinText: "usually within a day",
     prizes: [
-      { place: "1st prize", detail: "To be announced" },
-      { place: "2nd prize", detail: "To be announced" },
-      { place: "3rd prize", detail: "To be announced" }
+      { place: "1st prize", detail: "" },
+      { place: "2nd prize", detail: "" },
+      { place: "3rd prize", detail: "" }
     ],
-    blurb: "Every ticket is a number in the hat and a gift to the cause. Winners drawn live on stage on the night."
+    blurb: "Every ticket is a number in the hat and a gift to the cause. Winners are drawn live on stage on the night."
+  },
+
+  /* ---------- PROGRAM  (screenings + games, by venue) ----------
+     `venue` must match a venueMap.zones[].venue string below.
+     Give a screening a `title` and `time` and it shows in the line-up;
+     leave them blank and the page just shows the count per room until
+     the committee locks the line-up. ~9 screenings across the two rooms. */
+  program: {
+    screeningsNote: "Nine films across the Basement and the AV room. The full line-up and times are announced closer to the date.",
+    screenings: [
+      { title: "", time: "", venue: "Basement", rating: "" },
+      { title: "", time: "", venue: "Basement", rating: "" },
+      { title: "", time: "", venue: "Basement", rating: "" },
+      { title: "", time: "", venue: "Basement", rating: "" },
+      { title: "", time: "", venue: "AV Room",  rating: "" },
+      { title: "", time: "", venue: "AV Room",  rating: "" },
+      { title: "", time: "", venue: "AV Room",  rating: "" },
+      { title: "", time: "", venue: "AV Room",  rating: "" },
+      { title: "", time: "", venue: "AV Room",  rating: "" }
+    ],
+    games: [
+      { name: "Housie / Tambola",     venue: "Basement" },
+      { name: "Carrom challenge",     venue: "AV Room" },
+      { name: "Ring toss",            venue: "Church Grounds" },
+      { name: "Hoopla",               venue: "Church Grounds" },
+      { name: "Dart the balloon",     venue: "Church Grounds" },
+      { name: "Lucky dip",            venue: "Church Grounds" },
+      { name: "Bottle knock-down",    venue: "Stall Row A" },
+      { name: "Guess the jar",        venue: "Stall Row B" }
+    ]
+  },
+
+  /* ---------- VENUE MAP  (the on-site plan in #map) ----------
+     Each zone.id must match a data-zone in the plan SVG. Leave
+     planImage "" to use the built-in placeholder plan; set it to a
+     traced SVG (keeping the same data-zone ids) when the real layout
+     is drawn. zone.venue is matched against program[].venue above. */
+  venueMap: {
+    planImage: "",
+    caption: "Tap a spot on the plan to see what’s there.",
+    zones: [
+      { id: "gate",     label: "Entry & Tokens", venue: "Gate",
+        blurb: "Buy game tokens and lucky-draw tickets here. Step-free access on the left." },
+      { id: "grounds",  label: "Church Grounds", venue: "Church Grounds",
+        blurb: "Open-air games and the main stage. The live lucky draw happens here." },
+      { id: "food",     label: "Food Street", venue: "Food Street",
+        blurb: "Home kitchens and local vendors. Cashless UPI at every stall." },
+      { id: "stalls-a", label: "Stall Row A", venue: "Stall Row A",
+        blurb: "Craft and game stalls run by families and youth groups." },
+      { id: "stalls-b", label: "Stall Row B", venue: "Stall Row B",
+        blurb: "More stalls. Want a table? See “Run a Stall” under Get Involved." },
+      { id: "basement", label: "Basement", venue: "Basement",
+        blurb: "Movie screenings and indoor games. Stairs by the side door." },
+      { id: "av",       label: "AV Room", venue: "AV Room",
+        blurb: "More screenings and indoor games, on the first floor. Follow the signs." },
+      { id: "kids",     label: "Kids’ Corner", venue: "Kids’ Corner",
+        blurb: "Craft tables and a story corner. Shaded and supervised." }
+    ]
   }
 };

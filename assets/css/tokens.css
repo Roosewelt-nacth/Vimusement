@@ -1,7 +1,11 @@
 /* ============================================================
-   VIMUSEMENT — DESIGN TOKENS
-   Palette "Evensong" · structural rigour adapted from the
-   Apple design analysis in DESIGN.md:
+   VIMUSEMENT — DESIGN TOKENS  ·  THE ONLY FILE WITH RAW COLOUR
+   -----------------------------------------------------------
+   Every other stylesheet references var(--…) only. To retheme
+   the whole site, edit the hex values in the :root block below
+   (and the two dark-mode blocks at the bottom) — nothing else.
+
+   Palette "Crimson" · structural rigour from DESIGN.md:
      - alternating full-bleed tiles (colour change = the divider)
      - one shadow, reserved for imagery resting on a surface
      - tight display tracking, 17px body, weight ladder 300/400/600/700
@@ -10,31 +14,31 @@
    ============================================================ */
 
 :root{
-  /* ---- Neutrals (warm, chosen) ---- */
-  --c-paper:        #FBF6EF;   /* default page ground */
-  --c-parchment:    #F4EEE3;   /* the "break" tile — one step off paper */
+  /* ---- Neutrals (warm, red undertone) ---- */
+  --c-paper:        #FBF3F1;   /* default page ground */
+  --c-parchment:    #F3E7E3;   /* the "break" tile — one step off paper */
   --c-surface:      #FFFFFF;   /* raised utility cards */
-  --c-ink:          #201B2B;   /* headings & body on light — near-black, not black */
-  --c-ink-soft:     #4C4557;
-  --c-ink-mute:     #837A8F;   /* captions, fine print */
-  --c-line:         #E7DDCC;   /* hairline — reads as a soft ring, not a hard rule */
+  --c-ink:          #23161A;   /* headings & body on light — near-black, red-warm */
+  --c-ink-soft:     #574650;
+  --c-ink-mute:     #8A7680;   /* captions, fine print */
+  --c-line:         #EBDAD3;   /* hairline — a soft ring, not a hard rule */
 
   /* ---- Brand — ONE interactive colour ---- */
-  --c-primary:      #5A43C9;   /* every "click me": buttons, links, focus */
-  --c-primary-ink:  #5A43C9;   /* primary as text on light */
+  --c-primary:      #C2213A;   /* crimson — every "click me": buttons, links, focus */
+  --c-primary-ink:  #B01E35;   /* crimson as text on white (contrast-safe) */
   --c-on-primary:   #FFFFFF;
 
-  /* ---- Accents — identity only, never "interactive" ---- */
-  --c-gold:  #D9862A;   /* lights / food */
-  --c-rose:  #DC5069;   /* games / kids */
-  --c-teal:  #178577;   /* movies / the cause */
+  /* ---- Accents — identity only, never "interactive" (warm reds) ---- */
+  --c-gold:  #D9703C;   /* terracotta — lights / food */
+  --c-rose:  #D6335A;   /* bright rose — games / kids */
+  --c-teal:  #9B2F4A;   /* deep wine — movies / the cause */
 
   /* ---- Dark tiles ---- */
-  --c-tile-dark:   #201B33;
-  --c-tile-void:   #14101F;   /* darkest — marquee, true void strips */
-  --c-on-dark:      #F6F1FB;
-  --c-on-dark-soft: #C7BBD8;
-  --c-primary-on-dark: #B6A6F6;   /* links on dark tiles (primary would sink) */
+  --c-tile-dark:   #2A121B;
+  --c-tile-void:   #1A0B10;   /* darkest — marquee, true void strips */
+  --c-on-dark:      #FBEEEA;
+  --c-on-dark-soft: #DBB9BE;
+  --c-primary-on-dark: #FF7A88;   /* lifted crimson for dark tiles */
 
   /* ---- Tile system (referenced by .tile--a / --b / --c) ---- */
   --tile-a-bg: var(--c-surface);      --tile-a-fg: var(--c-ink);
@@ -43,7 +47,7 @@
 
   /* ---- Hero — light & open ---- */
   --hero-bg: linear-gradient(185deg, var(--c-paper) 30%, var(--c-parchment));
-  --accent-text: linear-gradient(100deg, var(--c-gold), var(--c-rose) 55%, var(--c-primary));
+  --accent-text: linear-gradient(100deg, var(--c-gold), var(--c-rose) 50%, var(--c-primary));
 
   /* ---- Type ---- */
   --font-display: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
@@ -95,16 +99,47 @@
   --glass-shadow:    0 8px 30px -10px rgba(10,7,20,.45);
   --glass-ink:       #fff;
   /* content panels on the page ground (need readable text): */
-  --glass-panel-bg:     color-mix(in srgb, var(--c-surface) 66%, transparent);
-  --glass-panel-border: color-mix(in srgb, #ffffff 58%, transparent);
-  --glass-panel-blur:   blur(16px) saturate(135%);
-  --glass-panel-shadow: 0 1px 1px rgba(255,255,255,.4) inset, 0 10px 34px -14px rgba(34,20,50,.28);
+  --glass-panel-bg:     color-mix(in srgb, var(--c-surface) 82%, transparent);
+  --glass-panel-border: var(--c-line);
+  --glass-panel-blur:   blur(12px) saturate(120%);
+  --glass-panel-shadow: none;   /* Apple rigour: shadow is for imagery only */
 
   /* soft ambient wash so frosted panels have something to blur over */
   --mesh-1: color-mix(in srgb, var(--c-gold) 42%, transparent);
   --mesh-2: color-mix(in srgb, var(--c-primary) 38%, transparent);
   --mesh-3: color-mix(in srgb, var(--c-teal) 34%, transparent);
-  --mesh-opacity: .5;
+  --mesh-opacity: .12;   /* ambient wash only — Apple rigour: no loud decoration */
+
+  /* ---- Translucent overlays on dark surfaces (one place to tune) ---- */
+  --tint-on-dark-1:  rgba(255,255,255,.05);   /* faint fill (cards on dark tiles) */
+  --tint-on-dark-2:  rgba(255,255,255,.10);   /* inputs, panels */
+  --tint-on-dark-3:  rgba(255,255,255,.18);   /* stronger fill */
+  --line-on-dark-1:  rgba(255,255,255,.14);   /* hairline on dark */
+  --line-on-dark-2:  rgba(255,255,255,.22);
+  --line-on-dark-3:  rgba(255,255,255,.35);
+  --ink-on-tint:     #2a1418;                 /* dark text sitting on an accent fill */
+
+  /* ---- STAGE screen (projector — always its own dark world) ---- */
+  --stage-bg:      #170a10;
+  --stage-bg-2:    #3a1220;
+  --stage-ink:     #fbeeea;
+  --stage-dim:     #d8a9b0;
+  --stage-a1:      #e0714e;   /* reel gradient start  */
+  --stage-a2:      #f0577a;   /* reel gradient middle */
+  --stage-a3:      #c85a86;   /* reel gradient end / "won" */
+
+  /* ---- VENUE MAP plan (light) ---- */
+  --vm-grass:      #ecefe6;
+  --vm-grass-dot:  #d8e0cf;
+  --vm-edge:       #e0ccc6;
+  --vm-build:      #f1e4de;
+  --vm-build-edge: #d6bcb2;
+  --vm-path:       #f0e6e0;
+  --vm-zone:       #ffffff;
+  --vm-zone-edge:  #e0ccc6;
+  --vm-zone-ink:   #3a2b2f;
+  --vm-active:     var(--c-primary);
+  --vm-note:       #9a8f7e;
 
   /* ---- Motion ---- */
   --dur-1: .14s;  --dur-2: .26s;  --dur-3: .5s;  --dur-4: .8s;
@@ -118,50 +153,58 @@
 /* ---- Dark = twilight version of the same palette ---- */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --c-paper:      #141020;
-    --c-parchment:  #1B1629;
-    --c-surface:    #1E1830;
-    --c-ink:        #F6F1FB;
-    --c-ink-soft:   #CBC1DA;
-    --c-ink-mute:   #968AA9;
-    --c-line:       #302840;
+    --c-paper:      #1A1013;
+    --c-parchment:  #221318;
+    --c-surface:    #271820;
+    --c-ink:        #FBEEEA;
+    --c-ink-soft:   #E0C4C8;
+    --c-ink-mute:   #A98E94;
+    --c-line:       #3D2830;
 
-    --c-primary-ink:#B6A6F6;
+    --c-primary-ink:#FF7A88;
 
-    --c-gold: #ECA556;
-    --c-rose: #F07E92;
-    --c-teal: #38C1B2;
+    --c-gold: #E88A54;
+    --c-rose: #F0577A;
+    --c-teal: #D06A82;
 
-    --c-tile-dark: #0F0B1A;
-    --c-tile-void: #0A0712;
+    --c-tile-dark: #1E0F14;
+    --c-tile-void: #150A0E;
 
-    --tile-a-bg: #17122A;               --tile-a-fg: var(--c-on-dark);
-    --tile-b-bg: #1C1630;               --tile-b-fg: var(--c-on-dark);
-    --tile-c-bg: #0F0B1A;               --tile-c-fg: var(--c-on-dark);
+    --tile-a-bg: #201217;               --tile-a-fg: var(--c-on-dark);
+    --tile-b-bg: #26141A;               --tile-b-fg: var(--c-on-dark);
+    --tile-c-bg: #1A0C11;               --tile-c-fg: var(--c-on-dark);
 
     --shadow-image: 0 5px 34px rgba(0,0,0,.55);
     --glass-bg:        rgba(255,255,255,.1);
     --glass-bg-strong: rgba(255,255,255,.18);
     --glass-border:    rgba(255,255,255,.28);
-    --glass-panel-bg:     color-mix(in srgb, var(--c-surface) 58%, transparent);
-    --glass-panel-border: color-mix(in srgb, #ffffff 12%, transparent);
-    --glass-panel-shadow: 0 1px 1px rgba(255,255,255,.06) inset, 0 12px 38px -14px rgba(0,0,0,.6);
-    --mesh-opacity: .38;
+    --glass-panel-bg:     color-mix(in srgb, var(--c-surface) 80%, transparent);
+    --glass-panel-border: var(--c-line);
+    --glass-panel-shadow: none;
+    --mesh-opacity: .14;
+
+    /* venue-map plan — dark */
+    --vm-grass:#221419; --vm-grass-dot:#2c1a20; --vm-edge:#3d2830;
+    --vm-build:#2a1a20; --vm-build-edge:#472f38; --vm-path:#2c1a22;
+    --vm-zone:#271820; --vm-zone-edge:#4a3540; --vm-zone-ink:#e9dce0; --vm-note:#8b8098;
   }
 }
 :root[data-theme="dark"]{
-  --c-paper:#141020; --c-parchment:#1B1629; --c-surface:#1E1830;
-  --c-ink:#F6F1FB; --c-ink-soft:#CBC1DA; --c-ink-mute:#968AA9; --c-line:#302840;
-  --c-primary-ink:#B6A6F6;
-  --c-gold:#ECA556; --c-rose:#F07E92; --c-teal:#38C1B2;
-  --c-tile-dark:#0F0B1A; --c-tile-void:#0A0712;
-  --tile-a-bg:#17122A; --tile-a-fg:var(--c-on-dark);
-  --tile-b-bg:#1C1630; --tile-b-fg:var(--c-on-dark);
-  --tile-c-bg:#0F0B1A; --tile-c-fg:var(--c-on-dark);
+  --c-paper:#1A1013; --c-parchment:#221318; --c-surface:#271820;
+  --c-ink:#FBEEEA; --c-ink-soft:#E0C4C8; --c-ink-mute:#A98E94; --c-line:#3D2830;
+  --c-primary-ink:#FF7A88;
+  --c-gold:#E88A54; --c-rose:#F0577A; --c-teal:#D06A82;
+  --c-tile-dark:#1E0F14; --c-tile-void:#150A0E;
+  --tile-a-bg:#201217; --tile-a-fg:var(--c-on-dark);
+  --tile-b-bg:#26141A; --tile-b-fg:var(--c-on-dark);
+  --tile-c-bg:#1A0C11; --tile-c-fg:var(--c-on-dark);
   --shadow-image: 0 5px 34px rgba(0,0,0,.55);
   --glass-bg:rgba(255,255,255,.1);--glass-bg-strong:rgba(255,255,255,.18);--glass-border:rgba(255,255,255,.28);
-  --glass-panel-bg:color-mix(in srgb, var(--c-surface) 58%, transparent);
-  --glass-panel-border:color-mix(in srgb, #ffffff 12%, transparent);
-  --glass-panel-shadow:0 1px 1px rgba(255,255,255,.06) inset, 0 12px 38px -14px rgba(0,0,0,.6);
-  --mesh-opacity:.38;
+  --glass-panel-bg:color-mix(in srgb, var(--c-surface) 80%, transparent);
+  --glass-panel-border:var(--c-line);
+  --glass-panel-shadow:none;
+  --mesh-opacity:.14;
+  --vm-grass:#221419; --vm-grass-dot:#2c1a20; --vm-edge:#3d2830;
+  --vm-build:#2a1a20; --vm-build-edge:#472f38; --vm-path:#2c1a22;
+  --vm-zone:#271820; --vm-zone-edge:#4a3540; --vm-zone-ink:#e9dce0; --vm-note:#8b8098;
 }

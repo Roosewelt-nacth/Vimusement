@@ -97,6 +97,39 @@
       });
     })();
 
+    /* ---- hide the "not live yet" setup notes once a backend is configured ---- */
+    if (Y.api || (Y.donation && Y.donation.api)) {
+      ctx.$$(".donate-setup").forEach(function (el) { el.remove(); });
+    }
+
+    /* ---- stalls page (stalls.html) ---- */
+    (function stalls() {
+      var s = Y.stalls || {};
+      ctx.$$("[data-stalls-intro]").forEach(function (el) { if (s.intro) el.textContent = s.intro; });
+      ctx.$$("[data-stalls-note]").forEach(function (el) { if (s.ratesNote) el.textContent = s.ratesNote; });
+      ctx.$$("[data-stalls-wa]").forEach(function (el) { if (s.contactWhatsApp) { el.setAttribute("href", s.contactWhatsApp); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener"); } });
+      ctx.$$("[data-stalls-ig]").forEach(function (el) { if (s.contactInstagram) { el.setAttribute("href", s.contactInstagram); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener"); } });
+
+      var rates = ctx.$("[data-stalls-rates]");
+      if (rates) {
+        if (s.rates && s.rates.length) {
+          rates.innerHTML = s.rates.map(function (r) {
+            return '<li><span>' + esc(r.name) + '</span><b>' + esc(r.price) + '</b></li>';
+          }).join("");
+        } else {
+          rates.innerHTML = '<li class="stalls__tbc">Table rates to be confirmed</li>';
+        }
+      }
+      var open = ctx.$("[data-stalls-open]");
+      if (open) {
+        if (s.open && s.open.length) {
+          open.innerHTML = s.open.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("");
+        } else {
+          open.innerHTML = '<li class="stalls__tbc">The list of open stalls is being drawn up. Message us to reserve one now.</li>';
+        }
+      }
+    })();
+
     /* ---- contact links ---- */
     ctx.$$("[data-bind-contact]").forEach(function (el) {
       if (Y.contactEmail) { el.setAttribute("href", "mailto:" + Y.contactEmail); el.textContent = Y.contactEmail; }
@@ -115,8 +148,9 @@
       var icon = ICONS[item.icon] || "";
       var cta = "";
       if (kind === "involve") {
-        cta = '<a class="btn btn--gold" href="' + esc(item.form && Y.forms[item.form] ? Y.forms[item.form] : mailFallback(item.title))
-            + '">' + esc(item.cta || "Learn more") + "</a>";
+        var href = item.form && Y.forms[item.form] ? Y.forms[item.form] : mailFallback(item.title);
+        var ext = /^https?:\/\//.test(href) ? ' target="_blank" rel="noopener"' : "";
+        cta = '<a class="btn btn--gold" href="' + esc(href) + '"' + ext + '>' + esc(item.cta || "Learn more") + "</a>";
       }
       return '<article class="card' + accent + '" data-animate="fade-up">'
            +   '<div class="card__icon">' + icon + "</div>"

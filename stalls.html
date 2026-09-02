@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run a Stall · Vimusement {year}</title>
+<meta name="description" content="Bring a stall to Vimusement: food, a game or a craft table. See what's open and the table rates.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%AA%3C/text%3E%3C/svg%3E">
+<script>
+document.documentElement.className+=" js";
+(function(){try{var m=localStorage.getItem("vim-theme");if(m)document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/home.css">
+<link rel="stylesheet" href="assets/css/pages/subpage.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<main id="main">
+<header class="pagehead">
+  <div class="wrap">
+    <p class="eyebrow" data-animate="fade-up">Get Involved</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.06">Run a stall</h1>
+    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12" data-stalls-intro>Bring a stall to Vimusement: food, a game or a craft table.</p>
+    <div class="pagehead__cta" data-animate="fade-up" data-animate-delay="0.18">
+      <a class="btn btn--gold btn--lg" data-stalls-wa href="#">Message Austin on WhatsApp</a>
+      <a class="btn btn--pill-ghost btn--lg" data-stalls-ig href="#">DM @victorians.youth</a>
+    </div>
+  </div>
+</header>
+
+<section class="subsection">
+  <div class="wrap wrap--narrow">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">Table rates</h2>
+      <p class="lead" data-animate="fade-up" data-stalls-note>Rates are being finalised by the committee.</p>
+    </div>
+    <ul class="stalls-list" data-stalls-rates data-animate="fade-up"></ul>
+  </div>
+</section>
+
+<section class="subsection">
+  <div class="wrap wrap--narrow">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">Stalls still open</h2>
+      <p class="lead" data-animate="fade-up">Reserve a spot before it’s taken.</p>
+    </div>
+    <ul class="stalls-open" data-stalls-open data-animate="fade-up"></ul>
+  </div>
+</section>
+
+<div class="wrap pageflow">
+  <a href="involve.html">← Get Involved</a>
+  <a href="donate.html">Donate →</a>
+</div>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+/* ============================================================
+   SUBPAGE — shared header + rhythm for the standalone pages
+   (programme / cause / gallery / involve). One intro, lots of air.
+   ============================================================ */
+.pagehead{
+  background:var(--hero-bg);
+  padding-block:clamp(3.5rem,9vw,6rem) clamp(2rem,5vw,3.2rem);
+  border-bottom:1px solid var(--c-line);
+  position:relative;overflow:hidden;
+}
+.pagehead .wrap{position:relative;z-index:1}
+.pagehead h1{
+  font-family:var(--font-display);font-weight:var(--weight-bold);
+  font-size:var(--fs-2xl);letter-spacing:var(--track-display);
+  margin:.5rem 0 0;color:var(--c-ink);
+}
+.pagehead__lead{
+  margin-top:1rem;max-width:46ch;font-size:var(--fs-md);
+  color:var(--c-ink-soft);line-height:1.45;
+}
+.pagehead__cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+
+/* soft corner glow, echoes the home hero without the weight */
+.pagehead::after{
+  content:"";position:absolute;right:-10%;top:-40%;width:55%;height:180%;
+  background:radial-gradient(50% 50% at 50% 50%,
+    color-mix(in srgb,var(--c-gold) 22%,transparent),transparent 70%);
+  pointer-events:none;
+}
+
+/* generic content section on a subpage — more breathing room than a tile */
+.subsection{padding-block:clamp(2.5rem,6vw,4.5rem)}
+.subsection + .subsection{border-top:1px solid var(--c-line)}
+.subsection__intro{max-width:44ch;margin-bottom:1.8rem}
+.subsection__intro .lead{margin-top:.4rem}
+
+/* a quiet link back / onward at the foot of a page */
+.pageflow{
+  display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;
+  padding-block:clamp(2rem,5vw,3rem);
+}
+.pageflow a{
+  font-family:var(--font-mono);font-size:var(--fs-sm);color:var(--c-primary-ink);
+  text-decoration:none;
+}
+.pageflow a:hover{text-decoration:underline}
+
+/* stalls page lists */
+.stalls-list,.stalls-open{list-style:none;margin:1.5rem 0 0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.stalls-list li,.stalls-open li{
+  display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
+  padding:.8rem 1.1rem;border:1px solid var(--c-line);border-radius:var(--r-md);
+  background:var(--c-surface);font-size:var(--fs-base);color:var(--c-ink-soft);
+}
+.stalls-list li b{color:var(--c-ink);font-family:var(--font-mono)}
+.stalls__tbc{color:var(--c-ink-mute);font-style:italic;justify-content:flex-start}

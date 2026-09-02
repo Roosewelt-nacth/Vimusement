@@ -131,7 +131,7 @@ Vim.register("donate", function (ctx) {
         .then(function () {
           panel.innerHTML = '<div class="upi__done">' +
             '<p>Thank you, ' + esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]) + '. ' +
-            'We’ll verify your gift and email <b>' + esc((emailEl && emailEl.value) || "") + '</b> once it’s confirmed — ' + esc(within) + '.</p>' +
+            'We’ll verify your gift and email <b>' + esc((emailEl && emailEl.value) || "") + '</b> once it’s confirmed, ' + esc(within) + '.</p>' +
             '<p class="upi__note">Your name joins the supporters wall the moment it’s confirmed.</p>' +
             '</div>';
           window.dispatchEvent(new Event("vim:donation"));
@@ -140,7 +140,7 @@ Vim.register("donate", function (ctx) {
   }
 
   function begin() {
-    if (!api) { say("Online giving isn’t switched on yet — please check back soon.", "warn"); return; }
+    if (!api) { say("Online giving isn’t switched on yet. Please check back soon.", "warn"); return; }
     var nm = ((nameEl && nameEl.value) || "").trim();
     var em = ((emailEl && emailEl.value) || "").trim();
     if (!(amount >= minAmt)) { say("Please choose at least " + fmt(minAmt) + ".", "warn"); return; }
@@ -157,7 +157,7 @@ Vim.register("donate", function (ctx) {
         say("");
         showUpiPanel(res);
       })
-      .catch(function () { go.disabled = false; say("Network problem — please try again.", "warn"); });
+      .catch(function () { go.disabled = false; say("Network problem. Please try again.", "warn"); });
   }
 
   if (go) go.addEventListener("click", function (e) { e.preventDefault(); begin(); });

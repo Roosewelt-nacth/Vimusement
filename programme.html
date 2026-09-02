@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programme · Vimusement {year}</title>
+<meta name="description" content="What's on at Vimusement: games, the movie line-up, and a plan of the church grounds so you know where everything is.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A1%3C/text%3E%3C/svg%3E">
+<script>
+document.documentElement.className+=" js";
+(function(){try{var m=localStorage.getItem("vim-theme");if(m)document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/home.css">
+<link rel="stylesheet" href="assets/css/pages/subpage.css">
+<link rel="stylesheet" href="assets/css/pages/venuemap.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<main id="main">
+<header class="pagehead">
+  <div class="wrap">
+    <p class="eyebrow" data-animate="fade-up">The evening</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.06">Programme &amp; map</h1>
+    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12">Games for every age, movie screenings in the Basement and the AV room, and a plan of the grounds so nobody gets lost.</p>
+  </div>
+</header>
+
+<section class="subsection">
+  <div class="wrap">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">Something for every age</h2>
+      <p class="lead" data-animate="fade-up">Come for an hour or stay till the credits roll.</p>
+    </div>
+    <div class="grid grid--auto card-grid" data-list="whatsOn"></div>
+  </div>
+</section>
+
+<section class="subsection venuemap">
+  <div class="wrap">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">What’s on, and where</h2>
+      <p class="lead" data-animate="fade-up" data-venuemap-caption>Tap a spot on the plan to see what’s there.</p>
+    </div>
+    <div class="venuemap__layout" data-venuemap data-animate="fade-up">
+      <div class="venuemap__plan" data-venuemap-plan></div>
+      <aside class="venuemap__panel" data-venuemap-panel></aside>
+    </div>
+    <ol class="venuemap__legend" data-venuemap-legend></ol>
+  </div>
+</section>
+
+<section class="subsection">
+  <div class="wrap">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">Screenings &amp; games</h2>
+    </div>
+    <ol class="venuemap__screenings" data-venuemap-schedule data-animate="fade-up"></ol>
+    <div class="venuemap__games" data-venuemap-games data-animate="fade-up"></div>
+  </div>
+</section>
+
+<div class="wrap pageflow">
+  <a href="draw.html">← Lucky Draw</a>
+  <a href="involve.html">Get involved →</a>
+</div>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/venuemap.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

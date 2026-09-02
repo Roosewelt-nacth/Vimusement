@@ -14,7 +14,7 @@
 /* festival bunting across the top — the one flourish */
 .hero__bunting{
   position:absolute;top:0;left:0;right:0;height:44px;pointer-events:none;z-index:1;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='126' height='44'%3E%3Cpath d='M0 4 H126' stroke='rgba(120,110,135,.4)' stroke-width='2'/%3E%3Cpolygon points='4,5 30,5 17,38' fill='%23D9862A'/%3E%3Cpolygon points='34,5 60,5 47,38' fill='%23E05A72'/%3E%3Cpolygon points='64,5 90,5 77,38' fill='%23178577'/%3E%3Cpolygon points='94,5 120,5 107,38' fill='%235A43C9'/%3E%3C/svg%3E") repeat-x;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='126' height='44'%3E%3Cpath d='M0 4 H126' stroke='rgba(120,100,105,.4)' stroke-width='2'/%3E%3Cpolygon points='4,5 30,5 17,38' fill='%23D9703C'/%3E%3Cpolygon points='34,5 60,5 47,38' fill='%23D6335A'/%3E%3Cpolygon points='64,5 90,5 77,38' fill='%239B2F4A'/%3E%3Cpolygon points='94,5 120,5 107,38' fill='%23C2213A'/%3E%3C/svg%3E") repeat-x;
   background-size:126px 44px;
 }
 .hero__photo{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;opacity:.1;filter:saturate(.9)}
@@ -44,17 +44,31 @@
 /* ---------- THE CAUSE ---------- */
 .pillars{--col:230px;margin-top:2.2rem}
 .pillar{
-  border:1px solid rgba(255,255,255,.18);border-radius:var(--r-lg);
-  padding:var(--sp-5);background:rgba(255,255,255,.06);
-  box-shadow:0 1px 1px rgba(255,255,255,.1) inset;
-}
-@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .pillar{backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+  border:1px solid rgba(255,255,255,.14);border-radius:var(--r-lg);
+  padding:var(--sp-5);background:rgba(255,255,255,.04);
 }
 .pillar__icon{width:34px;height:34px;color:var(--c-gold)}
 .pillar h3{color:var(--c-on-dark);margin:.6rem 0 .3rem;font-size:1.08rem}
 .pillar p{color:var(--c-on-dark-soft);font-size:var(--fs-sm)}
 .cause__note{margin-top:1.6rem;font-family:var(--font-mono);font-size:.8rem;color:var(--c-on-dark-soft);opacity:.7}
+
+/* ---------- HOME — why band + explore cards ---------- */
+.home-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+.tile--c .home-cta .btn--ghost{color:var(--c-on-dark);border-color:rgba(255,255,255,.4)}
+
+.explore-grid{--col:250px;margin-top:2.4rem}
+.card--link{
+  display:flex;flex-direction:column;text-decoration:none;
+  border-left:3px solid var(--accent,var(--c-primary));
+}
+.card--link:hover{transform:translateY(-3px)}
+.card--rose{--accent:var(--c-rose)}
+.card--gold{--accent:var(--c-gold)}
+.card--teal{--accent:var(--c-teal)}
+.card__go{
+  margin-top:auto;padding-top:1rem;font-family:var(--font-mono);
+  font-size:var(--fs-sm);color:var(--accent,var(--c-primary-ink));font-weight:var(--weight-semi);
+}
 
 /* ---------- BANNER REVEAL (dark inset card on a light tile) ---------- */
 .reveal-card{
@@ -62,6 +76,17 @@
   background:var(--c-tile-void);color:var(--c-on-dark);
   padding:clamp(1.6rem,4vw,3rem);
 }
+.reveal-card--compact{margin-top:0}
+.reveal-card--compact .eyebrow{color:var(--c-on-dark-soft)}
+.reveal-card--compact .eyebrow::before{background:var(--c-gold)}
+.reveal-card--compact h3{font-size:var(--fs-md);margin-top:.4rem}
+
+.noscript-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:var(--c-tile-dark);color:var(--c-on-dark);text-align:center;
+  padding:.7rem 1rem;font-size:.8rem;
+}
+.noscript-nav a{color:var(--c-on-dark);text-decoration:underline}
 .reveal-card h3{color:var(--c-on-dark);font-size:var(--fs-lg);margin:.5rem 0 .5rem}
 .reveal-card h3 em{color:var(--c-gold);font-style:italic}
 .reveal-card p{color:var(--c-on-dark-soft);max-width:52ch}
@@ -129,8 +154,8 @@
 .reel-card--noposter{
   background:
     radial-gradient(120% 75% at 12% -5%, color-mix(in srgb,var(--accent) 60%,transparent), transparent 60%),
-    radial-gradient(95% 60% at 92% 105%, color-mix(in srgb,var(--accent) 78%,#0b0713), transparent 62%),
-    linear-gradient(163deg, color-mix(in srgb,var(--accent) 82%,#140b22), color-mix(in srgb,var(--accent) 26%,#140b22));
+    radial-gradient(95% 60% at 92% 105%, color-mix(in srgb,var(--accent) 78%,var(--c-tile-void)), transparent 62%),
+    linear-gradient(163deg, color-mix(in srgb,var(--accent) 82%,var(--c-tile-dark)), color-mix(in srgb,var(--accent) 26%,var(--c-tile-dark)));
 }
 .reel-card__scene{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:block}
 .reel-card__grain{

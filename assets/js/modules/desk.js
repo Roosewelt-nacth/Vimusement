@@ -159,7 +159,7 @@ Vim.register("desk", function (ctx) {
           mount.querySelector("[data-dn]").value = mount.querySelector("[data-dp]").value = mount.querySelector("[data-de]").value = "";
           q = 1; qs();
         })
-        .catch(function () { btn.disabled = false; btn.textContent = "Issue tickets"; alert("Network problem — try again."); });
+        .catch(function () { btn.disabled = false; btn.textContent = "Issue tickets"; alert("Network problem. Try again."); });
     });
 
     mount.querySelector("[data-cashgo]").addEventListener("click", function () {
@@ -179,7 +179,7 @@ Vim.register("desk", function (ctx) {
           mount.querySelector("[data-ca]").value = mount.querySelector("[data-cn]").value = mount.querySelector("[data-ce]").value = "";
           mount.querySelector("[data-cw]").checked = true;
         })
-        .catch(function () { btn.disabled = false; btn.textContent = "Record donation"; alert("Network problem — try again."); });
+        .catch(function () { btn.disabled = false; btn.textContent = "Record donation"; alert("Network problem. Try again."); });
     });
 
     function tab(t) {

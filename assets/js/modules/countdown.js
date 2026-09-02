@@ -33,7 +33,7 @@ Vim.register("countdown", function (ctx) {
   function tick() {
     var diff = target - Date.now();
     if (diff <= 0) {
-      if (label) label.textContent = "The gates are open — welcome to Vimusement!";
+      if (label) label.textContent = "The gates are open. Welcome to Vimusement!";
       Object.keys(cells).forEach(function (k) { put(cells[k], "00"); });
       clearInterval(timer);
       return;

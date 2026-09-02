@@ -52,7 +52,7 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   transition:transform var(--dur-1) var(--ease-out), background var(--dur-2), border-color var(--dur-2), opacity var(--dur-2);
 }
 .btn:active{transform:var(--press)}
-.btn--gold{--btn-bg:var(--c-gold)}
+.btn--gold{--btn-bg:var(--c-primary)}   /* one interactive colour — crimson carries every CTA */
 .btn--lg{padding:.9rem 1.75rem;font-size:1.06rem;font-weight:var(--weight-light)}
 .btn--block{width:100%}
 .btn--pill-ghost{
@@ -113,7 +113,7 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   transition:background var(--dur-2), color var(--dur-2);
 }
 .dock__link svg{width:18px;height:18px;flex:none}
-.dock__link[aria-current="true"]{color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 12%,transparent)}
+.dock__link[aria-current]{color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 12%,transparent)}
 .dock__link:active{background:color-mix(in srgb,var(--c-primary) 18%,transparent)}
 
 /* the collapsing label — the signature dock animation */
@@ -172,21 +172,17 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .dock__brand{display:none}
 }
 
-/* ---------- CARD (frosted glass) ---------- */
+/* ---------- CARD (flat surface + hairline — Apple rigour) ---------- */
 .card{
   --accent:var(--c-primary);
-  background:var(--c-surface);                        /* fallback */
-  border:1px solid var(--glass-panel-border);
+  background:var(--c-surface);
+  border:1px solid var(--c-line);
   border-radius:var(--r-lg);
-  box-shadow:var(--glass-panel-shadow);
   padding:var(--sp-5);
   position:relative;overflow:hidden;
-  transition:transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  transition:transform var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
 }
-@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .card{background:var(--glass-panel-bg);backdrop-filter:var(--glass-panel-blur);-webkit-backdrop-filter:var(--glass-panel-blur)}
-}
-.card:hover{transform:translateY(-3px);box-shadow:0 1px 1px rgba(255,255,255,.4) inset, 0 18px 44px -16px rgba(34,20,50,.34)}
+.card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 40%,var(--c-line))}
 @media (prefers-reduced-motion:reduce){.card:hover{transform:none}}
 .card__icon{
   width:46px;height:46px;border-radius:var(--r-md);display:grid;place-items:center;
@@ -201,10 +197,8 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .card--food{--accent:var(--c-gold)}
 .card--movies{--accent:var(--c-teal)}
 .card--kids{--accent:var(--c-primary)}
-.tile--c .card{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16);box-shadow:0 1px 1px rgba(255,255,255,.1) inset, 0 14px 40px -16px rgba(0,0,0,.5)}
-@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .tile--c .card{background:rgba(255,255,255,.06);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
-}
+.tile--c .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14);box-shadow:none}
+.tile--c .card:hover{border-color:rgba(255,255,255,.28)}
 .tile--c .card h3{color:var(--c-on-dark)}
 .tile--c .card p{color:var(--c-on-dark-soft)}
 
@@ -388,6 +382,7 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   font-family:var(--font-display);font-weight:var(--weight-bold);text-decoration:none;font-size:1.05rem;
 }
 .footer__brand b{color:var(--c-gold)}
+.footer__blurb{margin-top:.7rem;max-width:34ch;font-size:var(--fs-sm);color:var(--c-ink-mute)}
 .footer h4{
   font-family:var(--font-mono);font-size:var(--fs-sm);font-weight:var(--weight-semi);
   letter-spacing:-.02em;color:var(--c-ink-soft);margin-bottom:.5rem;

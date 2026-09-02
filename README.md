@@ -1,7 +1,7 @@
 # Vimusement — annual parish fundraiser site
 
-Static, modular website for the yearly Vimusement fair (games, food stalls, open-air
-movies on the church grounds). **No build step.** Hosts free on GitHub Pages. Designed to
+Static, modular website for the yearly Vimusement fair (games, food stalls, and movie
+screenings on the church grounds). **No build step.** Hosts free on GitHub Pages. Designed to
 be handed from one committee to the next by editing one config file per year.
 
 ---
