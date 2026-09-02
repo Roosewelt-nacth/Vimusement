@@ -1,0 +1,72 @@
+/* ============================================================
+   PAGE — donate  (donate.html)
+   ============================================================ */
+
+.donate-hero{background:var(--hero-bg);color:var(--c-ink-soft);padding-block:clamp(3.5rem,8vw,6rem)}
+.donate-hero h1{color:var(--c-ink);font-size:var(--fs-2xl);margin-block:.5rem;letter-spacing:var(--track-display)}
+.donate-hero p{color:var(--c-ink-soft);max-width:46ch;font-size:var(--fs-md);line-height:1.4}
+
+.donate-panel{
+  background:var(--c-surface);                       /* fallback */
+  border:1px solid var(--glass-panel-border);border-radius:var(--r-lg);
+  box-shadow:var(--glass-panel-shadow);
+  padding:clamp(1.4rem,4vw,2.2rem);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .donate-panel{background:var(--glass-panel-bg);backdrop-filter:var(--glass-panel-blur);-webkit-backdrop-filter:var(--glass-panel-blur)}
+}
+.donate-panel h2{color:var(--c-ink);font-size:var(--fs-lg)}
+.donate-panel .chip-group{margin-block:1.3rem}
+.donate-panel .field{margin-bottom:1.3rem}
+
+.donate-note{margin-top:1rem;font-size:var(--fs-sm);color:var(--c-ink-mute)}
+.donate-setup{
+  margin-top:1.3rem;border:1px solid var(--c-line);border-left:3px solid var(--c-gold);
+  border-radius:var(--r-md);background:var(--c-parchment);
+  padding:1rem 1.1rem;font-size:var(--fs-sm);color:var(--c-ink-soft);
+}
+.donate-setup code{font-family:var(--font-mono);font-size:.85em;background:var(--c-surface);padding:.1rem .4rem;border-radius:var(--r-xs)}
+
+/* ---- UPI pay panel ---- */
+.upi-panel{
+  margin-top:1.3rem;padding:1.3rem;border-radius:var(--r-lg);text-align:center;
+  border:1px solid var(--glass-panel-border);background:var(--c-parchment);
+  box-shadow:var(--glass-panel-shadow);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .upi-panel{background:color-mix(in srgb, var(--c-parchment) 70%, transparent);backdrop-filter:var(--glass-panel-blur);-webkit-backdrop-filter:var(--glass-panel-blur)}
+}
+.upi__head{margin-bottom:1rem}
+.upi__amount{font-family:var(--font-display);font-weight:var(--weight-bold);font-size:1.7rem;color:var(--c-ink);letter-spacing:var(--track-tight)}
+.upi__ref{font-family:var(--font-mono);font-size:.8rem;color:var(--c-ink-mute);margin-top:.2rem}
+.upi__ref b{color:var(--c-primary-ink);letter-spacing:.06em}
+.upi__qr{
+  width:200px;height:200px;image-rendering:pixelated;
+  border-radius:var(--r-md);border:6px solid #fff;background:#fff;margin:0 auto .9rem;
+  box-shadow:var(--shadow-image);
+}
+.upi__to{font-size:.9rem;color:var(--c-ink-soft);margin-bottom:1rem}
+.upi__to b{color:var(--c-ink);font-family:var(--font-mono);font-size:.86em}
+.upi__copy{
+  border:1px solid var(--c-line);background:var(--c-surface);color:var(--c-primary-ink);
+  font-size:.72rem;font-weight:var(--weight-semi);padding:.15rem .5rem;border-radius:var(--r-pill);cursor:pointer;margin-left:.3rem;
+}
+.upi__open{margin-bottom:.8rem}
+.upi__note{font-size:.82rem;color:var(--c-ink-mute);line-height:1.5;margin-bottom:1rem;max-width:38ch;margin-inline:auto}
+.upi__note b{color:var(--c-ink-soft)}
+.upi__paid{border-top:1px solid var(--c-line);padding-top:1rem}
+.upi__utr{margin-top:.7rem;display:flex;flex-direction:column;gap:.6rem}
+.upi__utr .field{background:var(--c-surface)}
+.upi__done{color:var(--c-ink-soft);line-height:1.55}
+.upi__done p + p{margin-top:.6rem}
+@keyframes upi-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){ .upi-panel{animation:upi-in var(--dur-3) var(--ease-out)} }
+
+.thermo{margin-top:1.8rem}
+.thermo__row{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.78rem;color:var(--c-ink-mute)}
+.thermo .progress{margin-top:.5rem;color:var(--c-ink)}
+
+.causes{list-style:none;margin-top:1rem}
+.causes li{padding-left:1.4rem;position:relative;color:var(--c-ink-soft)}
+.causes li + li{margin-top:.65rem}
+.causes li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:7px;border-radius:2px;background:var(--c-gold)}

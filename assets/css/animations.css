@@ -1,0 +1,51 @@
+/* ============================================================
+   ANIMATIONS — keyframes + scroll-reveal
+   Opt in:  data-animate="fade-up"          (see motion.js)
+   Cascade: data-animate-stagger on a parent
+   ============================================================ */
+
+@keyframes marquee-scroll{ to{ transform:translateX(-50%); } }
+@keyframes digit-flip{ 0%{ transform:translateY(-45%); opacity:0 } 100%{ transform:translateY(0); opacity:1 } }
+@keyframes float-y{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
+@keyframes bunting-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(4px) } }
+@keyframes gradient-pan{ to{ background-position:200% center } }
+
+/* ---- scroll-reveal ----
+   Only hidden when JS is present (html.js). No-JS / JS-error = fully visible. */
+.js [data-animate]{
+  opacity:0;
+  transition:opacity var(--dur-3) var(--ease-out),
+             transform var(--dur-3) var(--ease-out),
+             filter var(--dur-3) var(--ease-out);
+  transition-delay:var(--animate-delay,0s);
+  will-change:opacity,transform;
+}
+.js [data-animate].is-in{opacity:1;transform:none;filter:none;will-change:auto}
+
+[data-animate="fade-up"]   { transform:translateY(22px); }
+[data-animate="fade-left"] { transform:translateX(28px); }
+[data-animate="fade-right"]{ transform:translateX(-28px); }
+[data-animate="fade"]      { transform:none; }
+
+/* zoom-in — content that "arrives": scale up + a blur that clears.
+   Best on imagery / media blocks (reel cards, carousel, gallery). */
+[data-animate="zoom-in"]{
+  transform:scale(.9);
+  filter:blur(10px);
+  transition-duration:var(--dur-4);
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .anim-float{animation:float-y 6s var(--ease-out) infinite}
+  .anim-bob{animation:bunting-bob 5s ease-in-out infinite;transform-origin:top center}
+}
+
+/* ---- global off-switch ---- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .js [data-animate]{opacity:1 !important;transform:none !important}
+}

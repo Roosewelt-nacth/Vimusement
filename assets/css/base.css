@@ -1,0 +1,118 @@
+/* ============================================================
+   BASE — reset, typography, layout + tile primitives
+   Link order: tokens → base → components → animations → pages/*
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  background:var(--c-paper);
+  color:var(--c-ink-soft);
+  font-family:var(--font-body);
+  font-size:var(--fs-base);
+  font-weight:var(--weight-reg);
+  line-height:var(--lh-body);
+  letter-spacing:-0.011em;            /* Inter/Hanken run a touch wide — nudge tight */
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  position:relative;
+  /* room for the floating bottom dock */
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+}
+
+/* ambient colour wash — gives every frosted panel something to blur over */
+body::before{
+  content:"";position:fixed;inset:-10% -10% -10% -10%;z-index:-1;pointer-events:none;
+  opacity:var(--mesh-opacity);
+  background:
+    radial-gradient(38% 30% at 12% 8%,  var(--mesh-1), transparent 70%),
+    radial-gradient(42% 34% at 88% 24%, var(--mesh-2), transparent 72%),
+    radial-gradient(48% 40% at 30% 92%, var(--mesh-3), transparent 74%),
+    radial-gradient(36% 30% at 78% 82%, var(--mesh-1), transparent 70%);
+  filter:blur(14px);
+}
+@media (prefers-reduced-motion: no-preference){
+  body::before{animation:mesh-drift 34s ease-in-out infinite alternate}
+}
+@keyframes mesh-drift{ to{ transform:translate3d(-2%, 1.5%, 0) scale(1.06); } }
+
+img,svg,video,canvas{display:block;max-width:100%;height:auto}
+a{color:var(--c-primary-ink);text-underline-offset:3px}
+::selection{background:color-mix(in srgb,var(--c-primary) 28%,transparent)}
+
+h1,h2,h3,h4{
+  font-family:var(--font-display);
+  color:var(--c-ink);
+  font-weight:var(--weight-bold);
+  line-height:var(--lh-tight);
+  letter-spacing:var(--track-tight);
+  text-wrap:balance;
+}
+h1{letter-spacing:var(--track-display)}
+h2{font-size:var(--fs-xl)}
+h3{font-size:var(--fs-lg);line-height:var(--lh-snug)}
+p{max-width:var(--measure)}
+strong{color:var(--c-ink);font-weight:var(--weight-semi)}
+
+/* ---- layout primitives ---- */
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
+.wrap--narrow{max-width:var(--maxw-text)}
+
+/* ---- TILE: full-bleed band; the background colour IS the section divider ----
+   light tiles are ~92% opaque so the ambient wash bleeds through and the
+   frosted panels on top have real colour to blur; dark tiles stay solid. */
+.tile{padding-block:var(--section-y);position:relative}
+.tile--a{background:color-mix(in srgb, var(--tile-a-bg) 92%, transparent);color:var(--tile-a-fg)}
+.tile--b{background:color-mix(in srgb, var(--tile-b-bg) 91%, transparent);color:var(--tile-b-fg)}
+.tile--c{background:var(--tile-c-bg);color:var(--tile-c-fg)}
+.tile--a h1,.tile--a h2,.tile--a h3{color:var(--tile-a-fg)}
+.tile--b h1,.tile--b h2,.tile--b h3{color:var(--tile-b-fg)}
+.tile--c h1,.tile--c h2,.tile--c h3{color:var(--tile-c-fg)}
+.tile--tight{padding-block:clamp(2rem,4vw,3rem)}
+
+/* .cv-auto kept as a hook but no containment — content-visibility
+   interferes with scroll-reveal transitions. Re-enable per-tile only
+   for media-heavy sections that have no [data-animate] children. */
+.cv-auto{}
+
+.stack{display:flex;flex-direction:column}
+.stack > * + *{margin-top:var(--flow,1rem)}
+
+.grid{display:grid;gap:var(--grid-gap,20px)}
+.grid--auto{grid-template-columns:repeat(auto-fit,minmax(var(--col,240px),1fr))}
+
+/* ---- shared text roles ---- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:var(--fs-xs);
+  font-weight:var(--weight-reg);
+  letter-spacing:var(--track-label);
+  text-transform:uppercase;
+  color:currentColor;opacity:.62;
+  display:inline-flex;align-items:center;gap:.65rem;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--c-gold);opacity:1;flex:none}
+.lead{
+  font-size:var(--fs-md);font-weight:var(--weight-reg);
+  color:currentColor;opacity:.82;max-width:52ch;line-height:1.35;
+}
+.section__title{font-size:var(--fs-xl);margin-block:.55rem .35rem}
+
+/* on dark tiles, links brighten */
+.tile--c a:not(.btn){color:var(--c-primary-on-dark)}
+
+/* ---- a11y ---- */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--c-primary);
+  outline-offset:3px;
+  border-radius:4px;
+}
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:400;
+  background:var(--c-primary);color:#fff;padding:12px 18px;border-radius:0 0 10px 0;font-weight:600;
+}
+.skip-link:focus{left:0}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
