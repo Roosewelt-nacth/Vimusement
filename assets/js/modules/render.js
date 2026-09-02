@@ -80,6 +80,23 @@
       if (Y.crew && Y.crew.caption) el.textContent = Y.crew.caption;
     });
 
+    /* ---- lucky draw: price / blurb / prize list ---- */
+    (function draw() {
+      var L = Y.luckyDraw || {};
+      var money = function (n) { return "₹" + Number(n).toLocaleString("en-IN"); };
+      ctx.$$("[data-draw-price]").forEach(function (el) { if (L.price) el.textContent = money(L.price); });
+      ctx.$$("[data-draw-blurb]").forEach(function (el) { if (L.blurb) el.textContent = L.blurb; });
+      var accents = ["var(--c-gold)", "var(--c-rose)", "var(--c-teal)", "var(--c-primary-ink)"];
+      ctx.$$('[data-list="prizes"]').forEach(function (box) {
+        if (!L.prizes) return;
+        box.innerHTML = L.prizes.map(function (p, i) {
+          return '<li class="prize" style="--dc:' + accents[i % 4] + '">' +
+            '<span class="prize__place">' + esc(p.place) + "</span>" +
+            '<span class="prize__detail">' + esc(p.detail) + "</span></li>";
+        }).join("");
+      });
+    })();
+
     /* ---- contact links ---- */
     ctx.$$("[data-bind-contact]").forEach(function (el) {
       if (Y.contactEmail) { el.setAttribute("href", "mailto:" + Y.contactEmail); el.textContent = Y.contactEmail; }

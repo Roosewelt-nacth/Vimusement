@@ -34,6 +34,11 @@ donate.html                    Apps Script (bound to Master sheet)        Parish
 6. name appears on the wall ◄── ?action=donors  (confirmed names only, never amounts)
 ```
 
+> **Updated:** the `/exec` URL now lives at `years/2026.config.js → api` (top level, shared
+> with lucky draw + movies). The `Donations` tab gained `Channel` (UPI/Cash) and `By`
+> columns — re-paste `Code.gs`, delete the old tab, redeploy, run `_selfTest`. Full lucky-draw
+> setup: `docs/lucky-draw-setup.md`.
+
 ## The Master sheet — tab `Donations`
 
 Auto-created. Columns:

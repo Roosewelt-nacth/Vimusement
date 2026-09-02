@@ -259,6 +259,12 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .field{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 }
 .field:focus-within{border-color:var(--c-primary);background:var(--c-surface)}
+.field__reveal{
+  flex:none;background:none;border:0;cursor:pointer;padding:.25rem .35rem;
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--c-ink-mute);
+}
+.field__reveal:hover{color:var(--c-primary-ink)}
 .field__prefix{font-weight:var(--weight-semi);color:var(--c-ink-mute)}
 .field input{border:0;background:none;font:inherit;font-size:var(--fs-base);color:var(--c-ink);width:100%;outline:none}
 
@@ -338,6 +344,38 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   padding:1.1rem .3rem;margin:0;
 }
 
+/* ---------- QUANTITY STEPPER ---------- */
+.qty{display:flex;align-items:center;gap:.7rem;margin:1.2rem 0 1.3rem;flex-wrap:wrap}
+.qty__btn{
+  width:44px;height:44px;flex:none;border-radius:50%;cursor:pointer;
+  border:1px solid var(--glass-panel-border);background:var(--c-surface);
+  color:var(--c-primary-ink);font-size:1.4rem;font-weight:var(--weight-bold);line-height:1;
+  display:grid;place-items:center;transition:transform var(--dur-1),border-color var(--dur-2);
+}
+.qty__btn:hover:not(:disabled){border-color:var(--c-primary-ink)}
+.qty__btn:active:not(:disabled){transform:var(--press)}
+.qty__btn:disabled{opacity:.4;cursor:not-allowed}
+.qty__n{
+  font-family:var(--font-display);font-weight:var(--weight-bold);font-size:1.9rem;
+  min-width:1.6ch;text-align:center;color:var(--c-ink);font-variant-numeric:tabular-nums;
+}
+.qty__total{font-size:var(--fs-sm);color:var(--c-ink-mute);font-family:var(--font-mono)}
+
+/* ---------- PRIZES ---------- */
+.prizes-list{list-style:none;margin:1rem 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.prize{
+  --dc:var(--c-gold);
+  display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;
+  padding:.85rem 1.1rem;border-radius:var(--r-md);
+  background:color-mix(in srgb, var(--dc) 8%, var(--glass-panel-bg));
+  border:1px solid color-mix(in srgb, var(--dc) 28%, transparent);
+}
+.prize__place{
+  font-family:var(--font-display);font-weight:var(--weight-bold);font-size:1rem;
+  color:var(--dc);white-space:nowrap;
+}
+.prize__detail{color:var(--c-ink-soft);font-size:var(--fs-sm)}
+
 /* ---------- PROGRESS ---------- */
 .progress{height:12px;border-radius:var(--r-pill);background:color-mix(in srgb,currentColor 14%,transparent);overflow:hidden}
 .progress__fill{height:100%;width:0;border-radius:var(--r-pill);background:var(--accent-text);transition:width 1.3s var(--ease-out)}
@@ -360,5 +398,14 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   margin-top:32px;padding-top:20px;border-top:1px solid var(--c-line);
   font-size:var(--fs-xs);color:var(--c-ink-mute);
 }
+.footer__staff{
+  margin-top:.6rem;font-family:var(--font-mono);font-size:.68rem;
+  letter-spacing:.08em;color:var(--c-ink-mute);
+}
+.footer__staff a,.footer__staff-btn{
+  color:var(--c-ink-mute);text-decoration:underline;text-underline-offset:2px;
+  background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;
+}
+.footer__staff a:hover,.footer__staff-btn:hover{color:var(--c-primary-ink)}
 @media (max-width:760px){.footer__grid{grid-template-columns:1fr 1fr}}
 @media (max-width:440px){.footer__grid{grid-template-columns:1fr}}

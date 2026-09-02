@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Lucky Draw · Live</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%B2%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/css/stage.css">
+</head>
+<body class="stage">
+
+<div class="stage__gate" data-gate>
+  <div class="stage__gatecard">
+    <h1>Lucky draw — live</h1>
+    <p>Admin login. This screen goes on the projector.</p>
+    <input id="su" type="text" placeholder="Username" autocapitalize="none" autocomplete="username">
+    <div class="stage__pw">
+      <input id="sk" type="password" placeholder="Desk key" autocomplete="off">
+      <button type="button" class="stage__reveal" data-sk-reveal>show</button>
+    </div>
+    <button type="button" class="stage__btn" data-gate-go>Open</button>
+    <p class="stage__msg" data-msg></p>
+  </div>
+</div>
+
+<div class="stage__app" data-app hidden>
+  <div class="stage__head">Vimusement <b data-year>2026</b> &nbsp;·&nbsp; Lucky Draw</div>
+
+  <div class="stage__stagearea">
+    <canvas class="stage__confetti" data-confetti aria-hidden="true"></canvas>
+    <div>
+      <div class="stage__reel" data-reel>—</div>
+      <div class="stage__caption" data-caption>ready to draw</div>
+      <div class="stage__winner" data-winner hidden></div>
+    </div>
+  </div>
+
+  <div class="stage__controls">
+    <select data-prize-select aria-label="Prize"></select>
+    <input type="text" data-prize-custom placeholder="Prize name" hidden>
+    <button type="button" class="stage__act" data-draw>Draw</button>
+    <button type="button" class="stage__act" data-confirm hidden>Confirm winner</button>
+    <button type="button" class="stage__act stage__act--ghost" data-next hidden>Next prize →</button>
+    <span class="stage__count" data-count></span>
+  </div>
+</div>
+
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/stage.js"></script>
+<script>document.addEventListener("DOMContentLoaded",function(){var y=(window.VIM_YEAR||{}).year;if(y)document.querySelectorAll("[data-year]").forEach(function(e){e.textContent=y;});});</script>
+</body>
+</html>

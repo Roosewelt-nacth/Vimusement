@@ -17,7 +17,7 @@ Vim.register("donors", function (ctx) {
   if (!box) return;
 
   var d = ctx.year.donation || {};
-  var api = (d.api || "").trim();
+  var api = (ctx.year.api || d.api || "").trim();
   var hintEl = ctx.$("[data-donor-hint]");
   var totalEl = ctx.$("[data-donor-total]");
 

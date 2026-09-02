@@ -125,6 +125,22 @@ keys, gentle autoplay that pauses on hover/focus/touch/off-screen and under
 `assets/img/2026/crew/` (`crew-01.jpg` …) — see that folder's README. List them in
 `crew.photos` in `years/2026.config.js` with an `alt` each.
 
+## Money features (donations · lucky draw · movies-later)
+
+One Apps Script (`apps-script/Code.gs`) bound to a Master sheet, one tab per feature +
+a hidden `_Counters` tab for unique IDs. The `/exec` URL is `years/2026.config.js → api`
+(shared). Every feature supports two channels — **UPI** (online) and **cash counter**
+(`counter.html`, PIN-gated) — and both land in the same tab with a `Channel` column.
+
+- **Lucky draw** — `draw.html` (buy online) · `#lucky-draw` teaser on the homepage ·
+  the **Staff desk** (embedded on money pages + `counter.html`, `desk.js`) for cash sales ·
+  `stage.html` for the **live on-stage draw** (spins to a winner, records + emails them).
+  Backend generates a unique number per ticket, emails a **designed PDF ticket**.
+  Modules: `draw.js`, `desk.js`, `stage.js`. Setup + checklist: **`docs/lucky-draw-setup.md`**.
+- **Staff access** — `Staff` tab (`Username·Name·Role·Active·Notes`) + a shared desk key
+  (`COUNTER_KEY`). Roles: `counter`, `admin` (admin also runs the draw). Every action is
+  recorded under the username + a hidden `_Log` audit tab.
+
 ## Donations — zero-fee UPI
 
 Backend = **one Google Apps Script** bound to a **Master sheet** (one tab per feature —

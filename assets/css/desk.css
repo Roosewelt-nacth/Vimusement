@@ -1,0 +1,54 @@
+/* ============================================================
+   DESK — staff counter panel, embedded on money pages
+   Linked after components.css on pages that carry [data-desk].
+   ============================================================ */
+.desk-toggle{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:none;border:0;cursor:pointer;padding:.4rem .2rem;
+  color:var(--c-ink-mute);font-family:var(--font-mono);font-size:.72rem;
+  letter-spacing:.12em;text-transform:uppercase;
+}
+.desk-toggle:hover{color:var(--c-primary-ink)}
+.desk-toggle::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c-teal)}
+
+[data-desk]{scroll-margin-top:16px}
+.desk{position:relative;max-width:520px;margin:1.5rem auto 0;padding:1.4rem}
+.desk__x{
+  position:absolute;top:.6rem;right:.7rem;width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--c-line);background:var(--c-surface);color:var(--c-ink-soft);
+  font-size:1.1rem;line-height:1;cursor:pointer;
+}
+.desk h3{font-size:1.3rem;color:var(--c-ink);margin-right:2rem}
+.desk__sub{color:var(--c-ink-soft);font-size:var(--fs-sm);margin:.35rem 0 1rem}
+.desk .field{margin-bottom:.75rem}
+.desk .donate-check{margin:.3rem 0 1rem}
+.desk__msg{margin-top:.7rem;font-size:var(--fs-sm);color:var(--c-gold);min-height:1.2em}
+
+.desk__bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--c-line);
+}
+.desk__bar b{display:block;color:var(--c-ink);font-size:.95rem}
+.desk__bar span{font-family:var(--font-mono);font-size:.74rem;color:var(--c-ink-mute)}
+.desk__bar .btn{padding:.45rem .9rem;font-size:var(--fs-sm)}
+
+.desk__tabs{display:flex;gap:5px;background:var(--c-parchment);padding:4px;border-radius:var(--r-pill);margin-bottom:16px}
+.desk__tabs button{
+  flex:1;padding:.6rem;border:0;border-radius:var(--r-pill);cursor:pointer;
+  background:transparent;color:var(--c-ink-soft);font-weight:var(--weight-semi);font-size:.9rem;
+}
+.desk__tabs button[aria-selected="true"]{background:var(--c-surface);color:var(--c-ink);box-shadow:var(--shadow-image)}
+
+.desk__price{font-family:var(--font-mono);font-size:.78rem;color:var(--c-ink-mute);margin-bottom:.3rem}
+.desk .qty{justify-content:center;margin:.3rem 0 1rem}
+
+.desk__result{margin-top:1.2rem;padding:1.3rem;text-align:center}
+.res__label{font-family:var(--font-mono);font-size:.78rem;color:var(--c-ink-mute);margin-bottom:.7rem}
+.res__ids{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:.9rem}
+.res__ids b{
+  font-family:var(--font-mono);font-size:1.1rem;font-weight:var(--weight-semi);
+  padding:.45rem .85rem;border-radius:var(--r-md);color:var(--c-ink);
+  background:color-mix(in srgb,var(--c-gold) 14%,transparent);
+  border:1px solid color-mix(in srgb,var(--c-gold) 34%,transparent);
+}
+.res__note{font-size:var(--fs-sm);color:var(--c-ink-soft);margin-bottom:1rem;line-height:1.5}

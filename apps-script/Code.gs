@@ -2,66 +2,94 @@
  * ============================================================
  * VIMUSEMENT — backend  (Google Apps Script, bound to the Master sheet)
  * ============================================================
- * ONE script for the whole project. One tab per feature:
- *     Donations   ← this file        (zero-fee UPI + confirm + notify)
- *     Movies      ← added later
- *     Food        ← added later
+ * ONE script for the whole project. Tabs:
+ *     Donations   — zero-fee UPI + confirm + notify
+ *     LuckyDraw   — ticket sales (UPI + cash counter) + the draw
+ *     Staff       — who can use the counter: Username|Name|Role|Active|Notes
+ *     _Counters   — running numbers for unique IDs (hidden; do not edit by hand)
+ *     _Log        — audit trail: every login / ticket / cash gift / winner (hidden)
  *
- * DONATIONS use plain UPI (zero MDR — no gateway, no fee):
- *   1. site  ?action=pledge   → we write a "Pending" row + a reference,
- *                               and return a upi://pay link for that amount
- *   2. donor pays in their UPI app (GPay / PhonePe / Paytm / BHIM …)
- *   3. site  ?action=ipaid    → row → "Paid?" (+ the donor's UPI ref if given)
- *   4. a volunteer checks the bank statement and sets Status = "Confirmed"
- *   5. the script emails the donor "your gift is confirmed" AND the name
- *      then appears on the public supporters wall (?action=donors)
- *
- * Optional phase-2: auto-confirm from forwarded bank-alert emails
- *   (reconcileFromEmail — off unless ENABLE_EMAIL_RECONCILE = "yes").
+ * Two payment channels everywhere:
+ *   UPI   : pledge → donor pays → a volunteer confirms vs the bank
+ *           statement → row becomes "Confirmed" → IDs issued + email sent
+ *   Cash  : a counter volunteer records the sale → row is "Confirmed"
+ *           immediately (Channel = Cash) → IDs issued + email sent now
  *
  * ---- Deploy ----
  *   Deploy ▸ New deployment ▸ Web app · Execute as: Me · Access: Anyone
- *   Put the /exec URL in  years/2026.config.js → donation.api
+ *   Put the /exec URL in  years/2026.config.js → api
  *
- * ---- Script properties (Project Settings ▸ Script properties) ----
- *   UPI_VPA            the parish UPI id, e.g. ascension@okhdfcbank   (REQUIRED)
- *   UPI_NAME           payee name shown in the UPI app               (REQUIRED)
- *   FROM_NAME          e.g. "Vimusement"                             (optional)
- *   REPLY_TO           committee email for replies                   (optional)
- *   MIN_AMOUNT         rupees, default 10
- *   MAX_AMOUNT         rupees, default 200000
- *   DONOR_WALL_LIMIT   names returned to the site, default 400
- *   ENABLE_EMAIL_RECONCILE   "yes" to turn on phase-2 (see bottom)
- *   RECONCILE_LABEL    Gmail label with forwarded bank alerts, default "bank-alerts"
+ * ---- Script properties ----
+ *   UPI_VPA          parish UPI id, e.g. name@okicici              (REQUIRED)
+ *   UPI_NAME         payee name shown in the UPI app               (REQUIRED)
+ *   COUNTER_KEY      the shared "desk key" staff type to log in     (REQUIRED for the counter)
+ *   ADMIN_KEY        fallback secret for the on-stage draw         (optional)
+ *   STAFF_JSON       optional — the staff list as a JSON array instead of the Staff tab:
+ *                    [{"user":"roonah","name":"Roonah","role":"admin"}, …]
+ *   FROM_NAME        e.g. "Vimusement"                             (optional)
+ *   REPLY_TO         committee email                               (optional)
+ *   MIN_AMOUNT / MAX_AMOUNT   rupees, default 10 / 200000
+ *   DONOR_WALL_LIMIT  names on the supporters wall, default 400
+ *   LD_PRICE         lucky-draw ticket price in rupees, default 50
+ *   LD_MAX           max tickets per online buyer, default 25
+ *   ENABLE_EMAIL_RECONCILE / RECONCILE_LABEL   phase-2 bank-alert auto-confirm
  *
- * ---- One-time triggers to add (Triggers ▸ Add trigger) ----
- *   onDonationEdit   — event source: From spreadsheet, type: On edit
- *   houseKeeping     — time-driven, every 15 minutes
+ * ---- Triggers ----
+ *   onSheetEdit    — From spreadsheet, On edit
+ *   houseKeeping   — Time-driven, every 15 minutes
  * ============================================================
  */
 
 var PROPS = PropertiesService.getScriptProperties();
-var DONATIONS_TAB = 'Donations';
-var DON_HEADER = [
-  'Timestamp', 'Reference', 'Name', 'Email', 'Amount (INR)',
-  'Donor UPI ref', 'Status', 'Show on wall', 'Confirmed at', 'Notes'
-];
+
+/* ---------- tab schemas ---------- */
+var T_DON = 'Donations';
+var DON_HEADER = ['Timestamp', 'Reference', 'Name', 'Email', 'Amount (INR)',
+  'Channel', 'By', 'Donor UPI ref', 'Status', 'Show on wall', 'Confirmed at', 'Notes'];
+var DC = { TS:1, REF:2, NAME:3, EMAIL:4, AMOUNT:5, CHANNEL:6, BY:7, UTR:8, STATUS:9, WALL:10, CONFIRMED:11, NOTES:12 };
+
+var T_LD = 'LuckyDraw';
+var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
+  'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes'];
+var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13 };
+
 var STATUS_LIST = ['Pending', 'Paid?', 'Confirmed', 'Cancelled'];
-var COL = { TS: 1, REF: 2, NAME: 3, EMAIL: 4, AMOUNT: 5, UTR: 6, STATUS: 7, WALL: 8, CONFIRMED: 9, NOTES: 10 };
+var T_COUNTERS = '_Counters';
+
+var T_STAFF = 'Staff';
+var STAFF_HEADER = ['Username', 'Name', 'Role', 'Active', 'Notes'];
+var T_LOG = '_Log';
+var LOG_HEADER = ['Timestamp', 'Username', 'Action', 'Detail'];
 
 /* ============================================================
    WEB APP ROUTER
    ============================================================ */
 function doGet(e) {
-  var action = (e && e.parameter && e.parameter.action) || 'donors';
+  var a = (e && e.parameter && e.parameter.action) || 'donors';
   try {
-    switch (action) {
-      case 'ping':    return _json({ ok: true, time: new Date().toISOString() });
-      case 'pledge':  return _json(pledge(e.parameter));
-      case 'ipaid':   return _json(iPaid(e.parameter));
-      case 'donors':  return _json(getDonors());
-      case 'stats':   return _json(getStats());
-      default:        return _json({ error: 'unknown action: ' + action });
+    switch (a) {
+      case 'ping':            return _json({ ok: true, time: new Date().toISOString() });
+
+      /* staff */
+      case 'staffLogin':      return _json(staffLogin(e.parameter));
+      case 'staffLogout':     return _json(staffLogout(e.parameter));
+
+      /* donations */
+      case 'pledge':          return _json(pledge(e.parameter));
+      case 'ipaid':           return _json(iPaid(e.parameter));
+      case 'donateCash':      return _json(donateCash(e.parameter));
+      case 'donors':          return _json(getDonors());
+      case 'stats':           return _json(getStats());
+
+      /* lucky draw */
+      case 'drawInfo':        return _json(drawInfo());
+      case 'drawPledge':      return _json(drawPledge(e.parameter));
+      case 'drawIssueCash':   return _json(drawIssueCash(e.parameter));
+      case 'drawPool':        return _json(drawPool(e.parameter));
+      case 'drawRecordWinner':return _json(drawRecordWinner(e.parameter));
+      case 'drawStats':       return _json(drawStats());
+
+      default:                return _json({ error: 'unknown action: ' + a });
     }
   } catch (err) {
     return _json({ error: String((err && err.message) || err) });
@@ -70,39 +98,154 @@ function doGet(e) {
 function doPost(e) { return doGet(e); }
 
 function _json(o) {
-  return ContentService.createTextOutput(JSON.stringify(o))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
 }
 
 /* ============================================================
-   SHEET
+   SHARED HELPERS
    ============================================================ */
 function _ss() {
   var id = PROPS.getProperty('SHEET_ID');
   return id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet();
 }
-function _donations() {
+function _tab(name, header, statusCol) {
   var ss = _ss();
-  var sh = ss.getSheetByName(DONATIONS_TAB);
-  if (!sh) sh = ss.insertSheet(DONATIONS_TAB);
-
-  // make sure row 1 is exactly the current header — repairs a tab left over
-  // from an earlier layout (otherwise data lands under the wrong labels).
-  var head = sh.getRange(1, 1, 1, DON_HEADER.length).getValues()[0];
-  var ok = DON_HEADER.every(function (h, i) { return String(head[i]) === h; });
+  var sh = ss.getSheetByName(name);
+  if (!sh) { sh = ss.insertSheet(name); if (name.charAt(0) === '_') sh.hideSheet(); }
+  var head = sh.getRange(1, 1, 1, header.length).getValues()[0];
+  var ok = header.every(function (h, i) { return String(head[i]) === h; });
   if (!ok) {
-    sh.getRange(1, 1, 1, DON_HEADER.length).setValues([DON_HEADER]).setFontWeight('bold');
+    sh.getRange(1, 1, 1, header.length).setValues([header]).setFontWeight('bold');
     sh.setFrozenRows(1);
   }
-
-  // keep a dropdown on the Status column so volunteers just pick a value
-  var rule = SpreadsheetApp.newDataValidation().requireValueInList(STATUS_LIST, true).build();
-  sh.getRange(2, COL.STATUS, Math.max(sh.getMaxRows() - 1, 1)).setDataValidation(rule);
+  if (statusCol) {
+    var rule = SpreadsheetApp.newDataValidation().requireValueInList(STATUS_LIST, true).build();
+    sh.getRange(2, statusCol, Math.max(sh.getMaxRows() - 1, 1)).setDataValidation(rule);
+  }
   return sh;
+}
+function _donations() { return _tab(T_DON, DON_HEADER, DC.STATUS); }
+function _luckydraw() { return _tab(T_LD, LD_HEADER, LC.STATUS); }
+
+/** running number per prefix, collision-safe (LockService). */
+function _nextId(prefix) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var ss = _ss();
+    var sh = ss.getSheetByName(T_COUNTERS);
+    if (!sh) { sh = ss.insertSheet(T_COUNTERS); sh.appendRow(['Key', 'Value']); sh.hideSheet(); }
+    var keys = sh.getRange(2, 1, Math.max(sh.getLastRow() - 1, 1), 2).getValues();
+    var row = -1, val = 0;
+    for (var i = 0; i < keys.length; i++) if (String(keys[i][0]) === prefix) { row = i + 2; val = Number(keys[i][1]) || 0; }
+    val += 1;
+    if (row === -1) sh.appendRow([prefix, val]); else sh.getRange(row, 2).setValue(val);
+    var yr = new Date().getFullYear();
+    return prefix + '-' + yr + '-' + ('0000' + val).slice(-4);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function _newRef() {
+  var yr = String(new Date().getFullYear()).slice(-2);
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var s = '';
+  for (var i = 0; i < 5; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+  return 'VIM' + yr + '-' + s;
+}
+
+function _upiUri(amount, ref) {
+  var vpa = PROPS.getProperty('UPI_VPA');
+  var pn = PROPS.getProperty('UPI_NAME') || 'Vimusement';
+  if (!vpa) throw new Error('UPI not configured (UPI_VPA)');
+  return { vpa: vpa, payeeName: pn,
+    upiUri: 'upi://pay?pa=' + vpa + '&pn=' + encodeURIComponent(pn) + '&am=' + amount + '&cu=INR&tn=' + encodeURIComponent(ref) };
+}
+
+function _validEmail(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || '')); }
+
+function _mail(to, subject, body) {
+  if (!_validEmail(to)) return false;
+  var opts = { name: PROPS.getProperty('FROM_NAME') || 'Vimusement' };
+  var rt = PROPS.getProperty('REPLY_TO'); if (rt) opts.replyTo = rt;
+  MailApp.sendEmail(to, subject, body, opts);
+  return true;
 }
 
 /* ============================================================
-   1 · PLEDGE  — create the row + the UPI link
+   STAFF ACCESS  — username + PIN, from the Staff tab
+   (or a STAFF_JSON script property if you'd rather keep it there).
+   Every counter action is done under a logged-in staff token so
+   the sheet + the _Log tab always record who and when.
+   ============================================================ */
+function _staffList() {
+  var j = PROPS.getProperty('STAFF_JSON');
+  if (j) {
+    try {
+      return JSON.parse(j).map(function (s) {
+        return { user: String(s.user || '').trim().toLowerCase(), name: s.name || s.user,
+                 role: String(s.role || 'counter').toLowerCase(), active: s.active !== false };
+      }).filter(function (s) { return s.user; });
+    } catch (e) { /* fall through to the sheet */ }
+  }
+  var sh = _tab(T_STAFF, STAFF_HEADER);
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  return sh.getRange(2, 1, last - 1, STAFF_HEADER.length).getValues().map(function (r) {
+    return { user: String(r[0] || '').trim().toLowerCase(), name: String(r[1] || r[0]),
+             role: String(r[2] || 'counter').trim().toLowerCase(),
+             active: String(r[3]).trim().toLowerCase() !== 'no' && String(r[3]).trim() !== '' };
+  }).filter(function (s) { return s.user; });
+}
+
+function _log(user, action, detail) {
+  try { _tab(T_LOG, LOG_HEADER).appendRow([new Date(), user || '', action || '', detail || '']); } catch (e) {}
+}
+
+function staffLogin(p) {
+  var user = String(p.user || '').trim().toLowerCase();
+  var k = String(p.k || '');
+  var deskKey = PROPS.getProperty('COUNTER_KEY');
+  if (!user) return { error: 'Enter your username' };
+  if (!deskKey || k !== deskKey) return { error: 'Desk key not recognised' };
+  var s = _staffList().filter(function (x) { return x.user === user; })[0];
+  if (!s || !s.active) return { error: 'That username isn’t on the staff list' };
+  var token = Utilities.getUuid().replace(/-/g, '');
+  CacheService.getScriptCache().put('sess_' + token, JSON.stringify({ user: user, name: s.name, role: s.role }), 28800); // 8h
+  _log(user, 'login', 'role ' + s.role);
+  return { ok: true, name: s.name, user: user, role: s.role, token: token };
+}
+
+function staffLogout(p) {
+  var s = _sess(p.token);
+  CacheService.getScriptCache().remove('sess_' + String(p.token || ''));
+  if (s) _log(s.user, 'logout', '');
+  return { ok: true };
+}
+
+function _sess(token) {
+  if (!token) return null;
+  var v = CacheService.getScriptCache().get('sess_' + String(token));
+  try { return v ? JSON.parse(v) : null; } catch (e) { return null; }
+}
+
+/** authorise a counter/admin action. Accepts a staff token, or the
+    ADMIN_KEY for admin actions. Returns { user, name, role }. */
+function _auth(p, needAdmin) {
+  var s = _sess(p.token);
+  if (s) {
+    if (needAdmin && s.role !== 'admin') throw new Error('admin only');
+    return s;
+  }
+  if (needAdmin && PROPS.getProperty('ADMIN_KEY') && String(p.k) === PROPS.getProperty('ADMIN_KEY')) {
+    return { user: 'admin-key', name: 'Admin (key)', role: 'admin' };
+  }
+  throw new Error('not authorised — log in again');
+}
+
+/* ============================================================
+   DONATIONS
    ============================================================ */
 function pledge(p) {
   var rupees = Math.round(Number(p.amount) || 0);
@@ -110,124 +253,65 @@ function pledge(p) {
   var max = Number(PROPS.getProperty('MAX_AMOUNT') || 200000);
   if (!(rupees >= min && rupees <= max)) return { error: 'Amount must be between ' + min + ' and ' + max };
 
-  var vpa = PROPS.getProperty('UPI_VPA');
-  var payeeName = PROPS.getProperty('UPI_NAME') || 'Vimusement';
-  if (!vpa) return { error: 'UPI not configured (UPI_VPA)' };
-
   var name = String(p.name || '').trim().slice(0, 80);
   var email = String(p.email || '').trim().slice(0, 120);
   if (!name) return { error: 'Please add your name' };
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { error: 'Please add a valid email so we can confirm your gift' };
+  if (!_validEmail(email)) return { error: 'Please add a valid email so we can confirm your gift' };
   var wall = String(p.wall) === 'no' ? 'No' : 'Yes';
 
   var ref = _newRef();
-  _donations().appendRow([
-    new Date(), ref, name, email, rupees, '', 'Pending', wall, '', ''
-  ]);
-
-  // VPA left un-encoded (the "@" must stay literal for many UPI apps);
-  // only pn / tn are percent-encoded.
-  var upiUri = 'upi://pay?pa=' + vpa
-    + '&pn=' + encodeURIComponent(payeeName)
-    + '&am=' + rupees
-    + '&cu=INR'
-    + '&tn=' + encodeURIComponent(ref);
-
-  return { ref: ref, amount: rupees, vpa: vpa, payeeName: payeeName, upiUri: upiUri };
+  var u = _upiUri(rupees, ref);
+  _donations().appendRow([new Date(), ref, name, email, rupees, 'UPI', '', '', 'Pending', wall, '', '']);
+  return { ref: ref, amount: rupees, vpa: u.vpa, payeeName: u.payeeName, upiUri: u.upiUri };
 }
 
-function _newRef() {
-  var yr = String(new Date().getFullYear()).slice(-2);
-  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no I O 0 1
-  var s = '';
-  for (var i = 0; i < 5; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
-  return 'VIM' + yr + '-' + s;   // e.g. VIM26-5ZBA9
-}
-
-/* ============================================================
-   2 · I PAID  — donor says they've sent the money
-   ============================================================ */
+/** donor / buyer says "I've paid" — mark every row with that reference "Paid?".
+    Works for both the Donations and LuckyDraw tabs. */
 function iPaid(p) {
   var ref = String(p.ref || '').trim().toUpperCase();
   if (!ref) return { error: 'missing reference' };
-  var sh = _donations();
+  var utr = String(p.utr || '').trim().slice(0, 40);
+  var hit = _markPaid(_donations(), DC.REF, DC.STATUS, DC.UTR, ref, utr);
+  hit = _markPaid(_luckydraw(), LC.REF, LC.STATUS, null, ref, null) || hit;
+  return hit ? { ok: true } : { error: 'reference not found' };
+}
+function _markPaid(sh, refCol, statusCol, utrCol, ref, utr) {
   var last = sh.getLastRow();
-  if (last < 2) return { error: 'not found' };
-  var refs = sh.getRange(2, COL.REF, last - 1, 1).getValues();
+  if (last < 2) return false;
+  var refs = sh.getRange(2, refCol, last - 1, 1).getValues();
+  var hit = false;
   for (var i = 0; i < refs.length; i++) {
     if (String(refs[i][0]).toUpperCase() === ref) {
-      var row = i + 2;
-      var status = String(sh.getRange(row, COL.STATUS).getValue());
-      if (status === 'Confirmed') return { ok: true, already: true };
-      sh.getRange(row, COL.STATUS).setValue('Paid?');
-      var utr = String(p.utr || '').trim().slice(0, 40);
-      if (utr) sh.getRange(row, COL.UTR).setValue(utr);
-      return { ok: true };
+      var row = i + 2, st = String(sh.getRange(row, statusCol).getValue());
+      if (st !== 'Confirmed' && st !== 'Cancelled') sh.getRange(row, statusCol).setValue('Paid?');
+      if (utrCol && utr) sh.getRange(row, utrCol).setValue(utr);
+      hit = true;
     }
   }
-  return { error: 'reference not found' };
+  return hit;
 }
 
-/* ============================================================
-   3 · CONFIRM + NOTIFY
-   Runs from: the on-edit trigger, the custom menu, and houseKeeping.
-   Idempotent — only touches rows that are Confirmed with no "Confirmed at".
-   ============================================================ */
-function onDonationEdit(e) {
-  try {
-    if (!e || !e.range) return;
-    if (e.range.getSheet().getName() !== DONATIONS_TAB) return;
-    if (e.range.getColumn() !== COL.STATUS) return;
-    processConfirmations();
-  } catch (err) { /* never block the edit */ }
-}
-
-function processConfirmations() {
-  var sh = _donations();
-  var last = sh.getLastRow();
-  if (last < 2) return 0;
-  var data = sh.getRange(2, 1, last - 1, DON_HEADER.length).getValues();
-  var sent = 0;
-  for (var i = 0; i < data.length; i++) {
-    var r = data[i];
-    if (String(r[COL.STATUS - 1]).trim() === 'Confirmed' && !r[COL.CONFIRMED - 1]) {
-      var row = i + 2;
-      sh.getRange(row, COL.CONFIRMED).setValue(new Date());
-      _notifyDonor({
-        name: r[COL.NAME - 1], email: r[COL.EMAIL - 1],
-        amount: r[COL.AMOUNT - 1], ref: r[COL.REF - 1]
-      });
-      sent++;
-    }
+/** counter: cash donation — recorded as Confirmed straight away */
+function donateCash(p) {
+  var st = _auth(p);
+  var rupees = Math.round(Number(p.amount) || 0);
+  if (!(rupees >= 1 && rupees <= 500000)) return { error: 'amount 1–500000' };
+  var name = String(p.name || 'Counter donor').trim().slice(0, 80);
+  var email = String(p.email || '').trim().slice(0, 120);
+  var wall = String(p.wall) === 'no' ? 'No' : 'Yes';
+  var ref = _newRef();
+  var now = new Date();
+  _donations().appendRow([now, ref, name, email, rupees, 'Cash', st.user, '', 'Confirmed', wall, now, '']);
+  _log(st.user, 'cash donation', '₹' + rupees + ' ' + ref);
+  if (_validEmail(email)) {
+    _mail(email, 'Your gift to Vimusement is confirmed 💛',
+      'Dear ' + name.split(' ')[0] + ',\n\nWe\'ve received your gift of ₹' + rupees.toLocaleString('en-IN') +
+      ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
+      (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
   }
-  return sent;
+  return { ok: true, ref: ref, amount: rupees };
 }
 
-function _notifyDonor(d) {
-  if (!d.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(d.email))) return;
-  var fromName = PROPS.getProperty('FROM_NAME') || 'Vimusement';
-  var replyTo = PROPS.getProperty('REPLY_TO') || '';
-  var first = String(d.name || 'Friend').split(' ')[0];
-  var amt = '₹' + Number(d.amount || 0).toLocaleString('en-IN');
-  var subject = 'Your gift to Vimusement is confirmed 💛';
-  var body =
-    'Dear ' + first + ',\n\n' +
-    'We\'ve received and confirmed your gift of ' + amt + ' to Vimusement.\n' +
-    'Reference: ' + d.ref + '\n\n' +
-    'Every rupee, after event costs, goes to scholarships, our medical-emergency fund, ' +
-    'and help for neighbours in need — and a full account is published after the event.\n\n' +
-    'Thank you for standing with the cause.\n\n' +
-    '— ' + fromName + ' committee';
-  var opts = { name: fromName };
-  if (replyTo) opts.replyTo = replyTo;
-  MailApp.sendEmail(d.email, subject, body, opts);
-}
-
-/* ============================================================
-   4 · PUBLIC READ ENDPOINTS
-   ============================================================ */
-
-/** Supporters wall — NAMES ONLY, confirmed gifts only, never amounts. */
 function getDonors() {
   var sh = _donations();
   var last = sh.getLastRow();
@@ -236,9 +320,8 @@ function getDonors() {
   var names = [];
   for (var i = 0; i < rows.length; i++) {
     var r = rows[i];
-    // must be Confirmed AND an explicit "Yes" on the wall — a blank never shows a name
-    if (String(r[COL.STATUS - 1]).trim() === 'Confirmed' && String(r[COL.WALL - 1]).trim().toLowerCase() === 'yes') {
-      var n = String(r[COL.NAME - 1] || '').trim();
+    if (String(r[DC.STATUS - 1]).trim() === 'Confirmed' && String(r[DC.WALL - 1]).trim().toLowerCase() === 'yes') {
+      var n = String(r[DC.NAME - 1] || '').trim();
       if (n) names.push(n);
     }
   }
@@ -247,52 +330,334 @@ function getDonors() {
   return { donors: names.slice(0, limit), count: names.length };
 }
 
-/** Aggregate total — only surfaced on the site if donation.showTotal is true. */
 function getStats() {
   var sh = _donations();
   var last = sh.getLastRow();
   if (last < 2) return { total: 0, count: 0 };
-  var rows = sh.getRange(2, COL.AMOUNT, last - 1, COL.STATUS - COL.AMOUNT + 1).getValues();
+  var rows = sh.getRange(2, 1, last - 1, DON_HEADER.length).getValues();
   var total = 0, count = 0;
   for (var i = 0; i < rows.length; i++) {
-    if (String(rows[i][rows[i].length - 1]).trim() === 'Confirmed') { total += Number(rows[i][0]) || 0; count++; }
+    if (String(rows[i][DC.STATUS - 1]).trim() === 'Confirmed') { total += Number(rows[i][DC.AMOUNT - 1]) || 0; count++; }
   }
   return { total: total, count: count };
 }
 
 /* ============================================================
-   HOUSEKEEPING  (time trigger, every 15 min)
+   LUCKY DRAW  — one row per ticket
+   ============================================================ */
+function _ldPrice() { return Number(PROPS.getProperty('LD_PRICE') || 50); }
+
+function drawInfo() {
+  return { price: _ldPrice(), maxOnline: Number(PROPS.getProperty('LD_MAX') || 25) };
+}
+
+/** online: create N Pending ticket rows sharing one Reference, return the UPI link */
+function drawPledge(p) {
+  var qty = Math.round(Number(p.qty) || 0);
+  var maxQ = Number(PROPS.getProperty('LD_MAX') || 25);
+  if (!(qty >= 1 && qty <= maxQ)) return { error: 'Choose between 1 and ' + maxQ + ' tickets' };
+  var name = String(p.name || '').trim().slice(0, 80);
+  var email = String(p.email || '').trim().slice(0, 120);
+  var phone = String(p.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
+  if (!name) return { error: 'Please add your name' };
+  if (!_validEmail(email)) return { error: 'Please add a valid email — your tickets are sent there' };
+  if (phone.replace(/\D/g, '').length < 10) return { error: 'Please add a valid phone number' };
+
+  var price = _ldPrice();
+  var amount = qty * price;
+  var ref = _newRef();
+  var u = _upiUri(amount, ref);
+  var sh = _luckydraw();
+  var now = new Date();
+  var rows = [];
+  for (var i = 0; i < qty; i++) rows.push([now, '', ref, name, email, phone, price, 'UPI', '', 'Pending', '', '', '']);
+  sh.getRange(sh.getLastRow() + 1, 1, qty, LD_HEADER.length).setValues(rows);
+  return { ref: ref, qty: qty, amount: amount, vpa: u.vpa, payeeName: u.payeeName, upiUri: u.upiUri };
+}
+
+/** counter: cash sale — issue the tickets immediately */
+function drawIssueCash(p) {
+  var st = _auth(p);
+  var qty = Math.round(Number(p.qty) || 0);
+  if (!(qty >= 1 && qty <= 100)) return { error: 'qty 1–100' };
+  var name = String(p.name || '').trim().slice(0, 80);
+  var email = String(p.email || '').trim().slice(0, 120);
+  var phone = String(p.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
+  if (!name) return { error: 'Enter the buyer name' };
+  if (phone.replace(/\D/g, '').length < 10) return { error: 'Enter the buyer phone number' };
+  var price = _ldPrice();
+
+  var sh = _luckydraw();
+  var now = new Date();
+  var ref = _newRef();
+  var ids = [], rows = [];
+  for (var i = 0; i < qty; i++) {
+    var id = _nextId('LD');
+    ids.push(id);
+    rows.push([now, id, ref, name, email, phone, price, 'Cash', st.user, 'Confirmed', now, '', '']);
+  }
+  sh.getRange(sh.getLastRow() + 1, 1, qty, LD_HEADER.length).setValues(rows);
+  _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
+
+  if (_validEmail(email)) _mailTickets(email, name, ids);
+  return { ref: ref, qty: qty, amount: qty * price, ids: ids };
+}
+
+function _mailTickets(email, name, ids) {
+  if (!_validEmail(email)) return;
+  var fromName = PROPS.getProperty('FROM_NAME') || 'Vimusement';
+  var replyTo = PROPS.getProperty('REPLY_TO') || '';
+  var plural = ids.length > 1;
+  var first = String(name || 'Friend').split(' ')[0];
+
+  var chips = ids.map(function (id) {
+    return '<span style="display:inline-block;margin:4px;padding:8px 14px;border:1px solid #d8c7a6;' +
+      'border-radius:8px;background:#fff;font-family:Courier New,monospace;font-size:16px;' +
+      'font-weight:bold;color:#201b2b">' + _esc(id) + '</span>';
+  }).join('');
+
+  var html =
+    '<div style="font-family:Helvetica,Arial,sans-serif;color:#201b2b;max-width:520px;margin:0 auto">' +
+      '<p style="letter-spacing:2px;color:#5a43c9;font-weight:bold;font-size:13px;margin:0 0 4px">VIMUSEMENT ' +
+        new Date().getFullYear() + ' &mdash; LUCKY DRAW</p>' +
+      '<h2 style="margin:0 0 12px;font-size:22px">You\'re in the hat, ' + _esc(first) + '.</h2>' +
+      '<p style="color:#4c4557;line-height:1.55">Here ' + (plural ? 'are your ticket numbers' : 'is your ticket number') +
+        ' &mdash; the ' + (plural ? 'designed tickets are' : 'designed ticket is') +
+        ' attached as a PDF you can save or print:</p>' +
+      '<p style="text-align:center;margin:16px 0">' + chips + '</p>' +
+      '<p style="color:#4c4557;line-height:1.55">If one of these is drawn <b>live on stage</b> on the night, that\'s you &mdash; ' +
+        'winners are also contacted directly. Thank you for backing the cause.</p>' +
+      '<p style="color:#877e92;font-size:13px;margin-top:20px">&mdash; ' + _esc(fromName) + ' committee</p>' +
+    '</div>';
+
+  var opts = { htmlBody: html, name: fromName };
+  if (replyTo) opts.replyTo = replyTo;
+  try {
+    var pdf = Utilities.newBlob(_ticketHtml(name, ids), 'text/html', 't.html')
+      .getAs('application/pdf').setName('Vimusement lucky-draw ticket' + (plural ? 's' : '') + '.pdf');
+    opts.attachments = [pdf];
+  } catch (err) { /* PDF renderer unavailable — send without the attachment */ }
+
+  MailApp.sendEmail(email, 'Your Vimusement lucky-draw ticket' + (plural ? 's' : ''),
+    'Your ticket number' + (plural ? 's' : '') + ': ' + ids.join(', ') + '\n(open this email in a browser to see the designed ticket)', opts);
+}
+
+/** the designed ticket(s), one per PDF page. Email-safe fonts only. */
+function _ticketHtml(name, ids) {
+  var yr = new Date().getFullYear();
+  var pages = ids.map(function (id) {
+    return '<div class="tk">' +
+      '<div class="tk__main">' +
+        '<div class="tk__brand">VIMUSEMENT ' + yr + '</div>' +
+        '<div class="tk__kind">LUCKY&nbsp;DRAW&nbsp;TICKET</div>' +
+        '<div class="tk__holder">' + _esc(name) + '</div>' +
+        '<div class="tk__note">Drawn live on stage on the night &middot; Ascension Church, Aminjikkarai</div>' +
+      '</div>' +
+      '<div class="tk__stub">' +
+        '<div class="tk__stub-label">TICKET&nbsp;N&ordm;</div>' +
+        '<div class="tk__stub-no">' + _esc(id) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  return '<!doctype html><html><head><meta charset="utf-8"><style>' +
+    '@page{size:190mm 78mm;margin:0}' +
+    'html,body{margin:0;padding:0}' +
+    '.tk{width:190mm;height:78mm;box-sizing:border-box;display:table;table-layout:fixed;' +
+      'page-break-after:always;background:#fbf6ef;color:#201b2b;' +
+      'font-family:Helvetica,Arial,sans-serif;border:3px solid #201b2b;position:relative}' +
+    '.tk__main{display:table-cell;vertical-align:top;padding:14mm 12mm;width:130mm;position:relative}' +
+    '.tk__stub{display:table-cell;vertical-align:middle;text-align:center;width:57mm;' +
+      'border-left:2px dashed #7a2c8d;background:#f3eadd;padding:6mm}' +
+    '.tk__brand{font-size:12pt;letter-spacing:4pt;color:#5a43c9;font-weight:bold}' +
+    '.tk__kind{font-size:8.5pt;letter-spacing:3pt;color:#877e92;margin-top:3mm}' +
+    '.tk__holder{font-size:24pt;font-weight:bold;margin-top:12mm;color:#201b2b}' +
+    '.tk__note{font-size:8pt;color:#877e92;position:absolute;left:12mm;bottom:12mm}' +
+    '.tk__stub-label{font-size:7.5pt;letter-spacing:3pt;color:#877e92}' +
+    '.tk__stub-no{font-size:17pt;font-weight:bold;font-family:Courier New,monospace;' +
+      'margin-top:4mm;color:#201b2b}' +
+    '</style></head><body>' + pages + '</body></html>';
+}
+
+function _esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+  });
+}
+
+/** the on-stage picker reads this: every ticket currently in the pool */
+function drawPool(p) {
+  _auth(p, true);
+  var sh = _luckydraw();
+  var last = sh.getLastRow();
+  if (last < 2) return { pool: [] };
+  var rows = sh.getRange(2, 1, last - 1, LD_HEADER.length).getValues();
+  var pool = [];
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    if (String(r[LC.STATUS - 1]).trim() === 'Confirmed' && r[LC.TID - 1] && !r[LC.WON - 1]) {
+      pool.push({ id: String(r[LC.TID - 1]), name: String(r[LC.NAME - 1] || '').split(' ')[0] });
+    }
+  }
+  return { pool: pool, count: pool.length };
+}
+
+/** the picker calls this after a winner lands */
+function drawRecordWinner(p) {
+  var st = _auth(p, true);
+  var id = String(p.id || '').trim().toUpperCase();
+  var prize = String(p.prize || 'Prize').trim().slice(0, 60);
+  if (!id) return { error: 'missing id' };
+  var sh = _luckydraw();
+  var last = sh.getLastRow();
+  var tids = sh.getRange(2, LC.TID, last - 1, 1).getValues();
+  for (var i = 0; i < tids.length; i++) {
+    if (String(tids[i][0]).toUpperCase() === id) {
+      var row = i + 2;
+      sh.getRange(row, LC.WON).setValue(prize);
+      var name = String(sh.getRange(row, LC.NAME).getValue());
+      var email = String(sh.getRange(row, LC.EMAIL).getValue());
+      if (_validEmail(email)) {
+        _mail(email, 'You won at the Vimusement lucky draw! 🎉',
+          'Dear ' + name.split(' ')[0] + ',\n\nTicket ' + id + ' has won the ' + prize +
+          ' in the Vimusement lucky draw. Congratulations!\n\nSomeone from the committee will be in touch about collecting your prize.\n\n— ' +
+          (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
+      }
+      _log(st.user, 'winner', prize + ' → ' + id + ' (' + name + ')');
+      return { ok: true, name: name.split(' ')[0], prize: prize };
+    }
+  }
+  return { error: 'ticket not found' };
+}
+
+function drawStats() {
+  var sh = _luckydraw();
+  var last = sh.getLastRow();
+  if (last < 2) return { sold: 0, amount: 0, pool: 0 };
+  var rows = sh.getRange(2, 1, last - 1, LD_HEADER.length).getValues();
+  var sold = 0, amount = 0, pool = 0;
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][LC.STATUS - 1]).trim() === 'Confirmed') {
+      sold++; amount += Number(rows[i][LC.PRICE - 1]) || 0;
+      if (rows[i][LC.TID - 1] && !rows[i][LC.WON - 1]) pool++;
+    }
+  }
+  return { sold: sold, amount: amount, pool: pool };
+}
+
+/* ============================================================
+   CONFIRM + NOTIFY  (donations AND lucky-draw UPI purchases)
+   ============================================================ */
+function onSheetEdit(e) {
+  try {
+    if (!e || !e.range) return;
+    var name = e.range.getSheet().getName();
+    if (name === T_DON && e.range.getColumn() === DC.STATUS) processConfirmations();
+    if (name === T_LD && e.range.getColumn() === LC.STATUS) processLuckyDraw();
+  } catch (err) { /* never block the edit */ }
+}
+
+function processConfirmations() {
+  var sh = _donations();
+  var last = sh.getLastRow();
+  if (last < 2) return 0;
+  var data = sh.getRange(2, 1, last - 1, DON_HEADER.length).getValues();
+  var n = 0;
+  for (var i = 0; i < data.length; i++) {
+    var r = data[i];
+    if (String(r[DC.STATUS - 1]).trim() === 'Confirmed' && !r[DC.CONFIRMED - 1]) {
+      var row = i + 2;
+      sh.getRange(row, DC.CONFIRMED).setValue(new Date());
+      var first = String(r[DC.NAME - 1] || 'Friend').split(' ')[0];
+      var amt = '₹' + Number(r[DC.AMOUNT - 1] || 0).toLocaleString('en-IN');
+      _mail(r[DC.EMAIL - 1], 'Your gift to Vimusement is confirmed 💛',
+        'Dear ' + first + ',\n\nWe\'ve received and confirmed your gift of ' + amt + ' to Vimusement.\n' +
+        'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
+        'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
+        'Thank you for standing with the cause.\n\n— ' + (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
+      n++;
+    }
+  }
+  return n;
+}
+
+/**
+ * When ANY ticket row of a Reference is set to Confirmed, confirm the whole
+ * Reference, issue Ticket IDs for its rows, and email the buyer once.
+ */
+function processLuckyDraw() {
+  var sh = _luckydraw();
+  var last = sh.getLastRow();
+  if (last < 2) return 0;
+  var data = sh.getRange(2, 1, last - 1, LD_HEADER.length).getValues();
+
+  // references that have at least one Confirmed row
+  var refsToFinish = {};
+  for (var i = 0; i < data.length; i++) {
+    if (String(data[i][LC.STATUS - 1]).trim() === 'Confirmed') refsToFinish[data[i][LC.REF - 1]] = true;
+  }
+
+  var issued = 0;
+  Object.keys(refsToFinish).forEach(function (ref) {
+    var rowsForRef = [], anyPending = false, email = '', name = '';
+    for (var j = 0; j < data.length; j++) {
+      if (String(data[j][LC.REF - 1]) !== String(ref)) continue;
+      rowsForRef.push(j + 2);
+      email = data[j][LC.EMAIL - 1]; name = data[j][LC.NAME - 1];
+    }
+    // 1. confirm + issue IDs for every row of this reference
+    rowsForRef.forEach(function (row) {
+      var st = String(sh.getRange(row, LC.STATUS).getValue()).trim();
+      if (st === 'Cancelled') return;
+      if (st !== 'Confirmed') sh.getRange(row, LC.STATUS).setValue('Confirmed');
+      if (!sh.getRange(row, LC.TID).getValue()) {
+        sh.getRange(row, LC.TID).setValue(_nextId('LD'));
+        sh.getRange(row, LC.CONFIRMED).setValue(new Date());
+        issued++;
+      }
+    });
+    // 2. email the buyer once (marker in the Notes cell of the first row)
+    var firstRow = rowsForRef[0];
+    var notes = String(sh.getRange(firstRow, LC.NOTES).getValue());
+    if (notes.indexOf('emailed') === -1 && _validEmail(email)) {
+      var ids = [];
+      rowsForRef.forEach(function (row) {
+        var t = sh.getRange(row, LC.TID).getValue();
+        if (t && !String(sh.getRange(row, LC.STATUS).getValue()).match(/cancelled/i)) ids.push(String(t));
+      });
+      if (ids.length) {
+        _mailTickets(email, name, ids);
+        sh.getRange(firstRow, LC.NOTES).setValue((notes ? notes + ' · ' : '') + 'emailed ' + new Date().toLocaleString());
+      }
+    }
+  });
+  return issued;
+}
+
+/* ============================================================
+   HOUSEKEEPING  (every 15 min)
    ============================================================ */
 function houseKeeping() {
   processConfirmations();
-  cleanupStalePledges();
+  processLuckyDraw();
+  cleanupStale(_donations(), DC.STATUS, DC.TS);
+  cleanupStale(_luckydraw(), LC.STATUS, LC.TS);
   if (PROPS.getProperty('ENABLE_EMAIL_RECONCILE') === 'yes') reconcileFromEmail();
 }
 
-/** Mark still-Pending rows older than 48h as Cancelled (donor never paid). */
-function cleanupStalePledges() {
-  var sh = _donations();
+function cleanupStale(sh, statusCol, tsCol) {
   var last = sh.getLastRow();
   if (last < 2) return;
   var cutoff = Date.now() - 48 * 3600 * 1000;
-  var rows = sh.getRange(2, 1, last - 1, DON_HEADER.length).getValues();
+  var rows = sh.getRange(2, 1, last - 1, Math.max(statusCol, tsCol)).getValues();
   for (var i = 0; i < rows.length; i++) {
-    if (String(rows[i][COL.STATUS - 1]).trim() === 'Pending') {
-      var ts = new Date(rows[i][COL.TS - 1]).getTime();
-      if (ts && ts < cutoff) sh.getRange(i + 2, COL.STATUS).setValue('Cancelled');
+    if (String(rows[i][statusCol - 1]).trim() === 'Pending') {
+      var ts = new Date(rows[i][tsCol - 1]).getTime();
+      if (ts && ts < cutoff) sh.getRange(i + 2, statusCol).setValue('Cancelled');
     }
   }
 }
 
-/* ============================================================
-   PHASE 2 (optional) — auto-confirm from forwarded bank alerts
-   Turn on with script property  ENABLE_EMAIL_RECONCILE = "yes".
-   Forward the parish account's UPI credit alerts to this Gmail and
-   label them (default label "bank-alerts"). This reads unread ones,
-   pulls the ₹amount, and confirms the oldest matching Pending/Paid? row.
-   Fragile — depends on the bank's email wording. Test with real alerts
-   before relying on it; the manual path always still works.
-   ============================================================ */
+/* optional phase-2 — auto-confirm donations from forwarded bank-alert emails */
 function reconcileFromEmail() {
   var label = PROPS.getProperty('RECONCILE_LABEL') || 'bank-alerts';
   var threads = GmailApp.search('label:' + label + ' is:unread newer_than:3d', 0, 30);
@@ -301,26 +666,22 @@ function reconcileFromEmail() {
   var last = sh.getLastRow();
   if (last < 2) return;
   var data = sh.getRange(2, 1, last - 1, DON_HEADER.length).getValues();
-
   threads.forEach(function (t) {
     t.getMessages().forEach(function (m) {
       if (!m.isUnread()) return;
-      var text = m.getPlainBody().replace(/[,]/g, '');
+      var text = m.getPlainBody().replace(/,/g, '');
       var mAmt = text.match(/(?:INR|Rs\.?|₹)\s*([0-9]+(?:\.[0-9]{1,2})?)/i);
       var mRef = text.match(/VIM\d{2}-?[A-Z0-9]{5}/i);
-      if (!mAmt && !mRef) return;
       var amt = mAmt ? Math.round(parseFloat(mAmt[1])) : null;
       var ref = mRef ? mRef[0].toUpperCase() : null;
-
       for (var i = 0; i < data.length; i++) {
-        var r = data[i], st = String(r[COL.STATUS - 1]).trim();
+        var st = String(data[i][DC.STATUS - 1]).trim();
         if (st !== 'Pending' && st !== 'Paid?') continue;
-        var matchRef = ref && String(r[COL.REF - 1]).toUpperCase() === ref;
-        var matchAmt = amt && Number(r[COL.AMOUNT - 1]) === amt;
-        if (matchRef || matchAmt) {
-          sh.getRange(i + 2, COL.STATUS).setValue('Confirmed');
-          sh.getRange(i + 2, COL.NOTES).setValue('auto-confirmed from bank alert ' + m.getDate());
-          data[i][COL.STATUS - 1] = 'Confirmed';
+        if ((ref && String(data[i][DC.REF - 1]).toUpperCase() === ref) ||
+            (amt && Number(data[i][DC.AMOUNT - 1]) === amt)) {
+          sh.getRange(i + 2, DC.STATUS).setValue('Confirmed');
+          sh.getRange(i + 2, DC.NOTES).setValue('auto-confirmed ' + m.getDate());
+          data[i][DC.STATUS - 1] = 'Confirmed';
           break;
         }
       }
@@ -335,28 +696,37 @@ function reconcileFromEmail() {
    ============================================================ */
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Vimusement')
-    .addItem('Confirm selected donation rows', 'confirmSelectedRows')
-    .addItem('Run confirmations + email now', 'processConfirmations')
+    .addItem('Confirm selected rows (this tab)', 'confirmSelectedRows')
+    .addItem('Run confirmations + emails now', 'runAllConfirmations')
     .addToUi();
 }
-
-/** Select any cells in the rows you've checked, then run this. */
+function runAllConfirmations() {
+  var n = processConfirmations() + processLuckyDraw();
+  SpreadsheetApp.getActive().toast('Processed ' + n + ' updates.');
+}
 function confirmSelectedRows() {
-  var sh = _donations();
-  var sel = sh.getActiveRangeList().getRanges();
+  var sh = SpreadsheetApp.getActiveSheet();
+  var name = sh.getName();
+  var statusCol = name === T_DON ? DC.STATUS : (name === T_LD ? LC.STATUS : 0);
+  if (!statusCol) { SpreadsheetApp.getActive().toast('Open the Donations or LuckyDraw tab first.'); return; }
   var rows = {};
-  sel.forEach(function (rg) {
+  sh.getActiveRangeList().getRanges().forEach(function (rg) {
     for (var r = rg.getRow(); r < rg.getRow() + rg.getNumRows(); r++) if (r >= 2) rows[r] = true;
   });
-  Object.keys(rows).forEach(function (r) { sh.getRange(Number(r), COL.STATUS).setValue('Confirmed'); });
-  var n = processConfirmations();
-  SpreadsheetApp.getActive().toast(n + ' donor(s) confirmed and emailed.');
+  Object.keys(rows).forEach(function (r) { sh.getRange(Number(r), statusCol).setValue('Confirmed'); });
+  runAllConfirmations();
 }
 
 function _selfTest() {
-  var sh = _donations();
-  Logger.log('Sheet OK: ' + sh.getName() + ' rows=' + sh.getLastRow());
-  Logger.log('UPI_VPA set: ' + !!PROPS.getProperty('UPI_VPA'));
-  Logger.log('Donors: ' + JSON.stringify(getDonors()));
-  Logger.log('Pledge test: ' + JSON.stringify(pledge({ amount: 100, name: 'Self Test', email: 'test@example.com' })));
+  Logger.log('Donations tab: rows=' + _donations().getLastRow());
+  Logger.log('LuckyDraw tab: rows=' + _luckydraw().getLastRow());
+  var stf = _tab(T_STAFF, STAFF_HEADER);
+  if (stf.getLastRow() < 2) {
+    stf.appendRow(['roonah', 'Roonah', 'admin', 'Yes', 'add a row per counter volunteer (role = counter). Active = No locks them out.']);
+    Logger.log('Staff tab seeded with admin "roonah" — add your counter volunteers as rows.');
+  }
+  _tab(T_LOG, LOG_HEADER);   // hidden audit log
+  Logger.log('Staff rows: ' + (stf.getLastRow() - 1) + ' · UPI_VPA set: ' + !!PROPS.getProperty('UPI_VPA') +
+    ' · ADMIN_KEY set: ' + !!PROPS.getProperty('ADMIN_KEY'));
+  Logger.log('drawInfo: ' + JSON.stringify(drawInfo()));
 }

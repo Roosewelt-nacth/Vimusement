@@ -1,0 +1,97 @@
+/* ============================================================
+   STAGE — the live lucky-draw picker (MC laptop → projector)
+   Dark room, huge type, one job.
+   ============================================================ */
+.stage{
+  --bg:#140a26; --bg2:#241241; --ink:#f6eefa; --dim:#b7a6d6;
+  --gold:#f2b84e; --rose:#f27e97; --teal:#3fd9c6;
+  margin:0;min-height:100dvh;background:radial-gradient(120% 80% at 50% 0%,var(--bg2),var(--bg));
+  color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;
+  overflow:hidden;
+}
+.stage *{box-sizing:border-box}
+
+/* ---- gate ---- */
+.stage__gate{min-height:100dvh;display:grid;place-items:center;padding:24px}
+.stage__gatecard{
+  width:100%;max-width:360px;padding:2rem;border-radius:20px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(14px);
+}
+.stage__gatecard h1{font-family:"Bricolage Grotesque",sans-serif;font-size:1.4rem;margin:0 0 .3rem}
+.stage__gatecard p{color:var(--dim);font-size:.85rem;margin:0 0 1.2rem}
+.stage__gatecard input{
+  width:100%;padding:.85rem 1rem;margin-bottom:.7rem;border-radius:999px;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:var(--ink);
+  font:inherit;outline:none;
+}
+.stage__gatecard input:focus{border-color:var(--gold)}
+.stage__pw{position:relative;margin-bottom:.7rem}
+.stage__pw input{margin-bottom:0;padding-right:64px}
+.stage__reveal{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  background:none;border:0;cursor:pointer;color:var(--dim);
+  font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+}
+.stage__reveal:hover{color:var(--gold)}
+.stage__btn{
+  display:block;width:100%;padding:.9rem;border:0;border-radius:999px;cursor:pointer;
+  background:var(--gold);color:#241a2e;font-weight:700;font-size:1rem;
+}
+.stage__msg{margin-top:.8rem;font-size:.85rem;color:var(--gold);min-height:1.2em;text-align:center}
+
+/* ---- app ---- */
+.stage__app{min-height:100dvh;display:flex;flex-direction:column;position:relative}
+.stage__head{
+  padding:clamp(1rem,3vw,2rem);text-align:center;
+  font-family:"IBM Plex Mono",monospace;letter-spacing:.22em;text-transform:uppercase;
+  font-size:clamp(.7rem,1.6vw,1rem);color:var(--dim);
+}
+.stage__head b{color:var(--gold);letter-spacing:.16em}
+
+.stage__stagearea{flex:1;display:grid;place-items:center;position:relative;padding:1rem}
+.stage__reel{
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
+  font-size:clamp(5rem,22vw,16rem);line-height:.9;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(100deg,var(--gold),var(--rose) 60%,var(--teal));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-align:center;
+}
+.stage__reel.is-spinning{filter:blur(2px);opacity:.9}
+.stage__caption{
+  margin-top:clamp(.5rem,2vw,1.5rem);text-align:center;
+  font-family:"IBM Plex Mono",monospace;font-size:clamp(.9rem,2.4vw,1.6rem);
+  letter-spacing:.14em;color:var(--dim);min-height:1.4em;
+}
+.stage__winner{
+  margin-top:.5rem;text-align:center;
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:700;
+  font-size:clamp(1.6rem,5vw,3.4rem);color:var(--ink);
+  animation:pop .5s cubic-bezier(.34,1.56,.44,1);
+}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+
+.stage__confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* ---- controls ---- */
+.stage__controls{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;
+  padding:clamp(1rem,3vw,2rem);
+}
+.stage__controls select,.stage__controls input{
+  padding:.7rem 1rem;border-radius:999px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);color:var(--ink);font:inherit;outline:none;
+}
+.stage__act{
+  padding:.9rem 2rem;border:0;border-radius:999px;cursor:pointer;
+  font-weight:700;font-size:1.05rem;background:var(--gold);color:#241a2e;
+}
+.stage__act--ghost{background:transparent;color:var(--ink);border:1.5px solid rgba(255,255,255,.35)}
+.stage__act:disabled{opacity:.4;cursor:not-allowed}
+.stage__count{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--dim)}
+
+@media (prefers-reduced-motion:reduce){
+  .stage__reel.is-spinning{filter:none}
+  .stage__winner{animation:none}
+}

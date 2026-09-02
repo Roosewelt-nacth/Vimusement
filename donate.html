@@ -21,6 +21,7 @@ document.documentElement.className+=" js";
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/pages/donate.css">
+<link rel="stylesheet" href="assets/css/desk.css">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -96,11 +97,14 @@ document.documentElement.className+=" js";
     </div>
   </div>
 </section>
+
+<section class="wrap wrap--narrow" data-desk hidden></section>
 </main>
 
 <footer class="footer">
   <div class="wrap">
-    <p class="footer__fine" style="margin:0;border:0;padding:0">Vimusement <span data-bind="year">2026</span> · Placeholder donation page — connect a payment provider before going live.</p>
+    <p class="footer__fine" style="margin:0;border:0;padding:0">Vimusement <span data-bind="year">2026</span></p>
+    <p class="footer__staff">For volunteers · <button type="button" class="footer__staff-btn" data-desk-toggle>Staff desk</button> · <a href="stage.html">Live draw screen</a></p>
   </div>
 </footer>
 
@@ -137,6 +141,7 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/counters.js"></script>
 <script defer src="assets/js/modules/donate.js"></script>
 <script defer src="assets/js/modules/donors.js"></script>
+<script defer src="assets/js/modules/desk.js"></script>
 <script defer src="assets/js/main.js"></script>
 </body>
 </html>

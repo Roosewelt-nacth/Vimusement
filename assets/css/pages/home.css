@@ -303,6 +303,13 @@
 :root[data-theme="dark"] .venue__map iframe,
 .venue__map iframe{color-scheme:light}          /* keep the map readable on dark pages */
 
+/* ---------- LUCKY DRAW ---------- */
+.lucky__grid{display:grid;gap:28px;margin-top:1.4rem;align-items:center}
+@media (min-width:800px){.lucky__grid{grid-template-columns:1.05fr .95fr}}
+.lucky__info .lead{margin-top:.4rem}
+.lucky__info .btn{margin-top:1.3rem}
+.lucky__prizes{margin-top:0}
+
 /* ---------- SUPPORTERS WALL ---------- */
 .supporters__hint{margin-top:1rem;color:var(--c-ink-mute);font-size:var(--fs-sm)}
 

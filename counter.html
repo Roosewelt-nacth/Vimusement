@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Counter · Vimusement</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
+<script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m)document.documentElement.setAttribute("data-theme",m);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/desk.css">
+<style>
+  body{padding-bottom:40px}
+  .counter-head{max-width:520px;margin:0 auto;padding:26px 16px 0;text-align:center}
+  .counter-head h1{font-size:1.3rem;color:var(--c-ink)}
+  .counter-head p{color:var(--c-ink-mute);font-size:var(--fs-sm);font-family:var(--font-mono)}
+  [data-desk]{padding:0 16px}
+  .desk{margin-top:1rem}
+  .desk__x{display:none}
+</style>
+</head>
+<body>
+<div class="counter-head">
+  <h1>Vimusement counter</h1>
+  <p>Issue lucky-draw tickets &amp; record cash donations</p>
+</div>
+<section data-desk data-desk-standalone></section>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/desk.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

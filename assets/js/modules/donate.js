@@ -19,6 +19,7 @@ Vim.register("donate", function (ctx) {
   if (!wrap) return;
 
   var d = ctx.year.donation || {};
+  var api = ctx.year.api || d.api || "";
   var presets = d.presets || [250, 500, 1000, 2500, 5000, 10000];
   var minAmt = Number(d.minAmount || 10);
   var amount = Number(d.default || presets[0]);
@@ -108,7 +109,7 @@ Vim.register("donate", function (ctx) {
     paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; });
     panel.querySelector("[data-ipaid-done]").addEventListener("click", function () {
       var utr = (panel.querySelector("[data-utr]").value || "").trim();
-      fetch(d.api + "?action=ipaid&ref=" + encodeURIComponent(res.ref) + (utr ? "&utr=" + encodeURIComponent(utr) : ""), { cache: "no-store" })
+      fetch(api + "?action=ipaid&ref=" + encodeURIComponent(res.ref) + (utr ? "&utr=" + encodeURIComponent(utr) : ""), { cache: "no-store" })
         .then(function (r) { return r.json(); })
         .catch(function () { return {}; })
         .then(function () {
@@ -123,7 +124,7 @@ Vim.register("donate", function (ctx) {
   }
 
   function begin() {
-    if (!d.api) { say("Online giving isn’t switched on yet — please check back soon.", "warn"); return; }
+    if (!api) { say("Online giving isn’t switched on yet — please check back soon.", "warn"); return; }
     var nm = ((nameEl && nameEl.value) || "").trim();
     var em = ((emailEl && emailEl.value) || "").trim();
     if (!(amount >= minAmt)) { say("Please choose at least " + fmt(minAmt) + ".", "warn"); return; }
@@ -133,7 +134,7 @@ Vim.register("donate", function (ctx) {
     go.disabled = true;
     say("Setting up your payment…");
     var wall = wallEl && !wallEl.checked ? "no" : "yes";
-    fetch(d.api + "?action=pledge&amount=" + amount +
+    fetch(api + "?action=pledge&amount=" + amount +
           "&name=" + encodeURIComponent(nm) + "&email=" + encodeURIComponent(em) + "&wall=" + wall, { cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(function (res) {
