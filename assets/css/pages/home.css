@@ -62,7 +62,42 @@
 .pillar__icon{width:34px;height:34px;color:var(--c-gold)}
 .pillar h3{color:var(--c-on-dark);margin:.6rem 0 .3rem;font-size:1.08rem}
 .pillar p{color:var(--c-on-dark-soft);font-size:var(--fs-sm)}
-.cause__note{margin-top:1.6rem;font-family:var(--font-mono);font-size:.8rem;color:var(--c-on-dark-soft);opacity:.7}
+.pillar__stat{
+  margin-top:.7rem;padding-top:.6rem;border-top:1px solid rgba(255,255,255,.14);
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.03em;
+  color:var(--c-gold);font-weight:600;
+}
+/* a standing commitment, not a one-line footnote — gets its own
+   highlighted band, not a muted caption under the pillar cards */
+.cause-activities{
+  margin-top:2rem;padding:1.4rem 1.6rem;border-radius:var(--r-lg);
+  border-left:3px solid var(--c-gold);
+  background:color-mix(in srgb, var(--c-gold) 10%, transparent);
+}
+.cause-activities__eyebrow{
+  font-family:var(--font-mono);font-size:var(--fs-xs);letter-spacing:var(--track-label);
+  text-transform:uppercase;color:var(--c-gold);font-weight:600;
+}
+.cause-activities__note{
+  margin-top:.5rem;font-size:var(--fs-base);color:var(--c-on-dark);line-height:1.5;max-width:64ch;
+}
+
+/* the headline figure — this is the number that makes the case, so it
+   gets the same scale and treatment as the hero year, not a caption */
+.impact-callout{text-align:center;max-width:640px;margin:0 auto 2.6rem;padding-bottom:2.2rem;border-bottom:1px solid rgba(255,255,255,.14)}
+.impact-callout__eyebrow{
+  font-family:var(--font-mono);font-size:var(--fs-xs);letter-spacing:var(--track-label);
+  text-transform:uppercase;color:var(--c-on-dark-soft);opacity:.75;
+}
+.impact-callout__figure{
+  font-family:var(--font-display);font-weight:var(--weight-bold);
+  font-size:clamp(3rem,6vw,4.6rem);line-height:1;margin:.5rem 0 .9rem;
+  color:var(--c-gold);font-variant-numeric:tabular-nums;
+}
+.impact-callout__note{
+  font-size:var(--fs-md);color:var(--c-on-dark-soft);
+  max-width:52ch;margin-inline:auto;line-height:1.5;
+}
 
 /* ---------- HOME — why band + explore cards ---------- */
 .home-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}

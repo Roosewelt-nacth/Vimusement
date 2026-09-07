@@ -77,7 +77,7 @@
   --lh-tight: 1.08;
   --lh-snug:  1.2;
   --lh-body:  1.47;              /* editorial leading — do not tighten */
-  --lh-dense-link: 2.2;          /* footer link stacks breathe */
+  --lh-dense-link: 1.9;          /* footer link stacks breathe */
 
   --track-display: -0.01em;      /* serif carries its own rhythm — don't crowd it */
   --track-tight:   -0.015em;

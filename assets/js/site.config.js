@@ -9,14 +9,19 @@ window.VIM_SITE = {
 
   /* The whole site's navigation — one page per purpose.
      `icon` keys are defined in assets/js/modules/chrome.js.
-     `cta: true` renders as the highlighted Donate pill on the right. */
+     `cta: true` renders as the highlighted Donate pill on the right.
+     `primary: true` keeps that link directly on the dock on narrow
+     phones; the rest fold into the dock's "More" menu there (there's
+     room for everything on tablet/desktop regardless). Chosen to
+     match the 3 cards the home page itself leads with under "Find
+     your way in" (Programme, Lucky Draw, Get Involved), plus Home. */
   pages: [
-    { label: "Home",         file: "index.html",     icon: "home" },
-    { label: "Programme",     file: "programme.html", icon: "screen" },
+    { label: "Home",         file: "index.html",     icon: "home",   primary: true },
+    { label: "Programme",     file: "programme.html", icon: "screen", primary: true },
     { label: "The Cause",     file: "cause.html",     icon: "heart" },
-    { label: "Lucky Draw",    file: "draw.html",      icon: "ticket" },
+    { label: "Lucky Draw",    file: "draw.html",      icon: "ticket", primary: true },
     { label: "Gallery",       file: "gallery.html",   icon: "photos" },
-    { label: "Get Involved",  file: "involve.html",   icon: "people" },
+    { label: "Get Involved",  file: "involve.html",   icon: "people", primary: true },
     { label: "Donate",        file: "donate.html",    icon: "gift", cta: true }
   ],
 

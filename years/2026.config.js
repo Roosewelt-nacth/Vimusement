@@ -138,21 +138,29 @@ window.VIM_YEARS["2026"] = {
 
   causes: [
     { icon: "cap",   title: "Education & Scholarships",
-      text: "School fees, books and exam costs for students who’d otherwise drop out." },
+      text: "School fees, books and exam costs for students who’d otherwise drop out, including children from single-parent and hardworking families.",
+      stat: "₹34,300 given last year" },
     { icon: "heart", title: "Medical Emergency Fund",
-      text: "Fast, no-questions help when a family is hit with a sudden hospital bill." },
+      text: "Fast, no-questions help when a family is hit with a sudden hospital bill.",
+      stat: "₹10,000 given last year" },
     { icon: "hands", title: "Hardship Support",
       text: "Rent, groceries and essentials for neighbours going through a hard stretch." }
   ],
 
-  causeNote: "// Last year’s figures and disbursements will be published on the Impact page.",
+  causeImpactTotal: "₹44,300",
+  causeNote: "That's ₹34,300 towards school and exam costs, and ₹10,000 towards a heart operation. No names, no fuss: just money that reached people who needed it, put to use last year.",
+
+  /* This is a standing yearly commitment, not a one-off — keep the
+     wording in the present tense / "every year", not "last year". */
+  causeActivitiesEyebrow: "Every year, beyond the fundraiser",
+  causeActivities: "Food donation drives, medical camps, and visits to local orphanages are run every year — not just funded by Vimusement, but organised by the same group, year after year.",
 
   /* Home-page impact strip (the #why section). Numbers count up when
-     scrolled into view. Add last year's total once you have it:
-       { n: 420000, prefix: "₹", label: "raised last year for the cause" }
-     Set `text` instead of `n` for a non-numeric stat. `hide: true` skips one. */
+     scrolled into view. Set `text` instead of `n` for a non-numeric
+     stat. `hide: true` skips one. */
   impact: {
     stats: [
+      { n: 44300, prefix: "₹", label: "given to education and medical support last year" },
       { n: 100, suffix: "%", label: "of what’s raised, after event costs, goes to the cause" },
       { n: 3,               label: "funds it feeds: scholarships, medical emergencies, hardship" },
       { text: "₹0",         label: "in payment fees. You pay the parish directly by UPI" }

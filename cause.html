@@ -37,8 +37,16 @@ document.documentElement.className+=" js";
 
 <section class="subsection tile--c" style="border:0">
   <div class="wrap">
+    <div class="impact-callout" data-animate="fade-up">
+      <p class="impact-callout__eyebrow">Last year’s impact</p>
+      <p class="impact-callout__figure" data-bind="causeImpactTotal">₹44,300</p>
+      <p class="impact-callout__note" data-bind="causeNote">Impact figures will be published after the event.</p>
+    </div>
     <div class="grid grid--auto pillars" data-list="causes"></div>
-    <p class="cause__note" data-animate="fade" data-bind="causeNote">// Impact figures will be published after the event.</p>
+    <div class="cause-activities" data-animate="fade-up">
+      <p class="cause-activities__eyebrow" data-bind="causeActivitiesEyebrow">Every year, beyond the fundraiser</p>
+      <p class="cause-activities__note" data-bind="causeActivities"></p>
+    </div>
   </div>
 </section>
 

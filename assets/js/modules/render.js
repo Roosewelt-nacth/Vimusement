@@ -34,7 +34,10 @@
       venue: Y.venue && Y.venue.name,
       tagline: S.tagline,
       footerNote: S.footerNote,
-      causeNote: Y.causeNote
+      causeNote: Y.causeNote,
+      causeImpactTotal: Y.causeImpactTotal,
+      causeActivities: Y.causeActivities,
+      causeActivitiesEyebrow: Y.causeActivitiesEyebrow
     };
     ctx.$$("[data-bind]").forEach(function (el) {
       var k = el.getAttribute("data-bind");
@@ -173,6 +176,7 @@
            +   '<div class="pillar__icon">' + (ICONS[item.icon] || "") + "</div>"
            +   "<h3>" + esc(item.title) + "</h3>"
            +   "<p>" + esc(item.text) + "</p>"
+           +   (item.stat ? '<p class="pillar__stat">' + esc(item.stat) + "</p>" : "")
            + "</div>";
     }
 

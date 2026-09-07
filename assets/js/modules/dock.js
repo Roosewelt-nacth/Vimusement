@@ -52,15 +52,44 @@ Vim.register("dock", function (ctx) {
     var el = document.getElementById(a.getAttribute("href").slice(1));
     if (el) map[el.id] = a;
   });
-  if (!Object.keys(map).length || !("IntersectionObserver" in window)) return;
+  if (Object.keys(map).length && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        links.forEach(function (a) { a.removeAttribute("aria-current"); });
+        if (map[en.target.id]) map[en.target.id].setAttribute("aria-current", "true");
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
 
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) {
-      if (!en.isIntersecting) return;
-      links.forEach(function (a) { a.removeAttribute("aria-current"); });
-      if (map[en.target.id]) map[en.target.id].setAttribute("aria-current", "true");
+    Object.keys(map).forEach(function (id) { io.observe(document.getElementById(id)); });
+  }
+
+  /* ---- "More" popover — only shown at all on narrow phones (CSS),
+     where the secondary nav links don't fit the dock directly ---- */
+  var moreBtn = ctx.$("[data-dock-more]", dock);
+  var moreMenu = ctx.$("[data-dock-more-menu]", dock);
+  if (moreBtn && moreMenu) {
+    function closeMore() {
+      moreMenu.hidden = true;
+      moreBtn.setAttribute("aria-expanded", "false");
+    }
+    function openMore() {
+      moreMenu.hidden = false;
+      moreBtn.setAttribute("aria-expanded", "true");
+      var first = moreMenu.querySelector(".dock__more-link");
+      if (first) first.focus();
+    }
+    moreBtn.addEventListener("click", function () {
+      if (moreMenu.hidden) openMore(); else closeMore();
     });
-  }, { rootMargin: "-40% 0px -55% 0px" });
-
-  Object.keys(map).forEach(function (id) { io.observe(document.getElementById(id)); });
+    document.addEventListener("click", function (e) {
+      if (!moreMenu.hidden && !moreMenu.contains(e.target) && e.target !== moreBtn) closeMore();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !moreMenu.hidden) { closeMore(); moreBtn.focus(); }
+    });
+    moreMenu.addEventListener("click", function (e) {
+      if (e.target.closest(".dock__more-link")) closeMore();
+    });
+  }
 });

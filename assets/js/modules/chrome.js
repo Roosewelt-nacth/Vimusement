@@ -17,7 +17,8 @@
     ticket: '<path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1-2 2H6a2 2 0 0 1-2-2 2 2 0 0 0 0-4Z"/><path d="M14 6v12" stroke-dasharray="1.5 2"/>',
     photos: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 15 5-4 4 3 3-2 6 4"/><circle cx="9" cy="9" r="1.4"/>',
     people: '<path d="M16 11a4 4 0 1 0-8 0M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"/>',
-    gift:   '<path d="M20 8H4v4h16V8ZM12 8v13M4 12v9h16v-9M12 8S9.5 4 7.5 4 5 6.5 7 8m5 0s2.5-4 4.5-4S19 6.5 17 8"/>'
+    gift:   '<path d="M20 8H4v4h16V8ZM12 8v13M4 12v9h16v-9M12 8S9.5 4 7.5 4 5 6.5 7 8m5 0s2.5-4 4.5-4S19 6.5 17 8"/>',
+    more:   '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>'
   };
 
   function svg(name) {
@@ -38,10 +39,19 @@
     /* ---------- dock ---------- */
     var dock = ctx.$("[data-dock]");
     if (dock && pages.length) {
-      var links = pages.filter(function (p) { return !p.cta; }).map(function (p) {
+      var navPages = pages.filter(function (p) { return !p.cta; });
+      var secondary = navPages.filter(function (p) { return !p.primary; });
+
+      function linkHTML(p, cls) {
         var active = p.file === here ? ' aria-current="page"' : '';
-        return '<a class="dock__link" href="' + p.file + '"' + active + '>' +
+        return '<a class="dock__link' + (cls ? " " + cls : "") + '" href="' + p.file + '"' + active + '>' +
           svg(p.icon) + '<span class="dock__label">' + p.label + '</span></a>';
+      }
+      /* every link renders in the row — tablet/desktop show them all;
+         data-dock-secondary is what the narrow-phone CSS hides, folding
+         those into the "More" menu below instead (see components.css) */
+      var links = navPages.map(function (p) {
+        return p.primary ? linkHTML(p) : linkHTML(p).replace('class="dock__link', 'data-dock-secondary class="dock__link');
       }).join("");
 
       var cta = pages.filter(function (p) { return p.cta; })[0];
@@ -52,6 +62,24 @@
           '<span class="dock__label">' + cta.label + '</span></a>'
       ) : '';
 
+      /* the "More" button + its popover only ever matter on narrow
+         phones (CSS hides the button otherwise) — harmless to always
+         render, and it means no JS branching on viewport width here */
+      var moreHTML = secondary.length ? (
+        '<div class="dock__more-wrap">' +
+          '<button class="dock__more" type="button" data-dock-more aria-haspopup="true" aria-expanded="false" aria-label="More pages">' +
+            svg("more") +
+          '</button>' +
+          '<div class="dock__more-menu" data-dock-more-menu role="menu" hidden>' +
+            secondary.map(function (p) {
+              var active = p.file === here ? ' aria-current="page"' : '';
+              return '<a class="dock__more-link" role="menuitem" href="' + p.file + '"' + active + '>' +
+                svg(p.icon) + '<span>' + p.label + '</span></a>';
+            }).join("") +
+          '</div>' +
+        '</div>'
+      ) : '';
+
       dock.innerHTML =
         '<div class="dock__inner">' +
           '<a href="index.html" class="dock__brand" aria-label="Vimusement home">' +
@@ -59,6 +87,7 @@
             '<span>Vimu<b>sement</b></span>' +
           '</a>' +
           '<div class="dock__links">' + links + '</div>' +
+          moreHTML +
           ctaHTML +
           '<button class="theme-toggle" data-theme-toggle aria-label="Switch colour theme">' +
             '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 3.6 3.6M20.4 20.4 19 19M19 5l1.4-1.4M3.6 20.4 5 19"/></svg>' +
