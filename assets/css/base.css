@@ -53,7 +53,8 @@ h1,h2,h3,h4{
 }
 h1{letter-spacing:var(--track-display)}
 h2{font-size:var(--fs-xl)}
-h3{font-size:var(--fs-lg);line-height:var(--lh-snug)}
+h3{font-size:var(--fs-lg);line-height:var(--lh-snug);font-weight:var(--weight-semi)}
+h4{font-weight:var(--weight-semi)}
 p{max-width:var(--measure)}
 strong{color:var(--c-ink);font-weight:var(--weight-semi)}
 
@@ -96,8 +97,9 @@ strong{color:var(--c-ink);font-weight:var(--weight-semi)}
 }
 .eyebrow::before{content:"";width:22px;height:2px;background:var(--c-gold);opacity:1;flex:none}
 .lead{
+  font-family:var(--font-display-italic);font-style:italic;
   font-size:var(--fs-md);font-weight:var(--weight-reg);
-  color:currentColor;opacity:.82;max-width:52ch;line-height:1.35;
+  color:currentColor;opacity:.82;max-width:52ch;line-height:1.4;letter-spacing:0;
 }
 .section__title{font-size:var(--fs-xl);margin-block:.55rem .35rem}
 

@@ -14,8 +14,21 @@
 }
 .vm-svg{display:block;width:100%;height:auto}
 .vm-svg .vm-note{
-  font-family:"IBM Plex Mono",monospace;font-size:15px;fill:var(--vm-note);letter-spacing:.04em;
+  font-family:var(--font-mono);font-size:15px;fill:var(--vm-note);letter-spacing:.04em;
 }
+.vm-svg .vm-note--sm{font-size:12px}
+
+/* the 29 numbered stalls — smaller, quieter than the named areas */
+.vm-zone--stall > text{font-size:12px;font-weight:600}
+.vm-zone--stall > rect{fill:color-mix(in srgb,var(--vm-zone) 55%,var(--c-surface));stroke-width:1}
+.vm-zone--stall.is-active > text{fill:#fff}
+
+/* the AV room is upstairs — dashed to say "not on this floor" */
+.vm-zone--up > rect{stroke-dasharray:4 3}
+/* Center of Attraction reads as the anchor */
+.vm-zone--hero > rect{fill:color-mix(in srgb,var(--vm-active) 8%,var(--vm-zone))}
+.vm-zone--hero > text{font-size:16px}
+.vm-zone--tall > text{font-size:13px}
 
 /* zones */
 .vm-zone{cursor:pointer}
@@ -24,7 +37,7 @@
   transition:fill .2s,stroke .2s,transform .2s;transform-origin:center;
 }
 .vm-zone > text{
-  font-family:"Hanken Grotesk",system-ui,sans-serif;font-weight:600;font-size:15px;
+  font-family:var(--font-body);font-weight:600;font-size:15px;
   fill:var(--vm-zone-ink);pointer-events:none;
 }
 .vm-zone:hover > rect,
@@ -43,13 +56,13 @@
 .vm-panel__title{margin:0 0 .3rem;font-size:1.3rem}
 .vm-panel__blurb{margin:0 0 1rem;color:var(--c-ink-mute);font-size:.95rem;line-height:1.5}
 .vm-panel__h{
-  margin:1rem 0 .4rem;font-family:"IBM Plex Mono",monospace;font-size:.7rem;
+  margin:1rem 0 .4rem;font-family:var(--font-mono);font-size:.7rem;
   letter-spacing:.16em;text-transform:uppercase;color:var(--c-ink-mute);
 }
 .vm-panel__list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.4rem}
 .vm-panel__list li{font-size:.95rem;line-height:1.4}
 .vm-panel__time{
-  font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--c-primary-ink);margin-right:.3rem;
+  font-family:var(--font-mono);font-weight:600;color:var(--c-primary-ink);margin-right:.3rem;
 }
 .vm-panel__tag{
   display:inline-block;margin-left:.3rem;padding:.05rem .4rem;border-radius:6px;
@@ -72,7 +85,7 @@
 /* full screening line-up */
 .venuemap__schedule{margin-top:2rem}
 .venuemap__schedule-title{
-  margin:0 0 .8rem;font-family:"IBM Plex Mono",monospace;font-size:.72rem;
+  margin:0 0 .8rem;font-family:var(--font-mono);font-size:.72rem;
   letter-spacing:.16em;text-transform:uppercase;color:var(--c-ink-mute);
 }
 .venuemap__screenings{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.4rem}
@@ -86,7 +99,7 @@
   .vm-scr{grid-template-columns:4.5rem 1fr;grid-auto-rows:min-content}
   .vm-scr__venue{grid-column:2}
 }
-.vm-scr__time{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.85rem;color:var(--c-primary-ink)}
+.vm-scr__time{font-family:var(--font-mono);font-weight:600;font-size:.85rem;color:var(--c-primary-ink)}
 .vm-scr__title{font-size:.95rem;line-height:1.35}
 .vm-scr__venue{
   padding:.3rem .7rem;border-radius:999px;cursor:pointer;font:inherit;font-size:.75rem;
@@ -98,7 +111,7 @@
 /* games by area */
 .venuemap__games{margin-top:2rem}
 .venuemap__games-title{
-  margin:0 0 .9rem;font-family:"IBM Plex Mono",monospace;font-size:.72rem;
+  margin:0 0 .9rem;font-family:var(--font-mono);font-size:.72rem;
   letter-spacing:.16em;text-transform:uppercase;color:var(--c-ink-mute);
 }
 .vm-games-group{margin-bottom:1rem}

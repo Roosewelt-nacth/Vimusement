@@ -261,40 +261,51 @@ window.VIM_YEARS["2026"] = {
       { title: "", time: "", venue: "AV Room",  rating: "" }
     ],
     games: [
-      { name: "Housie / Tambola",     venue: "Basement" },
-      { name: "Carrom challenge",     venue: "AV Room" },
-      { name: "Ring toss",            venue: "Church Grounds" },
-      { name: "Hoopla",               venue: "Church Grounds" },
-      { name: "Dart the balloon",     venue: "Church Grounds" },
-      { name: "Lucky dip",            venue: "Church Grounds" },
-      { name: "Bottle knock-down",    venue: "Stall Row A" },
-      { name: "Guess the jar",        venue: "Stall Row B" }
+      { name: "Housie / Tambola",     venue: "Center of Attraction" },
+      { name: "Carrom challenge",     venue: "Center of Attraction" },
+      { name: "Ring toss",            venue: "Center of Attraction" },
+      { name: "Hoopla",               venue: "Center of Attraction" },
+      { name: "Dart the balloon",     venue: "Center of Attraction" },
+      { name: "Lucky dip",            venue: "Center of Attraction" },
+      { name: "Bottle knock-down",    venue: "Center of Attraction" },
+      { name: "Guess the jar",        venue: "Center of Attraction" }
     ]
   },
 
-  /* ---------- VENUE MAP  (the on-site plan in #map) ----------
-     Each zone.id must match a data-zone in the plan SVG. Leave
-     planImage "" to use the built-in placeholder plan; set it to a
-     traced SVG (keeping the same data-zone ids) when the real layout
-     is drawn. zone.venue is matched against program[].venue above. */
+  /* ---------- VENUE MAP  (the grounds plan on the Programme page) ----------
+     The plan is drawn in modules/venuemap.js, traced from the committee's
+     layout sketch: 27 numbered stalls (1–27, sequential) around the
+     Center of Attraction, the church block up top, the AV Room beside
+     stalls 17–20, Food Counter, Entry at the foot.
+
+     zones[]  — the named (non-stall) areas. `id` must match a data-zone in
+                the SVG; `venue` is matched against program[].venue above.
+     stalls   — fill a number in as it's assigned, e.g.
+                  "12": { for: "Home bakes & preserves", by: "St. Anne's Guild" }
+                anything not listed shows "Not assigned yet". */
   venueMap: {
     planImage: "",
-    caption: "Tap a spot on the plan to see what’s there.",
+    caption: "Tap a spot on the plan to see what’s there. Stalls are still being assigned.",
     zones: [
-      { id: "gate",     label: "Entry & Tokens", venue: "Gate",
-        blurb: "Buy game tokens and lucky-draw tickets here. Step-free access on the left." },
-      { id: "grounds",  label: "Church Grounds", venue: "Church Grounds",
-        blurb: "Open-air games and the main stage. The live lucky draw happens here." },
-      { id: "food",     label: "Food Street", venue: "Food Street",
-        blurb: "Home kitchens and local vendors. Cashless UPI at every stall." },
-      { id: "stalls-a", label: "Stall Row A", venue: "Stall Row A",
-        blurb: "Craft and game stalls run by families and youth groups." },
-      { id: "stalls-b", label: "Stall Row B", venue: "Stall Row B",
-        blurb: "More stalls. Want a table? See “Run a Stall” under Get Involved." },
+      { id: "entry",    label: "Entry", venue: "Gate",
+        blurb: "Come in here." },
+      { id: "center",   label: "Center of Attraction", venue: "Center of Attraction",
+        blurb: "The main stage and the open games area. Live through the day, and the lucky draw is called here after mass." },
+      { id: "food",     label: "Food Counter", venue: "Food Street",
+        blurb: "Breakfast from 7:30, then snacks and meals all day. Cashless UPI." },
       { id: "basement", label: "Basement", venue: "Basement",
-        blurb: "Movie screenings and indoor games. Stairs by the side door." },
+        blurb: "Movie screenings from 10am. Stairs by the side door." },
       { id: "av",       label: "AV Room", venue: "AV Room",
-        blurb: "More screenings and indoor games, on the first floor. Follow the signs." }
-    ]
+        blurb: "More screenings, on the third floor above stalls 17–20. Follow the signs." },
+      { id: "church",   label: "Church", venue: "Church",
+        blurb: "Evening mass at 6. Open through the day for a quiet moment." },
+      { id: "chapel",   label: "Chapel", venue: "Chapel",
+        blurb: "A quiet side chapel, open all day." },
+      { id: "tickets",  label: "Gifts & tickets", venue: "Gifts",
+        blurb: "Lucky-draw tickets, event tees and the Victorians Youth table. Game tokens are handed out here too." }
+    ],
+    stalls: {
+      // "1": { for: "", by: "" },
+    }
   }
 };

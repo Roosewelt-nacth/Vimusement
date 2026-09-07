@@ -1,9 +1,12 @@
 /* ============================================================
    MODULE — herofx
    Ambient fairground bokeh behind the hero. Soft warm lights
-   drifting and pulsing, with a gentle parallax toward the
-   pointer. ~2KB, pauses when the hero scrolls out of view,
-   goes static under prefers-reduced-motion.
+   drifting and pulsing on their own — no pointer/tilt tracking
+   (that "interactive" parallax read as broken on mobile, where
+   device-tilt either needs an iOS permission prompt we never
+   asked for, or just jittered the lights around unhelpfully).
+   ~2KB, pauses when the hero scrolls out of view, goes static
+   under prefers-reduced-motion.
 
    Markup:  <canvas class="hero__fx" data-hero-fx></canvas>
             (inside .hero, behind .hero .wrap)
@@ -22,7 +25,6 @@ Vim.register("herofx", function (ctx) {
   ];
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var w = 0, h = 0, lights = [], raf = 0, running = false;
-  var px = 0, py = 0, tx = 0, ty = 0;   // parallax target / eased
 
   function size() {
     w = host.clientWidth; h = host.clientHeight;
@@ -44,7 +46,6 @@ Vim.register("herofx", function (ctx) {
         a: 0.05 + Math.random() * 0.16,
         vx: (Math.random() - 0.5) * 0.16,
         vy: (Math.random() - 0.5) * 0.13 - 0.04,
-        z: 0.3 + Math.random() * 0.9,           // parallax depth
         ph: Math.random() * 6.28,
         ps: 0.004 + Math.random() * 0.01
       });
@@ -54,12 +55,10 @@ Vim.register("herofx", function (ctx) {
   function paint(t) {
     g.clearRect(0, 0, w, h);
     g.globalCompositeOperation = "lighter";
-    tx += (px - tx) * 0.06; ty += (py - ty) * 0.06;
     for (var i = 0; i < lights.length; i++) {
       var L = lights[i];
       var pulse = 0.72 + Math.sin(L.ph + t * L.ps) * 0.28;
-      var ox = tx * 26 * L.z, oy = ty * 20 * L.z;
-      var x = L.x + ox, y = L.y + oy;
+      var x = L.x, y = L.y;
       var grd = g.createRadialGradient(x, y, 0, x, y, L.r);
       var c = L.c, al = L.a * pulse;
       grd.addColorStop(0, "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + al + ")");
@@ -85,15 +84,6 @@ Vim.register("herofx", function (ctx) {
   function stop() { running = false; cancelAnimationFrame(raf); }
 
   window.addEventListener("resize", function () { size(); build(); if (reduce) paint(0); }, { passive: true });
-  window.addEventListener("pointermove", function (e) {
-    px = (e.clientX / window.innerWidth - 0.5) * 2;
-    py = (e.clientY / window.innerHeight - 0.5) * 2;
-  }, { passive: true });
-  window.addEventListener("deviceorientation", function (e) {
-    if (e.gamma == null) return;
-    px = Math.max(-1, Math.min(1, e.gamma / 30));
-    py = Math.max(-1, Math.min(1, (e.beta - 40) / 30));
-  }, { passive: true });
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) stop(); else start();
   });

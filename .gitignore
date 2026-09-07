@@ -1,0 +1,10 @@
+# Claude Code tooling — installed skills, not site content
+.claude/
+
+# Python bytecode (comes along with any locally-run skill scripts)
+__pycache__/
+*.pyc
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

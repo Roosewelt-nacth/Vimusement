@@ -25,47 +25,77 @@
     });
   }
 
-  /* Built-in placeholder plan. viewBox 0 0 880 560. Every interactive
-     area is <g class="vm-zone" data-zone="…">. Swap the whole thing by
-     setting venueMap.planImage to a traced SVG that keeps these ids. */
-  function builtinPlan() {
-    return '' +
-    '<svg class="vm-svg" viewBox="0 0 880 560" role="group" aria-label="Grounds plan">' +
-      '<defs>' +
-        '<pattern id="vmGrass" width="26" height="26" patternUnits="userSpaceOnUse">' +
-          '<rect width="26" height="26" fill="var(--vm-grass)"/>' +
-          '<circle cx="6" cy="6" r="1.1" fill="var(--vm-grass-dot)"/>' +
-          '<circle cx="19" cy="17" r="1.1" fill="var(--vm-grass-dot)"/>' +
-        '</pattern>' +
-      '</defs>' +
+  /* Grounds plan, traced from the committee's layout sketch. viewBox
+     0 0 640 900 (portrait). 27 numbered stalls (1–27, sequential — the
+     two that didn't exist on the ground were dropped and everything
+     renumbered down to close the gap) around a centred "Center of
+     Attraction", the church block up top (Basement + Gifts & tickets +
+     Chapel), the AV Room (upstairs) beside stalls 17–20, Food Counter,
+     Entry at the foot. Every interactive area is
+     <g class="vm-zone" data-zone="…">; stalls are data-zone="s1".."s27".
+     Replace wholesale by setting venueMap.planImage to a traced SVG that
+     keeps the same data-zone ids. */
+  var STALLS = [
+    [27, 44, 100, 66, 48], [26, 44, 150, 66, 48], [25, 44, 200, 66, 48], [24, 44, 250, 66, 48], [23, 44, 300, 66, 48],
+    [22, 14, 388, 78, 46], [21, 14, 436, 78, 46],
+    [20, 120, 470, 80, 52], [19, 120, 524, 80, 52], [18, 120, 578, 80, 52], [17, 120, 632, 80, 52],
+    [16, 162, 702, 96, 56], [15, 260, 702, 96, 56], [14, 358, 702, 96, 56],
+    [9, 432, 452, 68, 48], [10, 432, 502, 68, 48], [11, 432, 552, 68, 48], [12, 432, 602, 68, 48], [13, 432, 652, 68, 48],
+    [8, 540, 342, 74, 44], [7, 540, 388, 74, 44], [6, 540, 434, 74, 44],
+    [5, 540, 480, 74, 44], [4, 540, 526, 74, 44], [3, 540, 572, 74, 44], [2, 540, 618, 74, 44], [1, 540, 664, 74, 44]
+  ];
 
-      '<rect x="8" y="8" width="864" height="544" rx="20" fill="url(#vmGrass)" stroke="var(--vm-edge)"/>' +
-
-      /* the church building — decorative, not a zone */
-      '<g aria-hidden="true" fill="var(--vm-build)" stroke="var(--vm-build-edge)">' +
-        '<rect x="360" y="34" width="160" height="96" rx="6"/>' +
-        '<path d="M440 8l26 26h-52z"/>' +
-        '<rect x="432" y="52" width="16" height="30" fill="var(--vm-build-edge)"/>' +
-      '</g>' +
-      '<text x="440" y="150" class="vm-note" text-anchor="middle">Ascension Church</text>' +
-
-      /* paths */
-      '<path d="M440 470V300M180 300H700M440 300V150" stroke="var(--vm-path)" stroke-width="26" fill="none" stroke-linecap="round"/>' +
-
-      zoneRect("gate",     360, 474, 160, 66,  "Entry &amp; Tokens") +
-      zoneRect("grounds",  300, 196, 280, 150, "Church Grounds") +
-      zoneRect("food",     628, 210, 200, 260, "Food Street") +
-      zoneRect("stalls-a", 52,  210, 150, 120, "Stall Row A") +
-      zoneRect("stalls-b", 52,  350, 150, 120, "Stall Row B") +
-      zoneRect("basement", 236, 366, 150, 104, "Basement") +
-      zoneRect("av",       410, 366, 150, 104, "AV Room") +
-    '</svg>';
-  }
-  function zoneRect(id, x, y, w, h, label) {
-    return '<g class="vm-zone" data-zone="' + id + '" tabindex="0" role="button" aria-label="' + label + '">' +
-      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="12"/>' +
-      '<text x="' + (x + w / 2) + '" y="' + (y + h / 2 + 4) + '" text-anchor="middle">' + label + '</text>' +
+  function box(id, x, y, w, h, label, cls) {
+    var lines = String(label).split("|");
+    var t = lines.map(function (ln, i) {
+      var dy = (i - (lines.length - 1) / 2) * 15 + 4;
+      return '<tspan x="' + (x + w / 2) + '" dy="' + (i === 0 ? dy : 15) + '">' + ln + '</tspan>';
+    }).join("");
+    return '<g class="vm-zone' + (cls ? " " + cls : "") + '" data-zone="' + id + '" tabindex="0" role="button" aria-label="' +
+      String(label).replace(/\|/g, " ").replace(/&[^;]+;/g, "and") + '">' +
+      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="6"/>' +
+      '<text text-anchor="middle" y="' + (y + h / 2) + '">' + t + '</text>' +
     '</g>';
+  }
+
+  function builtinPlan() {
+    var stalls = STALLS.map(function (s) {
+      return '<g class="vm-zone vm-zone--stall" data-zone="s' + s[0] + '" tabindex="0" role="button" aria-label="Stall ' + s[0] + '">' +
+        '<rect x="' + s[1] + '" y="' + s[2] + '" width="' + s[3] + '" height="' + s[4] + '" rx="4"/>' +
+        '<text x="' + (s[1] + s[3] / 2) + '" y="' + (s[2] + s[4] / 2 + 5) + '" text-anchor="middle">' + s[0] + '</text>' +
+      '</g>';
+    }).join("");
+
+    return '' +
+    '<svg class="vm-svg" viewBox="0 0 640 900" role="group" aria-label="Grounds plan">' +
+      '<defs><pattern id="vmGrass" width="24" height="24" patternUnits="userSpaceOnUse">' +
+        '<rect width="24" height="24" fill="var(--vm-grass)"/>' +
+        '<circle cx="6" cy="6" r="1" fill="var(--vm-grass-dot)"/>' +
+        '<circle cx="17" cy="16" r="1" fill="var(--vm-grass-dot)"/>' +
+      '</pattern></defs>' +
+
+      '<rect x="12" y="12" width="616" height="864" rx="16" fill="url(#vmGrass)" stroke="var(--vm-edge)"/>' +
+      /* the entry gap at the foot */
+      '<rect x="470" y="872" width="120" height="10" fill="var(--vm-grass)"/>' +
+      '<text x="530" y="892" class="vm-note" text-anchor="middle">ENTRY</text>' +
+
+      /* church block — centered on the grounds (canvas centre x=320) */
+      '<g aria-hidden="true"><rect x="308" y="16" width="52" height="270" fill="var(--vm-build)" stroke="var(--vm-build-edge)"/>' +
+        '<path d="M334 4l12 12h-24z" fill="var(--vm-build)" stroke="var(--vm-build-edge)"/></g>' +
+      box("church",  308, 220, 52, 66, "Church", "vm-zone--tall") +
+      box("basement", 178, 290, 96, 66, "Basement") +
+      box("tickets",  274, 290, 96, 66, "Gifts|&amp; tickets") +
+      box("chapel",   370, 290, 92, 66, "Chapel") +
+
+      box("food",   22, 18, 278, 58, "Food Counter") +
+      /* AV Room sits on the left of the 19–22 stall column, same
+         floor footprint — it's upstairs (3rd floor) above that block */
+      box("av",       44, 482, 70, 202, "AV Room|3rd floor", "vm-zone--up") +
+      box("center", 214, 456, 196, 236, "Center of|Attraction", "vm-zone--hero") +
+      box("entry",  430, 802, 150, 48, "Entry") +
+
+      stalls +
+    '</svg>';
   }
 
   Vim.register("venuemap", function (ctx) {
@@ -180,15 +210,32 @@
     function forVenue(list, venue) {
       return (list || []).filter(function (x) { return String(x.venue) === String(venue); });
     }
+    var stalls = M.stalls || {};
     function select(id) {
-      var z = byId[id];
-      if (!z) return;
+      var stallN = /^s(\d+)$/.exec(id);
+      var z = stallN ? null : byId[id];
+      if (!z && !stallN) return;
+
       ctx.$$(".vm-zone", planBox).forEach(function (g) {
         g.classList.toggle("is-active", g.getAttribute("data-zone") === id);
       });
       if (legend) ctx.$$(".vm-chip", legend).forEach(function (b) {
         b.classList.toggle("is-active", b.getAttribute("data-zone") === id);
       });
+
+      if (stallN) {
+        var n = stallN[1], info = stalls[n] || stalls[+n];
+        var sh = '<h3 class="vm-panel__title">Stall ' + n + '</h3>';
+        if (info && (info.for || info.name)) {
+          sh += '<p class="vm-panel__blurb">' + esc(info.for || info.name) +
+            (info.by ? ' &middot; ' + esc(info.by) : '') + '</p>';
+        } else {
+          sh += '<p class="vm-panel__empty">Not assigned yet. Fancy this one? ' +
+            'See &ldquo;Run a stall&rdquo; under Get Involved.</p>';
+        }
+        panel.innerHTML = sh;
+        return;
+      }
 
       var screenings = forVenue(P.screenings, z.venue);
       var titled = screenings.filter(function (s) { return s.title; });

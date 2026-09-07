@@ -11,7 +11,14 @@
      - tight display tracking, 17px body, weight ladder 300/400/600/700
      - 8px spacing base
    Single source of truth. Every page links this first.
+
+   Fonts are loaded here too (one @import), not per-page — change
+   the family or weight subset once, below, and every page picks
+   it up. Keep the weight list in sync with what --font-display /
+   --font-body / --font-mono actually use in this file.
    ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root{
   /* ---- Neutrals (warm, red undertone) ---- */
@@ -20,7 +27,7 @@
   --c-surface:      #FFFFFF;   /* raised utility cards */
   --c-ink:          #23161A;   /* headings & body on light — near-black, red-warm */
   --c-ink-soft:     #574650;
-  --c-ink-mute:     #8A7680;   /* captions, fine print */
+  --c-ink-mute:     #74636C;   /* captions, fine print — 4.5:1+ on both paper and parchment, meets WCAG AA */
   --c-line:         #EBDAD3;   /* hairline — a soft ring, not a hard rule */
 
   /* ---- Brand — ONE interactive colour ---- */
@@ -49,8 +56,11 @@
   --hero-bg: linear-gradient(185deg, var(--c-paper) 30%, var(--c-parchment));
   --accent-text: linear-gradient(100deg, var(--c-gold), var(--c-rose) 50%, var(--c-primary));
 
-  /* ---- Type ---- */
-  --font-display: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
+  /* ---- Type — a classic high-contrast display serif over a clean
+     grotesk body: the recognisable "upscale editorial / hospitality"
+     pairing, set against a quiet, tightly-tracked sans for reading. ---- */
+  --font-display: "Playfair Display", "Georgia", serif;
+  --font-display-italic: "Playfair Display", "Georgia", serif;   /* use with font-style:italic — the accent voice */
   --font-body:    "Hanken Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono:    "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 
@@ -69,9 +79,9 @@
   --lh-body:  1.47;              /* editorial leading — do not tighten */
   --lh-dense-link: 2.2;          /* footer link stacks breathe */
 
-  --track-display: -0.03em;      /* "Apple tight" */
-  --track-tight:   -0.02em;
-  --track-label:    0.2em;
+  --track-display: -0.01em;      /* serif carries its own rhythm — don't crowd it */
+  --track-tight:   -0.015em;
+  --track-label:    0.22em;
 
   --weight-light: 300; --weight-reg: 400; --weight-semi: 600; --weight-bold: 700;
 

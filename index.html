@@ -13,11 +13,11 @@
 <script>
 document.documentElement.className+=" js";
 (function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
 
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
@@ -149,6 +149,7 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/chrome.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/dockswipe.js"></script>
 <script defer src="assets/js/modules/render.js"></script>
 <script defer src="assets/js/modules/motion.js"></script>
 <script defer src="assets/js/modules/counters.js"></script>
@@ -156,7 +157,6 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/marquee.js"></script>
 <script defer src="assets/js/modules/herofx.js"></script>
 <script defer src="assets/js/modules/mosaic.js"></script>
-<script defer src="assets/js/modules/victorian.js"></script>
 <script defer src="assets/js/modules/polish.js"></script>
 <script defer src="assets/js/main.js"></script>
 </body>
