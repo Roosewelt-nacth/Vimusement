@@ -207,6 +207,29 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .dock__mark{display:none}
   .dock__brand{display:none}
 }
+/* narrow phones: 6 nav icons + the Donate pill + the theme toggle,
+   each at an accessible 44px, genuinely don't fit an ~350px-wide dock
+   with room to spare — tighten the spacing first, then ease the
+   toggle and the nav icons down a few px (still nowhere near WCAG's
+   24px floor). The Donate pill is the one thing that stays put. */
+@media (max-width:430px){
+  .dock__inner{padding:.32rem .3rem;gap:0}
+  .dock__links{gap:0}
+}
+@media (max-width:400px){
+  .dock__more,.theme-toggle{width:32px;height:32px}
+  .dock__link{min-width:42px;min-height:42px}
+}
+/* the theme toggle is a nice-to-have override of the system preference
+   the site already follows automatically — on the smallest phones it's
+   the one thing dropped, rather than squeezed illegibly small */
+@media (max-width:340px){
+  .theme-toggle{display:none}
+}
+/* belt and braces: whatever doesn't fit at a screen width narrower
+   than we've explicitly tuned for is clipped to the pill, never left
+   to spill past the edge of the device */
+.dock__inner{overflow:hidden}
 
 /* ---------- CARD (flat surface + hairline — Apple rigour) ---------- */
 .card{
