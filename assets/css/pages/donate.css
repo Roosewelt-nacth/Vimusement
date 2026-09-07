@@ -24,7 +24,7 @@
    the whole block, which for a 2-3 line step left the number
    floating in the gap between lines instead of reading against
    any actual line of text */
-.draw-steps{list-style:none;margin:0;counter-reset:step}
+.draw-steps{list-style:none;margin:1.2rem 0 0;counter-reset:step}
 .draw-steps li{
   display:flex;align-items:flex-start;gap:.9rem;
   color:var(--c-ink-soft);line-height:1.5;
@@ -71,11 +71,6 @@
 .donate-panel h2{color:var(--c-ink);font-size:var(--fs-lg)}
 .donate-panel .chip-group{margin-block:1.3rem}
 .donate-panel .field{margin-bottom:1.3rem}
-/* the last panel on the page (How it works, on Lucky Draw) sits right
-   above the footer with nothing else to separate them — give it a
-   clearer break instead of running straight into the section's
-   own edge padding */
-.donate-panel--last{margin-bottom:clamp(1rem,4vw,2.5rem)}
 
 /* "what your gift does" — swaps as the amount changes */
 .donate-funds{
