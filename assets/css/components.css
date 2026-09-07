@@ -196,8 +196,11 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   transition:border-color var(--dur-2), color var(--dur-2), transform var(--dur-2);
 }
 .theme-toggle:active{transform:var(--press)}
-.dock__more{display:none}   /* shown only on narrow phones, below — see "compact dock" */
 .dock__more-wrap{position:relative;flex:none}
+/* pages without `primary:true` in site.config.js never sit directly
+   on the bar — they only ever live inside this dropdown, at every
+   screen size, not just when space runs out on a phone */
+[data-dock-secondary]{display:none}
 .dock__more-menu{
   position:absolute;right:0;bottom:calc(100% + 10px);z-index:1;
   flex-direction:column;gap:.15rem;min-width:180px;
@@ -246,15 +249,6 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 @media (max-width:380px){
   .dock__mark{display:none}
   .dock__brand{display:none}
-}
-/* compact dock: below this, the secondary pages (see `primary` in
-   site.config.js) fold into the "More" popover instead of sitting
-   directly on the bar — only Home/Programme/Lucky Draw/Get Involved
-   plus Donate stay one tap away at all times. Tablet and up always
-   show everything, full-width, as before. */
-@media (max-width:600px){
-  [data-dock-secondary]{display:none}
-  .dock__more{display:grid}
 }
 /* narrow phones: even just the primary 4 icons + More + the Donate
    pill + the theme toggle don't quite fit an ~350px-wide dock with

@@ -18,6 +18,7 @@
     photos: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 15 5-4 4 3 3-2 6 4"/><circle cx="9" cy="9" r="1.4"/>',
     people: '<path d="M16 11a4 4 0 1 0-8 0M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"/>',
     gift:   '<path d="M20 8H4v4h16V8ZM12 8v13M4 12v9h16v-9M12 8S9.5 4 7.5 4 5 6.5 7 8m5 0s2.5-4 4.5-4S19 6.5 17 8"/>',
+    code:   '<path d="m9 8-4 4 4 4M15 8l4 4-4 4M13 6l-2 12"/>',
     more:   '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>'
   };
 
@@ -62,9 +63,9 @@
           '<span class="dock__label">' + cta.label + '</span></a>'
       ) : '';
 
-      /* the "More" button + its popover only ever matter on narrow
-         phones (CSS hides the button otherwise) — harmless to always
-         render, and it means no JS branching on viewport width here */
+      /* pages without `primary:true` (see site.config.js) never sit
+         directly on the bar, at any screen size — they only ever
+         live in this "More" popover instead */
       var moreHTML = secondary.length ? (
         '<div class="dock__more-wrap">' +
           '<button class="dock__more" type="button" data-dock-more aria-haspopup="true" aria-expanded="false" aria-label="More pages">' +

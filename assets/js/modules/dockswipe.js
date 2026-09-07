@@ -24,7 +24,10 @@ Vim.register("dockswipe", function (ctx) {
     return (!p || p.indexOf(".html") === -1) ? "index.html" : p;
   }
   function pageOrder() {
-    return ctx.$$(".dock__link, .dock__cta", dock).map(function (a) {
+    /* skip [data-dock-secondary] — those never sit directly on the
+       bar (they only live in the "More" dropdown), so swiping should
+       never land on one either */
+    return ctx.$$(".dock__link:not([data-dock-secondary]), .dock__cta", dock).map(function (a) {
       return a.getAttribute("href");
     });
   }

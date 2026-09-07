@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Developers · Vimusement {year}</title>
+<meta name="description" content="How the Vimusement website was built — the stack, the approach, and who put it together.">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<script>
+document.documentElement.className+=" js";
+(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/home.css">
+<link rel="stylesheet" href="assets/css/pages/subpage.css">
+<style>
+  .devs-stack{list-style:none;margin:1.4rem 0 0;display:grid;gap:.9rem}
+  .devs-stack li{
+    display:flex;gap:1rem;align-items:flex-start;
+    padding:1.1rem 1.3rem;border:1px solid var(--c-line);border-radius:var(--r-lg);background:var(--c-surface);
+  }
+  .devs-stack b{display:block;color:var(--c-ink);font-size:1rem;margin-bottom:.2rem}
+  .devs-stack p{color:var(--c-ink-soft);font-size:var(--fs-sm);line-height:1.5;margin:0}
+  .devs-stack__tag{
+    flex:none;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--c-gold);padding-top:.15rem;
+  }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<main id="main">
+<header class="pagehead">
+  <div class="wrap">
+    <p class="eyebrow" data-animate="fade-up">Behind the scenes</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.06">How this site was built</h1>
+    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12">In the same spirit as the money page: nothing hidden. Here's the stack, and who put it together.</p>
+  </div>
+</header>
+
+<section class="subsection">
+  <div class="wrap wrap--narrow">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">Built by</h2>
+      <p class="lead" data-animate="fade-up">The Victorians Youth committee, directing the design and content — built and iterated on with <strong>Claude Code</strong>, Anthropic's AI coding assistant.</p>
+    </div>
+  </div>
+</section>
+
+<section class="subsection">
+  <div class="wrap wrap--narrow">
+    <div class="subsection__intro">
+      <h2 class="section__title" data-animate="fade-up">The stack</h2>
+      <p class="lead" data-animate="fade-up">No framework, no build step — plain files that load fast and are easy to hand off.</p>
+    </div>
+    <ul class="devs-stack" data-animate="fade-up">
+      <li>
+        <span class="devs-stack__tag">Frontend</span>
+        <div><b>Vanilla HTML, CSS &amp; JavaScript</b><p>Every page is generated from one shared set of modules and a per-year content file — no framework, no build step, no dependencies to keep updated.</p></div>
+      </li>
+      <li>
+        <span class="devs-stack__tag">Backend</span>
+        <div><b>Google Apps Script</b><p>One script, bound to the parish's own Google Sheet, handles donations, lucky-draw ticket sales, the staff counter, and the live donor wall.</p></div>
+      </li>
+      <li>
+        <span class="devs-stack__tag">Hosting</span>
+        <div><b>GitHub Pages</b><p>Free, static hosting straight from the repository — no server to maintain.</p></div>
+      </li>
+      <li>
+        <span class="devs-stack__tag">Payments</span>
+        <div><b>Direct UPI</b><p>Donations and tickets go straight to the parish by UPI. No payment gateway, no platform fee.</p></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="wrap pageflow">
+  <a href="index.html">← Home</a>
+  <a href="donate.html">Donate →</a>
+</div>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/dockswipe.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

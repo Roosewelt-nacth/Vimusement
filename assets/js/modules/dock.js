@@ -83,7 +83,12 @@ Vim.register("dock", function (ctx) {
       if (moreMenu.hidden) openMore(); else closeMore();
     });
     document.addEventListener("click", function (e) {
-      if (!moreMenu.hidden && !moreMenu.contains(e.target) && e.target !== moreBtn) closeMore();
+      /* moreBtn.contains(e.target), not `e.target !== moreBtn` — a
+         click on the button's own SVG icon has e.target set to that
+         icon, not the button, so the strict check let this "click
+         outside" handler close the menu in the same tick it had just
+         been opened by moreBtn's own click listener */
+      if (!moreMenu.hidden && !moreMenu.contains(e.target) && !moreBtn.contains(e.target)) closeMore();
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !moreMenu.hidden) { closeMore(); moreBtn.focus(); }
