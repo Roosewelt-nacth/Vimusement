@@ -52,3 +52,20 @@
   border:1px solid color-mix(in srgb,var(--c-gold) 34%,transparent);
 }
 .res__note{font-size:var(--fs-sm);color:var(--c-ink-soft);margin-bottom:1rem;line-height:1.5}
+
+/* ---- how-to-use steps, for staff ---- (same grammar as .draw-steps:
+   the badge aligns to the top of the first line, not the whole block,
+   so it reads correctly whether a step wraps or not) */
+.desk-steps{list-style:none;margin:0;counter-reset:step;max-width:520px;margin-inline:auto}
+.desk-steps li{
+  display:flex;align-items:flex-start;gap:.9rem;
+  color:var(--c-ink-soft);line-height:1.5;font-size:var(--fs-sm);
+}
+.desk-steps li + li{margin-top:.9rem}
+.desk-steps li::before{
+  counter-increment:step;content:counter(step);
+  flex:none;width:1.5rem;height:1.5rem;margin-top:-.1rem;
+  display:grid;place-items:center;border-radius:50%;
+  background:var(--c-gold);color:#2a2036;font-family:var(--font-mono);font-weight:600;font-size:.76rem;
+}
+.desk-steps li strong{color:var(--c-ink)}

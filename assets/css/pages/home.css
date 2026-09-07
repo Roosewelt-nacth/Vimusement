@@ -58,7 +58,16 @@
 .pillar{
   border:1px solid rgba(255,255,255,.14);border-radius:var(--r-lg);
   padding:var(--sp-5);background:rgba(255,255,255,.04);
+  transition:transform var(--dur-3) var(--ease-out),
+             border-color var(--dur-3) var(--ease-out),
+             box-shadow var(--dur-3) var(--ease-out);
 }
+.pillar:hover{
+  transform:translateY(-3px);
+  border-color:rgba(217,112,60,.4);
+  box-shadow:var(--shadow-lift-hover);
+}
+@media (prefers-reduced-motion:reduce){.pillar:hover{transform:none}}
 .pillar__icon{width:34px;height:34px;color:var(--c-gold)}
 .pillar h3{color:var(--c-on-dark);margin:.6rem 0 .3rem;font-size:1.08rem}
 .pillar p{color:var(--c-on-dark-soft);font-size:var(--fs-sm)}

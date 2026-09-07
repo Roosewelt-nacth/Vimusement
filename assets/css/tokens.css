@@ -88,7 +88,7 @@
   /* ---- Space — 8px base ---- */
   --sp-1: .25rem;  --sp-2: .5rem;   --sp-3: .75rem;  --sp-4: 1.0625rem; /* 17 */
   --sp-5: 1.5rem;  --sp-6: 2rem;    --sp-7: 3rem;    --sp-8: 5rem;
-  --section-y: clamp(3.5rem, 2rem + 6vw, 5rem);   /* ~80px inside a tile */
+  --section-y: clamp(4rem, 2.4rem + 7vw, 6.5rem);   /* generous air between sections — editorial, not cramped */
   --gutter:    clamp(20px, 3vw, 32px);
   --maxw:      1120px;
   --maxw-text: 900px;
@@ -97,8 +97,11 @@
   /* ---- Shape — one grammar per role ---- */
   --r-xs: 5px;  --r-sm: 8px;  --r-md: 11px;  --r-lg: 18px;  --r-pill: 9999px;
 
-  /* ---- Elevation — the ONLY shadow, for imagery on a surface ---- */
+  /* ---- Elevation — reserved for imagery, and hover-lift feedback.
+     Never decorative on a static element; always soft, never harsh. ---- */
   --shadow-image: 0 5px 30px rgba(20, 12, 30, .20);
+  --shadow-lift:       0 2px 10px rgba(20, 12, 30, .07);   /* resting */
+  --shadow-lift-hover: 0 14px 34px -8px rgba(20, 12, 30, .22);   /* on hover — deepens, doesn't just appear */
 
   /* ---- Glass (frosted panels — see docs/design-glassmorphism.md) ---- */
   /* over imagery / dark tiles: */
@@ -151,8 +154,11 @@
   --vm-active:     var(--c-primary);
   --vm-note:       #9a8f7e;
 
-  /* ---- Motion ---- */
-  --dur-1: .24s;  --dur-2: .42s;  --dur-3: .5s;  --dur-4: .8s;
+  /* ---- Motion ----
+     dur-1..4 are for UI feedback — snappy, functional. dur-5 is the
+     "editorial" tier: image reveals, card lifts, anything meant to
+     feel unhurried and deliberate rather than merely responsive. */
+  --dur-1: .24s;  --dur-2: .42s;  --dur-3: .5s;  --dur-4: .8s;  --dur-5: .9s;
   --ease-out:    cubic-bezier(.22,.68,.32,1);
   --ease-spring: cubic-bezier(.34,1.4,.44,1);
   --press: scale(.96);
@@ -185,6 +191,8 @@
     --tile-c-bg: #1A0C11;               --tile-c-fg: var(--c-on-dark);
 
     --shadow-image: 0 5px 34px rgba(0,0,0,.55);
+    --shadow-lift:       0 2px 10px rgba(0,0,0,.24);
+    --shadow-lift-hover: 0 14px 34px -8px rgba(0,0,0,.5);
     --glass-bg:        rgba(255,255,255,.1);
     --glass-bg-strong: rgba(255,255,255,.18);
     --glass-border:    rgba(255,255,255,.28);
@@ -209,6 +217,8 @@
   --tile-b-bg:#26141A; --tile-b-fg:var(--c-on-dark);
   --tile-c-bg:#1A0C11; --tile-c-fg:var(--c-on-dark);
   --shadow-image: 0 5px 34px rgba(0,0,0,.55);
+  --shadow-lift:       0 2px 10px rgba(0,0,0,.24);
+  --shadow-lift-hover: 0 14px 34px -8px rgba(0,0,0,.5);
   --glass-bg:rgba(255,255,255,.1);--glass-bg-strong:rgba(255,255,255,.18);--glass-border:rgba(255,255,255,.28);
   --glass-panel-bg:color-mix(in srgb, var(--c-surface) 80%, transparent);
   --glass-panel-border:var(--c-line);

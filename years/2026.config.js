@@ -17,8 +17,8 @@ window.VIM_YEARS["2026"] = {
   api: "https://script.google.com/macros/s/AKfycbzA0T3Ccp2OjNS6WUXACM1G7UPT10lMZ4hVOiLGYihmDdN_OjvbHghkZRoO9DSrJijH/exec",
 
   /* Full ISO 8601 with timezone. +05:30 = India Standard Time.
-     Doors open 7:30am; the fair runs all day. Date still to be confirmed. */
-  eventDate: "2026-12-19T07:30:00+05:30",
+     Doors open 7:30am; the fair runs all day. */
+  eventDate: "2026-11-22T07:30:00+05:30",
 
   venue: {
     name: "Ascension Church, Aminjikkarai",
@@ -40,7 +40,7 @@ window.VIM_YEARS["2026"] = {
      Preview it any time with  ?reveal=preview  on the URL. */
   reveal: {
     live: false,
-    opensOn: "2026-12-19T00:00:00+05:30",
+    opensOn: "2026-11-01T00:00:00+05:30",   // first Sunday of November
     goalTaps: 500
   },
 

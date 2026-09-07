@@ -75,7 +75,29 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 }
 .btn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px}
 
-.btn--gold{--btn-bg:var(--c-primary)}   /* one interactive colour — crimson carries every CTA */
+.btn--gold{
+  --btn-bg:var(--c-primary);   /* one interactive colour — crimson carries every CTA */
+  isolation:isolate;overflow:hidden;
+  transition:color var(--dur-3) var(--ease-out),
+             transform var(--dur-1) var(--ease-out),
+             box-shadow var(--dur-2) var(--ease-out);
+}
+/* the one deliberately "expensive" motion moment on the site: a gold
+   sweep fills in from the left on hover, text stays legible above it
+   the whole way — slow and sure, not a snap-on hover state */
+.btn--gold::before{
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
+  background:var(--c-gold);
+  transform:translateX(-102%);
+  transition:transform var(--dur-5) var(--ease-out);
+}
+.btn--gold:hover::before,
+.btn--gold:focus-visible::before{transform:translateX(0)}
+.btn--gold:hover,
+.btn--gold:focus-visible{color:var(--ink-on-tint)}
+@media (prefers-reduced-motion:reduce){
+  .btn--gold::before{transition:none}
+}
 .btn--lg{padding:.9rem 1.75rem;font-size:1.06rem;font-weight:var(--weight-light)}
 .btn--block{width:100%}
 .btn--pill-ghost{
@@ -261,9 +283,16 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   border-radius:var(--r-lg);
   padding:var(--sp-5);
   position:relative;overflow:hidden;
-  transition:transform var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+  box-shadow:var(--shadow-lift);
+  transition:transform var(--dur-3) var(--ease-out),
+             border-color var(--dur-3) var(--ease-out),
+             box-shadow var(--dur-3) var(--ease-out);
 }
-.card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 40%,var(--c-line))}
+.card:hover{
+  transform:translateY(-3px);
+  border-color:color-mix(in srgb,var(--accent) 40%,var(--c-line));
+  box-shadow:var(--shadow-lift-hover);
+}
 @media (prefers-reduced-motion:reduce){.card:hover{transform:none}}
 .card__icon{
   width:46px;height:46px;border-radius:var(--r-md);display:grid;place-items:center;

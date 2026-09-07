@@ -19,19 +19,20 @@
 .donate-hero--draw::after{background:radial-gradient(50% 50% at 50% 50%,color-mix(in srgb,var(--c-gold) 26%,transparent),transparent 70%)}
 .donate-hero--draw .eyebrow::before{background:var(--c-gold)}
 
-/* how-it-works steps — flex, not absolute-positioned, so the number
-   stays centred on the whole step even when its text wraps to two
-   lines (an absolute badge pinned to a fixed offset only centres
-   against the first line, and drifts out of alignment on the rest) */
+/* how-it-works steps — flex, badge aligned to the top of the text
+   (the standard numbered-list convention) rather than centred on
+   the whole block, which for a 2-3 line step left the number
+   floating in the gap between lines instead of reading against
+   any actual line of text */
 .draw-steps{list-style:none;margin:0;counter-reset:step}
 .draw-steps li{
-  display:flex;align-items:center;gap:.9rem;
+  display:flex;align-items:flex-start;gap:.9rem;
   color:var(--c-ink-soft);line-height:1.5;
 }
-.draw-steps li + li{margin-top:1rem}
+.draw-steps li + li{margin-top:1.1rem}
 .draw-steps li::before{
   counter-increment:step;content:counter(step);
-  flex:none;width:1.8rem;height:1.8rem;
+  flex:none;width:1.8rem;height:1.8rem;margin-top:-.1rem;
   display:grid;place-items:center;border-radius:50%;
   background:var(--c-gold);color:#2a2036;font-family:var(--font-mono);font-weight:600;font-size:.85rem;
 }
@@ -70,6 +71,11 @@
 .donate-panel h2{color:var(--c-ink);font-size:var(--fs-lg)}
 .donate-panel .chip-group{margin-block:1.3rem}
 .donate-panel .field{margin-bottom:1.3rem}
+/* the last panel on the page (How it works, on Lucky Draw) sits right
+   above the footer with nothing else to separate them — give it a
+   clearer break instead of running straight into the section's
+   own edge padding */
+.donate-panel--last{margin-bottom:clamp(1rem,4vw,2.5rem)}
 
 /* "what your gift does" — swaps as the amount changes */
 .donate-funds{
