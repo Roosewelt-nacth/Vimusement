@@ -157,4 +157,30 @@
 .causes{list-style:none;margin-top:1rem}
 .causes li{padding-left:1.4rem;position:relative;color:var(--c-ink-soft)}
 .causes li + li{margin-top:.65rem}
+
+/* ---- movie screening picker (movies.html) ---- */
+.movie-list{margin-top:1.4rem;display:grid;gap:1.4rem}
+.movie-list__loading{color:var(--c-ink-mute);font-size:var(--fs-sm)}
+.movie-venue__title{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--c-ink-mute);margin-bottom:.6rem;
+}
+.movie-venue__grid{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.movie-pick{
+  text-align:left;display:flex;flex-direction:column;gap:.3rem;
+  padding:.85rem 1rem;border:1px solid var(--c-line);border-radius:var(--r-md);
+  background:var(--c-surface);cursor:pointer;font:inherit;
+  transition:border-color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
+}
+.movie-pick:hover{border-color:var(--c-gold)}
+.movie-pick.is-selected{border-color:var(--c-primary);background:color-mix(in srgb,var(--c-primary) 6%,var(--c-surface))}
+.movie-pick--full{opacity:.55;cursor:not-allowed}
+.movie-pick--full:hover{border-color:var(--c-line)}
+.movie-pick__label{color:var(--c-ink);font-weight:var(--weight-semi);display:flex;align-items:center;gap:.5rem}
+.movie-pick__rating{
+  font-family:var(--font-mono);font-size:.65rem;letter-spacing:.04em;color:var(--c-ink-mute);
+  border:1px solid var(--c-line);border-radius:var(--r-xs);padding:.05rem .35rem;
+}
+.movie-pick__meta{font-family:var(--font-mono);font-size:.74rem;color:var(--c-ink-mute)}
+.movie-pick.is-selected .movie-pick__meta{color:var(--c-primary-ink)}
 .causes li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:7px;border-radius:2px;background:var(--c-gold)}

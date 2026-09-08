@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movie Screenings · Vimusement {year}</title>
+<meta name="description" content="Book seats for a Vimusement movie screening in the Basement or the AV room. Pay by UPI, show your code at the door.">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/donate.css">
+<link rel="stylesheet" href="assets/css/desk.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<main id="main">
+<header class="donate-hero donate-hero--draw">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow" data-animate="fade-up">Movie screenings</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.07">Book your seats, Basement or AV room</h1>
+    <p data-animate="fade-up" data-animate-delay="0.14">Nine screenings across the day. Seats are limited in both rooms — reserve online or pay cash at any counter on the grounds.</p>
+  </div>
+</header>
+
+<section class="tile tile--a">
+  <div class="wrap wrap--narrow stack" style="--flow:1.6rem">
+
+    <div class="donate-panel" data-animate="fade-up">
+      <h2>Choose a screening</h2>
+      <p class="lead" style="color:var(--c-ink-soft);opacity:1">Basement seats are ₹120, AV room seats are ₹100 — the AV room is upstairs, third floor.</p>
+      <div class="movie-list" data-movie-list></div>
+    </div>
+
+    <div class="donate-panel" data-animate="fade-up" data-movie-form hidden>
+      <h2>Your seats</h2>
+
+      <div class="qty" role="group" aria-label="Number of seats">
+        <button type="button" class="qty__btn" data-movie-dec aria-label="One fewer seat">−</button>
+        <span class="qty__n" data-movie-qty>1</span>
+        <button type="button" class="qty__btn" data-movie-inc aria-label="One more seat">+</button>
+        <span class="qty__total" data-movie-total>1 seat</span>
+      </div>
+
+      <label class="field field--text" for="mName"><input id="mName" data-movie-name type="text" autocomplete="name" placeholder="Your name"></label>
+      <label class="field field--text" for="mEmail"><input id="mEmail" data-movie-email type="email" inputmode="email" autocomplete="email" placeholder="Email for your booking code"></label>
+      <label class="field field--text" for="mPhone"><input id="mPhone" data-movie-phone type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone number"></label>
+
+      <a class="btn btn--gold btn--block btn--lg" data-movie-go href="#">Continue to pay</a>
+      <p class="donate-status" data-donate-status data-movie-status hidden></p>
+      <p class="donate-note">Pay straight to the parish by <strong>UPI, with no fees</strong>. Non-refundable. Max 4 seats per booking.</p>
+
+      <div class="upi-panel" data-upi-panel hidden></div>
+
+      <div class="donate-setup">
+        <strong>Not live yet.</strong> Needs <code>api</code> in <code>years/2026.config.js</code> and the Apps Script deployed.
+      </div>
+    </div>
+
+    <div class="donate-panel" data-animate="fade-up">
+      <h2>How it works</h2>
+      <ol class="draw-steps">
+        <li><span>Pick a screening and <strong>pay by UPI</strong>, or buy cash at any counter on the grounds.</span></li>
+        <li><span>Once we confirm the payment, your <strong>booking code</strong> is emailed to you.</span></li>
+        <li><span>Show that code at the door. Seats aren’t individually numbered — <strong>just arrive before it starts</strong>.</span></li>
+        <li><span>Each screening has a hard seat limit, so once a room is full, that's it for that slot.</span></li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<section class="wrap wrap--narrow" data-desk hidden></section>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/dockswipe.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/vendor/qrcode-generator.js"></script>
+<script defer src="assets/js/modules/movie.js"></script>
+<script defer src="assets/js/modules/desk.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

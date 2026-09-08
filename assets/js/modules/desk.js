@@ -17,6 +17,8 @@ Vim.register("desk", function (ctx) {
   var api = ctx.year.api || "";
   var L = ctx.year.luckyDraw || {};
   var PRICE = Number(L.price || 50);
+  var SCREENINGS = ctx.year.screenings || [];
+  var MOV_MAX = Number(ctx.year.moviesMaxSeats || 4);
   var SS = window.sessionStorage;
   var KEYNAME = "vim-desk";
   var s = load() || { token: "", name: "", user: "", sales: 0, amount: 0 };
@@ -93,6 +95,25 @@ Vim.register("desk", function (ctx) {
     });
   }
 
+  function screeningLabel(cfg, slotIndex) {
+    if (cfg.title) return cfg.title;
+    if (cfg.time) return cfg.time;
+    return "Slot " + slotIndex;
+  }
+  function screeningOptions() {
+    var byVenue = {}, order = [];
+    SCREENINGS.forEach(function (cfg) {
+      if (!byVenue[cfg.venue]) { byVenue[cfg.venue] = []; order.push(cfg.venue); }
+      byVenue[cfg.venue].push(cfg);
+    });
+    return order.map(function (venue) {
+      return byVenue[venue].map(function (cfg, i) {
+        return '<option value="' + esc(cfg.id) + '" data-price="' + Number(cfg.price) + '">' +
+          esc(venue) + " · " + esc(screeningLabel(cfg, i + 1)) + " — " + money(cfg.price) + "</option>";
+      }).join("");
+    }).join("");
+  }
+
   /* ---------- app ---------- */
   function renderApp() {
     mount.innerHTML = deskShell(
@@ -101,6 +122,7 @@ Vim.register("desk", function (ctx) {
       '<div class="desk__tabs" role="tablist">' +
         '<button type="button" role="tab" data-tab="draw" aria-selected="true">Lucky Draw</button>' +
         '<button type="button" role="tab" data-tab="cash" aria-selected="false">Cash Donation</button>' +
+        '<button type="button" role="tab" data-tab="movies" aria-selected="false">Movies</button>' +
         '<button type="button" role="tab" data-tab="confirm" aria-selected="false">Confirm UPI</button></div>' +
       '<div data-panel="draw">' +
         '<p class="desk__price">' + money(PRICE) + ' a ticket</p>' +
@@ -125,6 +147,20 @@ Vim.register("desk", function (ctx) {
         '<label class="field field--text"><input data-cu type="text" inputmode="numeric" maxlength="22" placeholder="12-digit UPI reference"></label>' +
         '<button type="button" class="btn btn--gold btn--block btn--lg" data-cugo>Confirm payment</button>' +
       '</div>' +
+      '<div data-panel="movies" hidden>' +
+        '<label class="field"><select data-ms>' + screeningOptions() + '</select></label>' +
+        '<div class="qty"><button type="button" class="qty__btn" data-msd>−</button>' +
+          '<span class="qty__n" data-msn>1</span>' +
+          '<button type="button" class="qty__btn" data-msi>+</button>' +
+          '<span class="qty__total" data-mst></span></div>' +
+        '<label class="field field--text"><input data-mn type="text" placeholder="Buyer name"></label>' +
+        '<label class="field field--text"><input data-mp type="tel" inputmode="tel" placeholder="Phone number"></label>' +
+        '<label class="field field--text"><input data-me type="email" inputmode="email" placeholder="Email for the booking code (optional)"></label>' +
+        '<button type="button" class="btn btn--gold btn--block btn--lg" data-mgo>Issue seats</button>' +
+        '<p class="desk__price" style="margin-top:1.6rem">Check a booking in at the door</p>' +
+        '<label class="field field--text"><input data-mc type="text" autocapitalize="characters" placeholder="Booking code"></label>' +
+        '<button type="button" class="btn btn--outline btn--block" data-mcheck>Check in</button>' +
+      '</div>' +
       '<div class="desk__result glass-panel" data-result hidden></div>');
     wireX();
     shift();
@@ -146,6 +182,16 @@ Vim.register("desk", function (ctx) {
     function qs() { qn.textContent = q; mount.querySelector("[data-qt]").textContent = money(q * PRICE); }
     mount.querySelector("[data-qd]").addEventListener("click", function () { if (q > 1) { q--; qs(); } });
     mount.querySelector("[data-qi]").addEventListener("click", function () { if (q < 100) { q++; qs(); } });
+
+    /* movies qty */
+    var mq = 1;
+    var msSel = mount.querySelector("[data-ms]");
+    var mqn = mount.querySelector("[data-msn]");
+    function msPrice() { var o = msSel.options[msSel.selectedIndex]; return o ? Number(o.dataset.price) || 0 : 0; }
+    function mqs() { mqn.textContent = mq; mount.querySelector("[data-mst]").textContent = money(mq * msPrice()); }
+    if (msSel) { msSel.addEventListener("change", mqs); mqs(); }
+    mount.querySelector("[data-msd]").addEventListener("click", function () { if (mq > 1) { mq--; mqs(); } });
+    mount.querySelector("[data-msi]").addEventListener("click", function () { if (mq < MOV_MAX) { mq++; mqs(); } });
 
     mount.querySelector("[data-issue]").addEventListener("click", function () {
       var name = mount.querySelector("[data-dn]").value.trim();
@@ -204,10 +250,48 @@ Vim.register("desk", function (ctx) {
         .catch(function () { btn.disabled = false; btn.textContent = "Confirm payment"; alert("Network problem. Try again."); });
     });
 
+    mount.querySelector("[data-mgo]").addEventListener("click", function () {
+      var screening = msSel.value;
+      var name = mount.querySelector("[data-mn]").value.trim();
+      var phone = mount.querySelector("[data-mp]").value.trim();
+      var email = mount.querySelector("[data-me]").value.trim();
+      if (!name) { alert("Enter the buyer’s name."); return; }
+      if (phone.replace(/\D/g, "").length < 10) { alert("Enter the buyer’s phone number."); return; }
+      var btn = this; btn.disabled = true; btn.textContent = "Issuing…";
+      call({ action: "movieIssueCash", token: s.token, screening: screening, seats: mq, name: name, phone: phone, email: email })
+        .then(function (res) {
+          btn.disabled = false; btn.textContent = "Issue seats";
+          if (res.error) { alert(res.error); return; }
+          record(res.amount);
+          result('<p class="res__label">' + res.seats + (res.seats === 1 ? " seat" : " seats") + " · " + money(res.amount) + ' cash</p>' +
+            '<div class="res__ids"><b>' + esc(res.bid) + '</b></div>' +
+            '<p class="res__note">Read this code out / write it on the ticket.' + (email ? " Also emailed to " + esc(email) + "." : "") + '</p>');
+          mount.querySelector("[data-mn]").value = mount.querySelector("[data-mp]").value = mount.querySelector("[data-me]").value = "";
+          mq = 1; mqs();
+        })
+        .catch(function () { btn.disabled = false; btn.textContent = "Issue seats"; alert("Network problem. Try again."); });
+    });
+
+    mount.querySelector("[data-mcheck]").addEventListener("click", function () {
+      var code = mount.querySelector("[data-mc]").value.trim();
+      if (!code) { alert("Enter the booking code."); return; }
+      var btn = this; btn.disabled = true; btn.textContent = "Checking…";
+      call({ action: "movieCheckIn", token: s.token, code: code })
+        .then(function (res) {
+          btn.disabled = false; btn.textContent = "Check in";
+          if (res.error) { alert(res.error); return; }
+          result('<p class="res__label">Checked in</p>' +
+            '<p class="res__note">' + esc(res.name) + " · " + res.seats + (res.seats === 1 ? " seat" : " seats") + " · " + esc(res.venue) + '</p>');
+          mount.querySelector("[data-mc]").value = "";
+        })
+        .catch(function () { btn.disabled = false; btn.textContent = "Check in"; alert("Network problem. Try again."); });
+    });
+
     function tab(t) {
       mount.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
       mount.querySelector('[data-panel="draw"]').hidden = t !== "draw";
       mount.querySelector('[data-panel="cash"]').hidden = t !== "cash";
+      mount.querySelector('[data-panel="movies"]').hidden = t !== "movies";
       mount.querySelector('[data-panel="confirm"]').hidden = t !== "confirm";
       var r = mount.querySelector("[data-result]"); r.hidden = true; r.innerHTML = "";
     }

@@ -257,17 +257,26 @@ window.VIM_YEARS["2026"] = {
       { at: "21:00", label: "Screenings close", note: "The last films wrap up" }
     ],
     screeningsNote: "Nine films across the Basement and the AV room. The full line-up and times are announced closer to the date.",
+    /* `id` must match apps-script/Code.gs → MOVIE_SCREENINGS exactly — that's
+       what a booking is actually validated against. `price`/`capacity` here
+       are for display only (movies.html shows them before you even open the
+       booking form); the real check happens server-side against its own
+       MOVIE_VENUES table, so editing the numbers here alone can't oversell
+       a room. */
     screenings: [
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" }
+      { id: "bsmt1", title: "", time: "", venue: "Basement", rating: "", price: 120, capacity: 100 },
+      { id: "bsmt2", title: "", time: "", venue: "Basement", rating: "", price: 120, capacity: 100 },
+      { id: "bsmt3", title: "", time: "", venue: "Basement", rating: "", price: 120, capacity: 100 },
+      { id: "bsmt4", title: "", time: "", venue: "Basement", rating: "", price: 120, capacity: 100 },
+      { id: "av1",   title: "", time: "", venue: "AV Room",  rating: "", price: 100, capacity: 90 },
+      { id: "av2",   title: "", time: "", venue: "AV Room",  rating: "", price: 100, capacity: 90 },
+      { id: "av3",   title: "", time: "", venue: "AV Room",  rating: "", price: 100, capacity: 90 },
+      { id: "av4",   title: "", time: "", venue: "AV Room",  rating: "", price: 100, capacity: 90 },
+      { id: "av5",   title: "", time: "", venue: "AV Room",  rating: "", price: 100, capacity: 90 }
     ],
+    /* max seats in one booking — kept in sync with MOV_MAX on the backend
+       (script property, defaults to the same number if unset there) */
+    moviesMaxSeats: 4,
     games: [
       { name: "Housie / Tambola",     venue: "Center of Attraction" },
       { name: "Carrom challenge",     venue: "Center of Attraction" },

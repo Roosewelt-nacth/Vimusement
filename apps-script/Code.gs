@@ -5,6 +5,7 @@
  * ONE script for the whole project. Tabs:
  *     Donations   — zero-fee UPI + confirm + notify
  *     LuckyDraw   — ticket sales (UPI + cash counter) + the draw
+ *     Movies      — seat-limited screening bookings (UPI + cash counter)
  *     Staff       — who can use the counter: Username|Name|Role|Active|Notes
  *     _Counters   — running numbers for unique IDs (hidden; do not edit by hand)
  *     _Log        — audit trail: every login / ticket / cash gift / winner (hidden)
@@ -32,6 +33,10 @@
  *   DONOR_WALL_LIMIT  names on the supporters wall, default 400
  *   LD_PRICE         lucky-draw ticket price in rupees, default 50
  *   LD_MAX           max tickets per online buyer, default 25
+ *   MOV_MAX          max seats per movie booking, default 4
+ *                    (per-screening price/capacity is in MOVIE_VENUES below —
+ *                    it's the capacity check that matters, so it stays in
+ *                    code, not a script property someone could fat-finger)
  *   ENABLE_EMAIL_RECONCILE / RECONCILE_LABEL   phase-2 bank-alert auto-confirm
  *
  * ---- Triggers ----
@@ -53,6 +58,29 @@ var T_LD = 'LuckyDraw';
 var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
   'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes', 'Donor UPI ref'];
 var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13, UTR:14 };
+
+/* one row per booking (not per seat — seats aren't individually won/drawn
+   like lucky-draw tickets, so there's nothing to gain from one row each) */
+var T_MOV = 'Movies';
+var MOV_HEADER = ['Timestamp', 'Booking ID', 'Reference', 'Screening', 'Venue', 'Name', 'Email', 'Phone',
+  'Seats', 'Price (INR)', 'Amount (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Checked in', 'Notes', 'Donor UPI ref'];
+var MC = { TS:1, BID:2, REF:3, SCREEN:4, VENUE:5, NAME:6, EMAIL:7, PHONE:8, SEATS:9, PRICE:10, AMOUNT:11,
+  CHANNEL:12, BY:13, STATUS:14, CONFIRMED:15, CHECKEDIN:16, NOTES:17, UTR:18 };
+
+/* price + capacity per venue — the source of truth for booking validation.
+   years/2026.config.js carries its own copy for display (titles, times),
+   but a booking is only ever checked against these numbers, never what a
+   client sends, so nobody can book past a full room by editing the page. */
+var MOVIE_VENUES = {
+  'Basement': { price: 120, capacity: 100 },
+  'AV Room':  { price: 100, capacity: 90 }
+};
+var MOVIE_SCREENINGS = [
+  { id: 'bsmt1', venue: 'Basement' }, { id: 'bsmt2', venue: 'Basement' },
+  { id: 'bsmt3', venue: 'Basement' }, { id: 'bsmt4', venue: 'Basement' },
+  { id: 'av1', venue: 'AV Room' }, { id: 'av2', venue: 'AV Room' }, { id: 'av3', venue: 'AV Room' },
+  { id: 'av4', venue: 'AV Room' }, { id: 'av5', venue: 'AV Room' }
+];
 
 var STATUS_LIST = ['Pending', 'Paid?', 'Confirmed', 'Cancelled'];
 var T_COUNTERS = '_Counters';
@@ -91,6 +119,12 @@ function doGet(e) {
       case 'drawPool':        return _json(drawPool(e.parameter));
       case 'drawRecordWinner':return _json(drawRecordWinner(e.parameter));
       case 'drawStats':       return _json(drawStats());
+
+      /* movies */
+      case 'movieInfo':       return _json(movieInfo());
+      case 'moviePledge':     return _json(moviePledge(e.parameter));
+      case 'movieIssueCash':  return _json(movieIssueCash(e.parameter));
+      case 'movieCheckIn':    return _json(movieCheckIn(e.parameter));
 
       default:                return _json({ error: 'unknown action: ' + a });
     }
@@ -134,6 +168,7 @@ function _tab(name, header, statusCol) {
 }
 function _donations() { return _tab(T_DON, DON_HEADER, DC.STATUS); }
 function _luckydraw() { return _tab(T_LD, LD_HEADER, LC.STATUS); }
+function _movies() { return _tab(T_MOV, MOV_HEADER, MC.STATUS); }
 
 /** running number per prefix, collision-safe (LockService). */
 function _nextId(prefix) {
@@ -281,6 +316,7 @@ function iPaid(p) {
   var utr = String(p.utr || '').replace(/\D/g, '').slice(0, 20);
   var hit = _markPaid(_donations(), DC.REF, DC.STATUS, DC.UTR, ref, utr);
   hit = _markPaid(_luckydraw(), LC.REF, LC.STATUS, LC.UTR, ref, utr) || hit;
+  hit = _markPaid(_movies(), MC.REF, MC.STATUS, MC.UTR, ref, utr) || hit;
   return hit ? { ok: true } : { error: 'reference not found' };
 }
 /** staff: "I can see this UPI reference landed in the bank app" — confirm the
@@ -326,9 +362,23 @@ function confirmByUtr(p) {
     });
   }
 
+  var mov = _movies(), ml = mov.getLastRow();
+  if (ml > 1) {
+    var mv = mov.getRange(2, 1, ml - 1, MOV_HEADER.length).getValues();
+    for (var m = 0; m < mv.length; m++) {
+      var ms = String(mv[m][MC.STATUS - 1]).trim();
+      if ((ms === 'Pending' || ms === 'Paid?') &&
+          String(mv[m][MC.UTR - 1]).replace(/\D/g, '').slice(-12) === key) {
+        mov.getRange(m + 2, MC.STATUS).setValue('Confirmed');
+        var seats = Number(mv[m][MC.SEATS - 1]) || 0;
+        out.push(seats + ' movie seat' + (seats === 1 ? '' : 's') + ' ' + mv[m][MC.REF - 1] + ' (₹' + mv[m][MC.AMOUNT - 1] + ')');
+      }
+    }
+  }
+
   if (!out.length) return { error: 'No pending payment found with that reference' };
   _log(st.user, 'confirm by UTR', key + ' → ' + out.join('; '));
-  processConfirmations(); processLuckyDraw();
+  processConfirmations(); processLuckyDraw(); processMovies();
   return { ok: true, confirmed: out };
 }
 
@@ -602,6 +652,170 @@ function drawStats() {
 }
 
 /* ============================================================
+   MOVIES  — seat-limited screening bookings
+   Same two-channel shape as Donations/LuckyDraw (UPI pledge → staff
+   confirms by UTR; or a counter volunteer sells cash and it's
+   Confirmed immediately). The one thing neither of those needs and
+   this does: a hard capacity check per screening, done under a lock
+   so two people can't both grab the last few seats at once.
+   ============================================================ */
+function _movieScreening(id) {
+  for (var i = 0; i < MOVIE_SCREENINGS.length; i++) if (MOVIE_SCREENINGS[i].id === id) return MOVIE_SCREENINGS[i];
+  return null;
+}
+function _movieVenue(venue) { return MOVIE_VENUES[venue] || null; }
+function _movMax() { return Number(PROPS.getProperty('MOV_MAX') || 4); }
+
+/** seats already Pending/Paid?/Confirmed for a screening — Pending counts
+    too, so a held-but-unpaid seat still blocks someone else overbooking it. */
+function _movieSeatsTaken(screeningId) {
+  var sh = _movies();
+  var last = sh.getLastRow();
+  if (last < 2) return 0;
+  var rows = sh.getRange(2, 1, last - 1, MOV_HEADER.length).getValues();
+  var n = 0;
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][MC.SCREEN - 1]) === screeningId && String(rows[i][MC.STATUS - 1]).trim() !== 'Cancelled') {
+      n += Number(rows[i][MC.SEATS - 1]) || 0;
+    }
+  }
+  return n;
+}
+
+function movieInfo() {
+  return {
+    maxSeats: _movMax(),
+    screenings: MOVIE_SCREENINGS.map(function (s) {
+      var v = _movieVenue(s.venue);
+      var taken = _movieSeatsTaken(s.id);
+      return { id: s.id, venue: s.venue, price: v.price, capacity: v.capacity, remaining: Math.max(0, v.capacity - taken) };
+    })
+  };
+}
+
+/** online: one Pending row for the whole booking, return the UPI link */
+function moviePledge(p) {
+  var s = _movieScreening(String(p.screening || '').trim());
+  if (!s) return { error: 'Unknown screening' };
+  var v = _movieVenue(s.venue);
+  var seats = Math.round(Number(p.seats) || 0);
+  var maxQ = _movMax();
+  if (!(seats >= 1 && seats <= maxQ)) return { error: 'Choose between 1 and ' + maxQ + ' seats' };
+  var name = String(p.name || '').trim().slice(0, 80);
+  var email = String(p.email || '').trim().slice(0, 120);
+  var phone = String(p.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
+  if (!name) return { error: 'Please add your name' };
+  if (!_validEmail(email)) return { error: 'Please add a valid email — your booking is sent there' };
+  if (phone.replace(/\D/g, '').length < 10) return { error: 'Please add a valid phone number' };
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var remaining = v.capacity - _movieSeatsTaken(s.id);
+    if (seats > remaining) {
+      return { error: remaining > 0 ? ('Only ' + remaining + ' seat' + (remaining === 1 ? '' : 's') + ' left for this screening') : 'This screening is full' };
+    }
+    var amount = seats * v.price;
+    var ref = _newRef();
+    var u = _upiUri(amount, ref);
+    _movies().appendRow([new Date(), '', ref, s.id, s.venue, name, email, phone, seats, v.price, amount, 'UPI', '', 'Pending', '', '', '', '']);
+    return { ref: ref, seats: seats, amount: amount, vpa: u.vpa, payeeName: u.payeeName, upiUri: u.upiUri };
+  } finally { lock.releaseLock(); }
+}
+
+/** counter: cash sale — booking is Confirmed immediately */
+function movieIssueCash(p) {
+  var st = _auth(p);
+  var s = _movieScreening(String(p.screening || '').trim());
+  if (!s) return { error: 'Unknown screening' };
+  var v = _movieVenue(s.venue);
+  var seats = Math.round(Number(p.seats) || 0);
+  var maxQ = _movMax();
+  if (!(seats >= 1 && seats <= maxQ)) return { error: 'seats 1–' + maxQ };
+  var name = String(p.name || '').trim().slice(0, 80);
+  var email = String(p.email || '').trim().slice(0, 120);
+  var phone = String(p.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
+  if (!name) return { error: 'Enter the buyer name' };
+  if (phone.replace(/\D/g, '').length < 10) return { error: 'Enter the buyer phone number' };
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var remaining = v.capacity - _movieSeatsTaken(s.id);
+    if (seats > remaining) {
+      return { error: remaining > 0 ? ('Only ' + remaining + ' seat' + (remaining === 1 ? '' : 's') + ' left') : 'This screening is full' };
+    }
+    var amount = seats * v.price;
+    var bid = _nextId('MOV');
+    var now = new Date();
+    _movies().appendRow([now, bid, '', s.id, s.venue, name, email, phone, seats, v.price, amount, 'Cash', st.user, 'Confirmed', now, 'No', '', '']);
+    _log(st.user, 'movie cash', s.id + ' x' + seats + ' ₹' + amount + ' → ' + bid);
+    if (_validEmail(email)) _mailMovieBooking(email, name, bid, s, seats);
+    return { ok: true, bid: bid, seats: seats, amount: amount };
+  } finally { lock.releaseLock(); }
+}
+
+/** door staff: mark a booking code checked in — headcount only, seats
+    aren't individually numbered so there's nothing else to validate */
+function movieCheckIn(p) {
+  var st = _auth(p);
+  var code = String(p.code || '').trim().toUpperCase();
+  if (!code) return { error: 'Enter the booking code' };
+  var sh = _movies();
+  var last = sh.getLastRow();
+  if (last < 2) return { error: 'Booking code not found' };
+  var ids = sh.getRange(2, MC.BID, last - 1, 1).getValues();
+  for (var i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]).toUpperCase() !== code) continue;
+    var row = i + 2;
+    var status = String(sh.getRange(row, MC.STATUS).getValue()).trim();
+    if (status !== 'Confirmed') return { error: 'This booking isn’t confirmed yet' };
+    if (String(sh.getRange(row, MC.CHECKEDIN).getValue()).trim().toLowerCase() === 'yes') return { error: 'Already checked in' };
+    sh.getRange(row, MC.CHECKEDIN).setValue('Yes');
+    var name = String(sh.getRange(row, MC.NAME).getValue());
+    var seats = Number(sh.getRange(row, MC.SEATS).getValue());
+    var venue = String(sh.getRange(row, MC.VENUE).getValue());
+    _log(st.user, 'movie check-in', code + ' ' + name + ' x' + seats);
+    return { ok: true, name: name, seats: seats, venue: venue };
+  }
+  return { error: 'Booking code not found' };
+}
+
+function _mailMovieBooking(email, name, bid, screening, seats) {
+  if (!_validEmail(email)) return;
+  var first = String(name || 'Friend').split(' ')[0];
+  _mail(email, 'Your Vimusement movie booking is confirmed 🎬',
+    'Dear ' + first + ',\n\nYour booking for ' + seats + ' seat' + (seats === 1 ? '' : 's') +
+    ' in the ' + screening.venue + ' is confirmed.\n\nBooking code: ' + bid +
+    '\n\nShow this code at the door. Seats aren\'t individually numbered — just arrive before the screening starts.\n\n— ' +
+    (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
+}
+
+/** UPI pledges that just went Confirmed still need a Booking ID + email —
+    same "finish the job" pattern as processLuckyDraw, just one row each. */
+function processMovies() {
+  var sh = _movies();
+  var last = sh.getLastRow();
+  if (last < 2) return 0;
+  var data = sh.getRange(2, 1, last - 1, MOV_HEADER.length).getValues();
+  var n = 0;
+  for (var i = 0; i < data.length; i++) {
+    var r = data[i];
+    if (String(r[MC.STATUS - 1]).trim() === 'Confirmed' && !r[MC.BID - 1]) {
+      var row = i + 2;
+      var bid = _nextId('MOV');
+      sh.getRange(row, MC.BID).setValue(bid);
+      sh.getRange(row, MC.CONFIRMED).setValue(new Date());
+      if (_validEmail(r[MC.EMAIL - 1])) {
+        _mailMovieBooking(r[MC.EMAIL - 1], r[MC.NAME - 1], bid, { venue: r[MC.VENUE - 1] }, r[MC.SEATS - 1]);
+      }
+      n++;
+    }
+  }
+  return n;
+}
+
+/* ============================================================
    CONFIRM + NOTIFY  (donations AND lucky-draw UPI purchases)
    ============================================================ */
 function onSheetEdit(e) {
@@ -610,6 +824,7 @@ function onSheetEdit(e) {
     var name = e.range.getSheet().getName();
     if (name === T_DON && e.range.getColumn() === DC.STATUS) processConfirmations();
     if (name === T_LD && e.range.getColumn() === LC.STATUS) processLuckyDraw();
+    if (name === T_MOV && e.range.getColumn() === MC.STATUS) processMovies();
   } catch (err) { /* never block the edit */ }
 }
 
@@ -696,8 +911,10 @@ function processLuckyDraw() {
 function houseKeeping() {
   processConfirmations();
   processLuckyDraw();
+  processMovies();
   cleanupStale(_donations(), DC.STATUS, DC.TS);
   cleanupStale(_luckydraw(), LC.STATUS, LC.TS);
+  cleanupStale(_movies(), MC.STATUS, MC.TS);
   if (PROPS.getProperty('ENABLE_EMAIL_RECONCILE') === 'yes') reconcileFromEmail();
 }
 
@@ -737,13 +954,15 @@ function reconcileFromEmail() {
   var threads = GmailApp.search(q, 0, 50);
   if (!threads.length) return 0;
 
-  var don = _donations(), ld = _luckydraw();
+  var don = _donations(), ld = _luckydraw(), mov = _movies();
   var dRows = don.getLastRow() > 1 ? don.getRange(2, 1, don.getLastRow() - 1, DON_HEADER.length).getValues() : [];
   var lRows = ld.getLastRow()  > 1 ? ld.getRange(2, 1, ld.getLastRow()  - 1, LD_HEADER.length).getValues()  : [];
+  var mRows = mov.getLastRow() > 1 ? mov.getRange(2, 1, mov.getLastRow() - 1, MOV_HEADER.length).getValues() : [];
 
   var used = {};   // UTRs already tied to a Confirmed row
   dRows.forEach(function (r) { var u = _utrKey(r[DC.UTR - 1]); if (u && String(r[DC.STATUS - 1]).trim() === 'Confirmed') used[u] = 1; });
   lRows.forEach(function (r) { var u = _utrKey(r[LC.UTR - 1]); if (u && String(r[LC.STATUS - 1]).trim() === 'Confirmed') used[u] = 1; });
+  mRows.forEach(function (r) { var u = _utrKey(r[MC.UTR - 1]); if (u && String(r[MC.STATUS - 1]).trim() === 'Confirmed') used[u] = 1; });
 
   var done = 0;
   threads.forEach(function (t) {
@@ -784,6 +1003,17 @@ function reconcileFromEmail() {
         matched = true;
       }
 
+      // ---- movies: one row = one booking ----
+      for (var mi = 0; mi < mRows.length && !matched; mi++) {
+        var mst = String(mRows[mi][MC.STATUS - 1]).trim();
+        if (mst !== 'Pending' && mst !== 'Paid?') continue;
+        if (_utrKey(mRows[mi][MC.UTR - 1]) !== utr) continue;
+        if (amt && Math.round(Number(mRows[mi][MC.AMOUNT - 1])) !== amt) continue;
+        mov.getRange(mi + 2, MC.STATUS).setValue('Confirmed');
+        mov.getRange(mi + 2, MC.NOTES).setValue('auto ' + Utilities.formatDate(m.getDate(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm'));
+        mRows[mi][MC.STATUS - 1] = 'Confirmed'; matched = true;
+      }
+
       if (matched) {
         used[utr] = 1; done++;
         m.markRead();
@@ -792,7 +1022,7 @@ function reconcileFromEmail() {
     });
   });
 
-  if (done) { processConfirmations(); processLuckyDraw(); }
+  if (done) { processConfirmations(); processLuckyDraw(); processMovies(); }
   return done;
 }
 
@@ -821,14 +1051,14 @@ function onOpen() {
     .addToUi();
 }
 function runAllConfirmations() {
-  var n = processConfirmations() + processLuckyDraw();
+  var n = processConfirmations() + processLuckyDraw() + processMovies();
   SpreadsheetApp.getActive().toast('Processed ' + n + ' updates.');
 }
 function confirmSelectedRows() {
   var sh = SpreadsheetApp.getActiveSheet();
   var name = sh.getName();
-  var statusCol = name === T_DON ? DC.STATUS : (name === T_LD ? LC.STATUS : 0);
-  if (!statusCol) { SpreadsheetApp.getActive().toast('Open the Donations or LuckyDraw tab first.'); return; }
+  var statusCol = name === T_DON ? DC.STATUS : (name === T_LD ? LC.STATUS : (name === T_MOV ? MC.STATUS : 0));
+  if (!statusCol) { SpreadsheetApp.getActive().toast('Open the Donations, LuckyDraw or Movies tab first.'); return; }
   var rows = {};
   sh.getActiveRangeList().getRanges().forEach(function (rg) {
     for (var r = rg.getRow(); r < rg.getRow() + rg.getNumRows(); r++) if (r >= 2) rows[r] = true;
@@ -840,6 +1070,7 @@ function confirmSelectedRows() {
 function _selfTest() {
   Logger.log('Donations tab: rows=' + _donations().getLastRow());
   Logger.log('LuckyDraw tab: rows=' + _luckydraw().getLastRow());
+  Logger.log('Movies tab: rows=' + _movies().getLastRow());
   var stf = _tab(T_STAFF, STAFF_HEADER);
   if (stf.getLastRow() < 2) {
     stf.appendRow(['roonah', 'Roonah', 'admin', 'Yes', 'add a row per counter volunteer (role = counter). Active = No locks them out.']);
@@ -849,4 +1080,5 @@ function _selfTest() {
   Logger.log('Staff rows: ' + (stf.getLastRow() - 1) + ' · UPI_VPA set: ' + !!PROPS.getProperty('UPI_VPA') +
     ' · ADMIN_KEY set: ' + !!PROPS.getProperty('ADMIN_KEY'));
   Logger.log('drawInfo: ' + JSON.stringify(drawInfo()));
+  Logger.log('movieInfo: ' + JSON.stringify(movieInfo()));
 }
