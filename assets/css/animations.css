@@ -9,6 +9,7 @@
 @keyframes float-y{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
 @keyframes bunting-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(4px) } }
 @keyframes gradient-pan{ to{ background-position:200% center } }
+@keyframes cloud-drift{ to{ transform:translateX(160%); } }
 @keyframes candle-flicker{
   0%,100%{ transform:scaleY(1) rotate(0deg); filter:brightness(1); }
   20%{ transform:scaleY(1.06) rotate(-1.5deg); filter:brightness(1.08); }

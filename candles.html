@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Light a Candle · Vimusement {year}</title>
-<meta name="description" content="Light a candle for someone or something close to your heart. Every intention is read aloud at the 8:30 AM Mass on the day of the fair.">
+<title>Light a Star · Vimusement {year}</title>
+<meta name="description" content="Light a star for someone or something close to your heart. It joins a growing night sky, remembered here for good.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
 (function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
@@ -21,33 +21,51 @@
 
 <main id="main">
 <header class="candle-hero">
+  <div class="candle-hero__stars" aria-hidden="true"></div>
   <div class="wrap wrap--narrow">
-    <p class="eyebrow" data-animate="fade-up">Light a candle</p>
-    <h1 data-animate="fade-up" data-animate-delay="0.07">Light a candle for someone, or something, close to your heart</h1>
-    <p data-animate="fade-up" data-animate-delay="0.14">Every intention lit here will be <strong>read aloud at the 8:30 AM Mass</strong> on the day of the fair.</p>
+    <p class="eyebrow" data-animate="fade-up">Light a star</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.07">Light a star for someone, or something, close to your heart</h1>
+    <p data-animate="fade-up" data-animate-delay="0.14">Every star lit here <strong>stays remembered</strong> — a small point of light in a sky that keeps growing, for good.</p>
   </div>
 </header>
 
 <section class="tile tile--a">
   <div class="wrap wrap--narrow stack" style="--flow:1.6rem">
     <div class="glass-panel candle-panel" data-animate="fade-up">
-      <h2>Light your candle</h2>
+      <h2>Light your star</h2>
       <label class="field field--text" for="cName"><input id="cName" data-candle-name type="text" maxlength="60" placeholder="Your name (optional — leave blank to stay anonymous)"></label>
       <label class="field field--text" for="cDedication"><input id="cDedication" data-candle-dedication type="text" maxlength="140" placeholder="A short dedication or intention"></label>
-      <label class="field field--text" for="cMessage"><textarea id="cMessage" data-candle-message maxlength="280" rows="3" placeholder="A short message (optional, shown when someone taps your candle)"></textarea></label>
-      <button type="button" class="btn btn--gold btn--block btn--lg" data-candle-go>Light a candle</button>
+      <label class="field field--text" for="cMessage"><textarea id="cMessage" data-candle-message maxlength="280" rows="3" placeholder="A short message (optional, shown when someone taps your star)"></textarea></label>
+      <button type="button" class="btn btn--gold btn--block btn--lg" data-candle-go>Light a star</button>
       <p class="donate-status" data-candle-status hidden></p>
-      <p class="donate-note">Your intention will be read aloud at the <strong>8:30 AM Mass</strong> on the day of the fair.</p>
+      <p class="donate-note">Your intention <strong>stays remembered here</strong>, a small point of light, for good.</p>
     </div>
   </div>
 </section>
 
 <section class="tile tile--c candle-wall-tile">
   <div class="wrap wrap--narrow">
-    <p class="eyebrow" data-animate="fade-up">The wall</p>
-    <h2 data-animate="fade-up">Candles lit so far</h2>
-    <ul class="candle-wall" data-candle-wall></ul>
-    <button type="button" class="btn btn--ghost btn--block" data-candle-more hidden>Load more candles</button>
+    <p class="eyebrow" data-animate="fade-up">The sky</p>
+    <h2 data-animate="fade-up">Stars lit so far</h2>
+    <p class="star-field-hint">A whole sky of them — scroll or drag to explore, zoom out to see it all.</p>
+
+    <div class="star-field-viewport" data-star-viewport>
+      <div class="star-field__glow" data-candle-glow aria-hidden="true"></div>
+      <div class="star-field__clouds" aria-hidden="true">
+        <span class="cloud cloud--1"></span>
+        <span class="cloud cloud--2"></span>
+        <span class="cloud cloud--3"></span>
+      </div>
+      <ul class="star-field" data-candle-wall data-star-field></ul>
+    </div>
+
+    <div class="star-field-controls">
+      <button type="button" class="star-zoom" data-star-zoom-out aria-label="Zoom out">−</button>
+      <button type="button" class="star-zoom star-zoom--reset" data-star-zoom-reset>Reset view</button>
+      <button type="button" class="star-zoom" data-star-zoom-in aria-label="Zoom in">+</button>
+    </div>
+
+    <button type="button" class="btn btn--ghost btn--block" data-candle-more hidden>Load more stars</button>
   </div>
 </section>
 </main>
