@@ -90,22 +90,61 @@ Vim.register("donors", function (ctx) {
       });
 
     if (totalEl && d.showTotal) {
-      jsonp({ action: "stats" })
+      jsonp({ action: "pulse" })
         .then(function (s) {
           if (!s || typeof s.total !== "number") return;
-          var total = "₹" + Number(s.total).toLocaleString("en-IN");
-          totalEl.innerHTML = '<strong>' + total + '</strong> raised so far from <strong>' + (s.count || 0) + '</strong> gift' + (s.count === 1 ? "" : "s");
-          totalEl.hidden = false;
-          var wrap = ctx.$("[data-donor-total-wrap]");
-          if (wrap) wrap.hidden = false;
-          if (d.goal > 0) {
-            var pct = Math.max(0, Math.min(100, Math.round((s.total / d.goal) * 100)));
-            var bar = ctx.$("[data-donor-bar]");
-            if (bar) bar.style.width = pct + "%";
-          }
+          applyPulse(s.total, s.count || 0);
         })
         .catch(function () {});
     }
+  }
+
+  /* ---- the live pulse: an animated count-up + a flash on increase,
+     instead of the number silently swapping to a new value ---- */
+  var lastTotal = null;
+  var ampEl, countEl, pluralEl;
+  function ensurePulseDom() {
+    if (ampEl) return;
+    totalEl.innerHTML =
+      '<strong data-pulse-amount>₹0</strong> raised so far from ' +
+      '<strong data-pulse-count>0</strong> gift<span data-pulse-plural>s</span>';
+    ampEl = totalEl.querySelector("[data-pulse-amount]");
+    countEl = totalEl.querySelector("[data-pulse-count]");
+    pluralEl = totalEl.querySelector("[data-pulse-plural]");
+  }
+  function tween(from, to) {
+    var dur = 900, start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min(1, (ts - start) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      ampEl.textContent = "₹" + Math.round(from + (to - from) * eased).toLocaleString("en-IN");
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function applyPulse(total, count) {
+    ensurePulseDom();
+    var wrap = ctx.$("[data-donor-total-wrap]");
+    var bar = ctx.$("[data-donor-bar]");
+    var isFirst = lastTotal === null;
+
+    tween(isFirst ? total : lastTotal, total);
+    countEl.textContent = String(count);
+    if (pluralEl) pluralEl.hidden = count === 1;
+    totalEl.hidden = false;
+    if (wrap) wrap.hidden = false;
+
+    if (d.goal > 0 && bar) {
+      var pct = Math.max(0, Math.min(100, Math.round((total / d.goal) * 100)));
+      bar.style.width = pct + "%";
+    }
+    if (!isFirst && total > lastTotal && bar) {
+      bar.classList.remove("is-pulsing");
+      void bar.offsetWidth;               // restart the animation on back-to-back increases
+      bar.classList.add("is-pulsing");
+    }
+    lastTotal = total;
   }
 
   load();

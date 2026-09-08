@@ -83,6 +83,7 @@ function doGet(e) {
       case 'donateCash':      return _json(donateCash(e.parameter));
       case 'donors':          return _json(getDonors());
       case 'stats':           return _json(getStats());
+      case 'pulse':           return _json(pulse());
 
       /* lucky draw */
       case 'drawInfo':        return _json(drawInfo());
@@ -397,6 +398,15 @@ function getStats() {
     if (String(rows[i][DC.STATUS - 1]).trim() === 'Confirmed') { total += Number(rows[i][DC.AMOUNT - 1]) || 0; count++; }
   }
   return { total: total, count: count };
+}
+
+/** combined live figure for the fundraising pulse — Donations + LuckyDraw
+    money, aggregate only, same privacy posture as getStats()/drawStats()
+    (no per-gift amounts ever leave either function). */
+function pulse() {
+  var d = getStats();
+  var l = drawStats();
+  return { total: d.total + l.amount, count: d.count + l.sold };
 }
 
 /* ============================================================

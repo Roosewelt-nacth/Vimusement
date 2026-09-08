@@ -9,6 +9,12 @@
 @keyframes float-y{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
 @keyframes bunting-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(4px) } }
 @keyframes gradient-pan{ to{ background-position:200% center } }
+@keyframes live-dot{ 0%,100%{ opacity:.35; transform:scale(.85) } 50%{ opacity:1; transform:scale(1.15) } }
+@keyframes pulse-glow{
+  0%{ box-shadow:0 0 0 0 color-mix(in srgb,var(--c-teal) 55%,transparent) }
+  60%{ box-shadow:0 0 0 8px color-mix(in srgb,var(--c-teal) 0%,transparent) }
+  100%{ box-shadow:0 0 0 0 color-mix(in srgb,var(--c-teal) 0%,transparent) }
+}
 
 /* ---- scroll-reveal ----
    Only hidden when JS is present (html.js). No-JS / JS-error = fully visible. */

@@ -151,8 +151,14 @@
 @media (prefers-reduced-motion:no-preference){ .upi-panel{animation:upi-in var(--dur-3) var(--ease-out)} }
 
 .thermo{margin-top:1.8rem}
-.thermo__row{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.78rem;color:var(--c-ink-mute)}
-.thermo .progress{margin-top:.5rem;color:var(--c-ink)}
+.thermo__row{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:.78rem;color:var(--c-ink-mute)}
+.thermo .progress{margin-top:.5rem;color:var(--c-ink);position:relative}
+.thermo__live{display:inline-flex;align-items:center;gap:.4rem;letter-spacing:.06em;text-transform:uppercase;font-size:.68rem}
+.thermo__live-dot{width:6px;height:6px;border-radius:50%;background:var(--c-teal)}
+@media (prefers-reduced-motion:no-preference){
+  .thermo__live-dot{animation:live-dot 1.8s ease-in-out infinite}
+}
+.progress__fill.is-pulsing{animation:pulse-glow .9s var(--ease-out)}
 
 .causes{list-style:none;margin-top:1rem}
 .causes li{padding-left:1.4rem;position:relative;color:var(--c-ink-soft)}
