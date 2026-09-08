@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light a Candle · Vimusement {year}</title>
+<meta name="description" content="Light a candle for someone or something close to your heart. Every intention is read aloud at the 8:30 AM Mass on the day of the fair.">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/candles.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<main id="main">
+<header class="candle-hero">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow" data-animate="fade-up">Light a candle</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.07">Light a candle for someone, or something, close to your heart</h1>
+    <p data-animate="fade-up" data-animate-delay="0.14">Every intention lit here will be <strong>read aloud at the 8:30 AM Mass</strong> on the day of the fair.</p>
+  </div>
+</header>
+
+<section class="tile tile--a">
+  <div class="wrap wrap--narrow stack" style="--flow:1.6rem">
+    <div class="glass-panel candle-panel" data-animate="fade-up">
+      <h2>Light your candle</h2>
+      <label class="field field--text" for="cName"><input id="cName" data-candle-name type="text" maxlength="60" placeholder="Your name (optional — leave blank to stay anonymous)"></label>
+      <label class="field field--text" for="cDedication"><input id="cDedication" data-candle-dedication type="text" maxlength="140" placeholder="A short dedication or intention"></label>
+      <label class="field field--text" for="cMessage"><textarea id="cMessage" data-candle-message maxlength="280" rows="3" placeholder="A short message (optional, shown when someone taps your candle)"></textarea></label>
+      <button type="button" class="btn btn--gold btn--block btn--lg" data-candle-go>Light a candle</button>
+      <p class="donate-status" data-candle-status hidden></p>
+      <p class="donate-note">Your intention will be read aloud at the <strong>8:30 AM Mass</strong> on the day of the fair.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tile tile--c candle-wall-tile">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow" data-animate="fade-up">The wall</p>
+    <h2 data-animate="fade-up">Candles lit so far</h2>
+    <ul class="candle-wall" data-candle-wall></ul>
+    <button type="button" class="btn btn--ghost btn--block" data-candle-more hidden>Load more candles</button>
+  </div>
+</section>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/dockswipe.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/modules/candles.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

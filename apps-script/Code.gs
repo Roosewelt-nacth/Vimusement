@@ -33,6 +33,7 @@
  *   LD_PRICE         lucky-draw ticket price in rupees, default 50
  *   LD_MAX           max tickets per online buyer, default 25
  *   ENABLE_EMAIL_RECONCILE / RECONCILE_LABEL   phase-2 bank-alert auto-confirm
+ *   CANDLE_BLOCKLIST comma-separated words to reject on the candle wall     (optional)
  *
  * ---- Triggers ----
  *   onSheetEdit    — From spreadsheet, On edit
@@ -53,6 +54,10 @@ var T_LD = 'LuckyDraw';
 var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
   'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes', 'Donor UPI ref'];
 var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13, UTR:14 };
+
+var T_CANDLES = 'Candles';
+var CANDLE_HEADER = ['Timestamp', 'Name', 'Dedication', 'Message', 'Hidden'];
+var CC = { TS:1, NAME:2, DEDICATION:3, MESSAGE:4, HIDDEN:5 };
 
 var STATUS_LIST = ['Pending', 'Paid?', 'Confirmed', 'Cancelled'];
 var T_COUNTERS = '_Counters';
@@ -91,6 +96,10 @@ function doGet(e) {
       case 'drawPool':        return _json(drawPool(e.parameter));
       case 'drawRecordWinner':return _json(drawRecordWinner(e.parameter));
       case 'drawStats':       return _json(drawStats());
+
+      /* candle wall */
+      case 'lightCandle':     return _json(lightCandle(e.parameter));
+      case 'candles':         return _json(getCandles(e.parameter));
 
       default:                return _json({ error: 'unknown action: ' + a });
     }
@@ -134,6 +143,7 @@ function _tab(name, header, statusCol) {
 }
 function _donations() { return _tab(T_DON, DON_HEADER, DC.STATUS); }
 function _luckydraw() { return _tab(T_LD, LD_HEADER, LC.STATUS); }
+function _candles() { return _tab(T_CANDLES, CANDLE_HEADER); }
 
 /** running number per prefix, collision-safe (LockService). */
 function _nextId(prefix) {
@@ -172,6 +182,20 @@ function _upiUri(amount, ref) {
 }
 
 function _validEmail(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || '')); }
+
+/** minimal spam guard for the open-text candle wall — bare links, plus an
+    optional CANDLE_BLOCKLIST script property (comma-separated words). No
+    server-side rate limiting here on purpose (see Code.gs header doc) —
+    field-length caps + this filter match the rest of this file's posture
+    for a non-monetary feature. */
+function _looksSpammy(s) {
+  s = String(s || '').toLowerCase();
+  if (!s) return false;
+  if (/https?:\/\/|www\.[^\s]+\.[a-z]{2,}/i.test(s)) return true;
+  var extra = String(PROPS.getProperty('CANDLE_BLOCKLIST') || '')
+    .toLowerCase().split(',').map(function (w) { return w.trim(); }).filter(Boolean);
+  return extra.some(function (w) { return s.indexOf(w) > -1; });
+}
 
 function _mail(to, subject, body) {
   if (!_validEmail(to)) return false;
@@ -397,6 +421,48 @@ function getStats() {
     if (String(rows[i][DC.STATUS - 1]).trim() === 'Confirmed') { total += Number(rows[i][DC.AMOUNT - 1]) || 0; count++; }
   }
   return { total: total, count: count };
+}
+
+/* ============================================================
+   CANDLE WALL  — one row per candle, no payment/status workflow
+   ============================================================ */
+function lightCandle(p) {
+  var name = String(p.name || '').trim().slice(0, 60);
+  var dedication = String(p.dedication || '').trim().slice(0, 140);
+  var message = String(p.message || '').trim().slice(0, 280);
+  if (!dedication) return { error: 'Please add a short dedication or intention.' };
+  if (_looksSpammy(name) || _looksSpammy(dedication) || _looksSpammy(message)) {
+    return { error: 'Please rephrase — that couldn’t be posted.' };
+  }
+  _candles().appendRow([new Date(), name, dedication, message, '']);
+  return { ok: true };
+}
+
+/** public, paginated, newest-first. Any row with a non-empty Hidden cell
+    (staff types anything into it by hand in the sheet) is never returned. */
+function getCandles(p) {
+  var offset = Math.max(0, parseInt(p.offset, 10) || 0);
+  var limit = Math.min(30, Math.max(1, parseInt(p.limit, 10) || 12));
+  var sh = _candles();
+  var last = sh.getLastRow();
+  if (last < 2) return { candles: [], count: 0, hasMore: false };
+
+  var rows = sh.getRange(2, 1, last - 1, CANDLE_HEADER.length).getValues();
+  var visible = [];
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    if (String(r[CC.HIDDEN - 1] || '').trim() === '') {
+      visible.push({
+        name: String(r[CC.NAME - 1] || '').trim(),
+        dedication: String(r[CC.DEDICATION - 1] || '').trim(),
+        message: String(r[CC.MESSAGE - 1] || '').trim(),
+        ts: new Date(r[CC.TS - 1]).toISOString()
+      });
+    }
+  }
+  visible.reverse();
+  var page = visible.slice(offset, offset + limit);
+  return { candles: page, count: visible.length, hasMore: offset + limit < visible.length };
 }
 
 /* ============================================================
@@ -840,6 +906,7 @@ function confirmSelectedRows() {
 function _selfTest() {
   Logger.log('Donations tab: rows=' + _donations().getLastRow());
   Logger.log('LuckyDraw tab: rows=' + _luckydraw().getLastRow());
+  Logger.log('Candles tab: rows=' + _candles().getLastRow());
   var stf = _tab(T_STAFF, STAFF_HEADER);
   if (stf.getLastRow() < 2) {
     stf.appendRow(['roonah', 'Roonah', 'admin', 'Yes', 'add a row per counter volunteer (role = counter). Active = No locks them out.']);

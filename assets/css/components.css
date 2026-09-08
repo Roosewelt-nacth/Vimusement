@@ -365,6 +365,8 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .field__reveal:hover{color:var(--c-primary-ink)}
 .field__prefix{font-weight:var(--weight-semi);color:var(--c-ink-mute)}
 .field input{border:0;background:none;font:inherit;font-size:var(--fs-base);color:var(--c-ink);width:100%;outline:none}
+.field textarea{border:0;background:none;font:inherit;font-size:var(--fs-base);color:var(--c-ink);width:100%;outline:none;resize:vertical}
+.field:has(textarea){height:auto;align-items:flex-start}
 
 .chip-group{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .chip{
@@ -380,6 +382,7 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 /* ---------- FORM: text field + checkbox + status ---------- */
 .field--text{padding-block:0}
 .field--text input{padding-block:.85rem}
+.field--text textarea{padding-block:.85rem;min-height:4.5rem}
 .donate-check{
   display:flex;gap:.6rem;align-items:flex-start;margin:.9rem 0 1.2rem;
   font-size:var(--fs-sm);color:var(--c-ink-soft);cursor:pointer;line-height:1.4;

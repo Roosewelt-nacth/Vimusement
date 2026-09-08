@@ -1,0 +1,97 @@
+/* ============================================================
+   PAGE — candles  (candles.html)
+   ============================================================ */
+
+.candle-hero{
+  background:var(--hero-bg);color:var(--c-ink-soft);
+  padding-block:clamp(3.5rem,9vw,6.5rem) clamp(2rem,5vw,3rem);
+  position:relative;overflow:hidden;border-bottom:1px solid var(--c-line);
+}
+.candle-hero .wrap{position:relative;z-index:1}
+.candle-hero::after{
+  content:"";position:absolute;right:-8%;top:-50%;width:52%;height:200%;
+  background:radial-gradient(50% 50% at 50% 50%,color-mix(in srgb,var(--c-gold) 26%,transparent),transparent 70%);
+  pointer-events:none;
+}
+.candle-hero h1{color:var(--c-ink);font-size:var(--fs-2xl);margin-block:.5rem;letter-spacing:var(--track-display);max-width:22ch}
+.candle-hero p{color:var(--c-ink-soft);max-width:48ch;font-size:var(--fs-md);line-height:1.45}
+.candle-hero .eyebrow::before{background:var(--c-gold)}
+
+.candle-panel{
+  background:var(--c-surface);
+  border:1px solid var(--c-line);border-radius:var(--r-lg);
+  padding:clamp(1.5rem,4vw,2.4rem);
+}
+.candle-panel h2{color:var(--c-ink);font-size:var(--fs-lg);margin-bottom:1.2rem}
+.candle-panel .field{margin-bottom:1.3rem}
+.candle-panel .donate-status a{color:inherit;text-decoration:underline}
+
+.candle-wall-tile{padding-block:clamp(2.5rem,6vw,4rem)}
+.candle-wall-tile [hidden]{display:none}
+.candle-wall-tile .eyebrow::before{background:var(--c-gold)}
+.candle-wall-tile h2{margin-bottom:1.4rem}
+
+/* ---- the wall: a real candle stand, not a card grid ----
+   Nothing but wax + flame shows at rest — the dedication only ever
+   appears in a little card that pops up on hover/tap, like walking up
+   to a real votive stand and reading the note tucked at its base.
+   The full text is on the <li>'s aria-label from the start, though, so
+   a keyboard/screen-reader visitor gets it without needing to hover. */
+.candle-wall{
+  list-style:none;margin-top:0;padding-block-end:.5rem;
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;
+  gap:20px 16px;min-height:120px;
+}
+.candle-wall__empty,.candle-wall__loading{
+  width:100%;color:var(--c-on-dark-soft);font-size:var(--fs-sm);
+  text-align:center;padding:2rem 1rem;
+}
+
+.candle{
+  position:relative;display:flex;flex-direction:column;align-items:center;
+  width:34px;cursor:pointer;outline:none;
+}
+.candle__flame{
+  display:block;width:16px;height:22px;color:var(--c-gold);margin-bottom:-3px;
+  transform-origin:50% 100%;
+  filter:drop-shadow(0 0 7px color-mix(in srgb,var(--c-gold) 65%,transparent));
+}
+.candle__flame-svg{width:100%;height:100%}
+@media (prefers-reduced-motion:no-preference){
+  .candle__flame{animation:candle-flicker 2.6s ease-in-out infinite;animation-delay:calc(var(--i,0) * -0.37s)}
+}
+.candle__body{
+  display:block;width:22px;height:var(--h,70px);border-radius:6px 6px 3px 3px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--wax,#F3E4C8) 90%,#fff),var(--wax,#F3E4C8));
+  box-shadow:inset -4px 0 7px rgba(0,0,0,.15),inset 3px 0 5px rgba(255,255,255,.3);
+  position:relative;
+}
+.candle__body::before{
+  content:"";position:absolute;top:-6px;left:50%;translate:-50% 0;
+  width:3px;height:8px;border-radius:2px;background:#3a2a1a;
+}
+.candle:hover .candle__flame,.candle:focus-visible .candle__flame{
+  filter:drop-shadow(0 0 11px color-mix(in srgb,var(--c-gold) 85%,transparent));
+}
+
+.candle__tip{
+  position:absolute;bottom:calc(100% + 16px);left:50%;translate:-50% 0;
+  width:200px;max-width:min(60vw,240px);
+  background:var(--c-parchment);color:var(--c-ink);
+  border:1px solid var(--c-line);border-radius:var(--r-md);
+  box-shadow:0 14px 34px -8px rgba(0,0,0,.45);
+  padding:.75rem .85rem;text-align:left;font-size:.8rem;line-height:1.45;
+  opacity:0;transform:translate(-50%,6px);pointer-events:none;
+  transition:opacity var(--dur-2) var(--ease-out),transform var(--dur-2) var(--ease-out);
+  z-index:5;
+}
+.candle__tip::after{
+  content:"";position:absolute;top:100%;left:50%;translate:-50% 0;
+  border:6px solid transparent;border-top-color:var(--c-parchment);
+}
+.candle:hover .candle__tip,.candle:focus-within .candle__tip,.candle:focus-visible .candle__tip{
+  opacity:1;transform:translate(-50%,0);
+}
+.candle__tip strong{display:block;font-family:var(--font-display);font-weight:var(--weight-semi);color:var(--c-ink)}
+.candle__tip em{display:block;font-style:normal;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.02em;color:var(--c-ink-mute);margin-top:.25rem}
+.candle__tip p{margin:.5rem 0 0;color:var(--c-ink-soft)}

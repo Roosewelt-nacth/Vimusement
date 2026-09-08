@@ -9,6 +9,12 @@
 @keyframes float-y{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
 @keyframes bunting-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(4px) } }
 @keyframes gradient-pan{ to{ background-position:200% center } }
+@keyframes candle-flicker{
+  0%,100%{ transform:scaleY(1) rotate(0deg); filter:brightness(1); }
+  20%{ transform:scaleY(1.06) rotate(-1.5deg); filter:brightness(1.08); }
+  45%{ transform:scaleY(0.94) rotate(1deg); filter:brightness(0.96); }
+  70%{ transform:scaleY(1.03) rotate(-0.5deg); filter:brightness(1.04); }
+}
 
 /* ---- scroll-reveal ----
    Only hidden when JS is present (html.js). No-JS / JS-error = fully visible. */
