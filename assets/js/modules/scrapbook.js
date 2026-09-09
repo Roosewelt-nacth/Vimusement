@@ -1,22 +1,29 @@
 /* ============================================================
-   MODULE — yearbook  (yearbook.html)
-   Add 1-3 photos (camera capture or gallery picker, both compressed
-   client-side) + a name, submitted as a real <form target="hidden
-   iframe"> POST — not JSONP, not fetch — since Apps Script's redirect
-   makes the response unreadable cross-origin either way, and a native
-   form navigation is the one request type that isn't subject to CORS
-   at all. That means there is no way to confirm success from here; the
-   UI stays honest about that ("submitted", never "success").
+   MODULE — scrapbook  (scrapbook.html)
+   The memory scrapbook: add 1-3 photos (camera capture or gallery
+   picker, both compressed client-side) + a name, submitted as a real
+   <form target="hidden iframe"> POST — not JSONP, not fetch — since
+   Apps Script's redirect makes the response unreadable cross-origin
+   either way, and a native form navigation is the one request type
+   that isn't subject to CORS at all. That means there is no way to
+   confirm success from here; the UI stays honest about that
+   ("submitted", never "success").
+
+   Backend action names stayed "Yearbook" internally (sheet tab,
+   action names) — only the user-facing name changed to "scrapbook",
+   same as how the candle wall kept "candle" internally after it
+   became star-themed on the page.
 
    Data (write): {api}?action=submitYearbook       (POST, hidden iframe)
    Data (read):  {api}?action=getYearbookPhotos&offset=&limit=  (JSONP)
                  -> { photos:[{name,url,ts}], count, hasMore }
 
-   Markup: see yearbook.html — [data-yb-form] [data-yb-files]
+   Markup: see scrapbook.html — [data-yb-form] [data-yb-files]
      [data-yb-thumbs] [data-yb-consent] [data-yb-go] [data-yb-status]
      [data-yb-frame] [data-yb-camera*] [data-yb-wall] [data-yb-more]
+     [data-yb-art]  (scattered decorative SVG flourishes)
    ============================================================ */
-Vim.register("yearbook", function (ctx) {
+Vim.register("scrapbook", function (ctx) {
   var wall = ctx.$("[data-yb-wall]");
   if (!wall) return;
 
@@ -270,4 +277,36 @@ Vim.register("yearbook", function (ctx) {
     if (form) form.action = api;
     load(true);
   }
+
+  /* ---------- scattered decorative art — a fresh arrangement every visit,
+     just for fun; purely cosmetic, no seeding needed since nothing about
+     it needs to stay consistent across reloads like the polaroids do ---------- */
+  var artEl = ctx.$("[data-yb-art]");
+  var ART_SHAPES = [
+    '<svg viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 14c4-10 8-10 12 0s8 10 12 0 8-10 12 0"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="6" r="3"/><circle cx="18" cy="12" r="3"/><circle cx="12" cy="18" r="3"/><circle cx="6" cy="12" r="3"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.4-9.3-9C1 7.5 3 4.5 6.2 4.5c2 0 3.4 1.2 4.3 2.5.9-1.3 2.3-2.5 4.3-2.5C22 4.5 24 7.5 21.3 11 19 15.6 12 20 12 20Z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 14 10 22 12 14 14 12 22 10 14 2 12 10 10Z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 12V6a4 4 0 0 1 8 0v10a2.5 2.5 0 0 1-5 0V8"/></svg>',
+    '<svg viewBox="0 0 40 12" fill="currentColor"><circle cx="2" cy="6" r="1.6"/><circle cx="12" cy="6" r="1.6"/><circle cx="22" cy="6" r="1.6"/><circle cx="32" cy="6" r="1.6"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v6M12 21v-2M3 12h6M21 12h-2M5.6 5.6l4.2 4.2M18.4 5.6l-4.2 4.2"/></svg>'
+  ];
+  var ART_COLORS = ["var(--c-gold)", "var(--c-rose)", "var(--c-teal)", "#fff"];
+  function scatterArt() {
+    if (!artEl) return;
+    var n = 6 + Math.floor(Math.random() * 3);
+    var html = "";
+    for (var i = 0; i < n; i++) {
+      var shape = ART_SHAPES[Math.floor(Math.random() * ART_SHAPES.length)];
+      var color = ART_COLORS[Math.floor(Math.random() * ART_COLORS.length)];
+      var x = (4 + Math.random() * 92).toFixed(1);
+      var y = (4 + Math.random() * 92).toFixed(1);
+      var rot = (Math.random() * 50 - 25).toFixed(1);
+      var scale = (0.7 + Math.random() * 0.7).toFixed(2);
+      var op = (0.12 + Math.random() * 0.16).toFixed(2);
+      html += '<span class="yb-art__piece" style="left:' + x + '%;top:' + y + '%;--rot:' + rot + 'deg;--scale:' + scale + ';--op:' + op + ';color:' + color + '">' + shape + '</span>';
+    }
+    artEl.innerHTML = html;
+  }
+  scatterArt();
 });

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Yearbook · Vimusement {year}</title>
-<meta name="description" content="Add a photo of you and your friends having a good time at Vimusement — it joins a growing scrapbook of the day.">
+<title>Memory Scrapbook · Vimusement {year}</title>
+<meta name="description" content="Add a photo of you and your friends having a good time at Vimusement — it joins a growing memory scrapbook of the day.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
 (function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/animations.css">
-<link rel="stylesheet" href="assets/css/pages/yearbook.css">
+<link rel="stylesheet" href="assets/css/pages/scrapbook.css">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -22,7 +22,7 @@
 <main id="main">
 <header class="yb-hero">
   <div class="wrap wrap--narrow">
-    <p class="eyebrow" data-animate="fade-up">The yearbook</p>
+    <p class="eyebrow" data-animate="fade-up">The memory scrapbook</p>
     <h1 data-animate="fade-up" data-animate-delay="0.07">Add yourself to the scrapbook</h1>
     <p data-animate="fade-up" data-animate-delay="0.14">A photo of you and your friends having a good time — it joins a growing page of moments from the day.</p>
   </div>
@@ -60,7 +60,7 @@
         <span>I'm happy for these photos of me to be shown publicly on this page.</span>
       </label>
 
-      <button type="submit" class="btn btn--gold btn--block btn--lg" data-yb-go>Add to the yearbook</button>
+      <button type="submit" class="btn btn--gold btn--block btn--lg" data-yb-go>Add to the scrapbook</button>
       <p class="donate-status" data-yb-status hidden></p>
       <p class="donate-note">Photos appear here once a volunteer approves them — usually within a day.</p>
 
@@ -86,6 +86,7 @@
 </section>
 
 <section class="tile tile--c yb-wall-tile">
+  <div class="yb-art" data-yb-art aria-hidden="true"></div>
   <div class="wrap wrap--narrow">
     <p class="eyebrow" data-animate="fade-up">The scrapbook</p>
     <h2 data-animate="fade-up">Moments from the day</h2>
@@ -108,7 +109,7 @@
 <script defer src="assets/js/modules/dockswipe.js"></script>
 <script defer src="assets/js/modules/render.js"></script>
 <script defer src="assets/js/modules/motion.js"></script>
-<script defer src="assets/js/modules/yearbook.js"></script>
+<script defer src="assets/js/modules/scrapbook.js"></script>
 <script defer src="assets/js/modules/polish.js"></script>
 <script defer src="assets/js/main.js"></script>
 </body>

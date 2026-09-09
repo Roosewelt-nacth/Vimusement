@@ -18,7 +18,7 @@ window.VIM_SITE = {
     { label: "Programme",     file: "programme.html", icon: "screen", primary: true },
     { label: "The Cause",     file: "cause.html",     icon: "heart",  primary: true },
     { label: "Lucky Draw",    file: "draw.html",      icon: "ticket", primary: true },
-    { label: "Yearbook",      file: "yearbook.html",  icon: "yearbook" },
+    { label: "Scrapbook",     file: "scrapbook.html", icon: "scrapbook" },
     { label: "Gallery",       file: "gallery.html",   icon: "photos" },
     { label: "Get Involved",  file: "involve.html",   icon: "people" },
     // { label: "Developers", file: "developers.html", icon: "code" },   // hidden for now — page still exists, just not linked

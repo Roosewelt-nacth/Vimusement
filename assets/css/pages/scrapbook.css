@@ -1,5 +1,5 @@
 /* ============================================================
-   PAGE — yearbook  (yearbook.html)
+   PAGE — scrapbook  (scrapbook.html) — the memory scrapbook
    ============================================================ */
 
 .yb-hero{
@@ -76,10 +76,22 @@
 .yb-camera__msg{color:#fff;font-size:var(--fs-sm);text-align:center;max-width:32ch}
 
 /* ---- the scrapbook wall ---- */
-.yb-wall-tile{padding-block:clamp(2.5rem,6vw,4rem)}
+.yb-wall-tile{padding-block:clamp(2.5rem,6vw,4rem);position:relative;overflow:hidden}
 .yb-wall-tile [hidden]{display:none}
 .yb-wall-tile .eyebrow::before{background:var(--c-teal)}
 .yb-wall-tile h2{margin-bottom:1.4rem}
+.yb-wall-tile > .wrap{position:relative;z-index:1}
+
+/* scattered decorative flourishes — a fresh random arrangement each visit,
+   purely for fun/atmosphere; low opacity so they never compete with the
+   actual photos or read as clutter */
+.yb-art{position:absolute;inset:0;pointer-events:none;z-index:0}
+.yb-art__piece{
+  position:absolute;width:30px;height:30px;
+  opacity:var(--op,.15);
+  transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(var(--scale,1));
+}
+.yb-art__piece svg{width:100%;height:100%;display:block}
 
 .polaroid-wall{
   list-style:none;margin:0;column-gap:1.2rem;column-count:1;
