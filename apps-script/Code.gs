@@ -5,6 +5,7 @@
  * ONE script for the whole project. Tabs:
  *     Donations   — zero-fee UPI + confirm + notify
  *     LuckyDraw   — ticket sales (UPI + cash counter) + the draw
+ *     Yearbook    — visitor photo uploads (Drive) + a staff Approved gate
  *     Staff       — who can use the counter: Username|Name|Role|Active|Notes
  *     _Counters   — running numbers for unique IDs (hidden; do not edit by hand)
  *     _Log        — audit trail: every login / ticket / cash gift / winner (hidden)
@@ -33,6 +34,12 @@
  *   LD_PRICE         lucky-draw ticket price in rupees, default 50
  *   LD_MAX           max tickets per online buyer, default 25
  *   ENABLE_EMAIL_RECONCILE / RECONCILE_LABEL   phase-2 bank-alert auto-confirm
+ *   YEARBOOK_FOLDER_ID  Drive folder to save photos into (optional — auto-
+ *                       creates/reuses one named "Vimusement Yearbook Photos"
+ *                       if unset). NOTE: the first deploy after adding the
+ *                       Yearbook feature needs a NEW Drive-scope OAuth
+ *                       authorization and a new deployment VERSION, not just
+ *                       a saved script — Drive wasn't used anywhere before.
  *
  * ---- Triggers ----
  *   onSheetEdit    — From spreadsheet, On edit
@@ -53,6 +60,17 @@ var T_LD = 'LuckyDraw';
 var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
   'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes', 'Donor UPI ref'];
 var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13, UTR:14 };
+
+/* one row per submission (name + up to 3 photos), not per photo — a
+   person's photos stay grouped together in the sheet for moderation.
+   Approved starts EMPTY on purpose (opposite of Candles' Hidden column):
+   photos of real people are higher-risk than candle text, so this is a
+   publish gate a staff member fills in, not a hide-after-the-fact flag. */
+var T_YEARBOOK = 'Yearbook';
+var YEARBOOK_HEADER = ['Timestamp', 'Name', 'Consent',
+  'Photo 1 URL', 'Photo 1 File ID', 'Photo 2 URL', 'Photo 2 File ID',
+  'Photo 3 URL', 'Photo 3 File ID', 'Approved'];
+var YC = { TS:1, NAME:2, CONSENT:3, P1URL:4, P1ID:5, P2URL:6, P2ID:7, P3URL:8, P3ID:9, APPROVED:10 };
 
 var STATUS_LIST = ['Pending', 'Paid?', 'Confirmed', 'Cancelled'];
 var T_COUNTERS = '_Counters';
@@ -91,6 +109,10 @@ function doGet(e) {
       case 'drawPool':        return _json(drawPool(e.parameter));
       case 'drawRecordWinner':return _json(drawRecordWinner(e.parameter));
       case 'drawStats':       return _json(drawStats());
+
+      /* yearbook */
+      case 'submitYearbook':    return _json(submitYearbookPhotos(e.parameter));
+      case 'getYearbookPhotos': return _json(getYearbookPhotos(e.parameter));
 
       default:                return _json({ error: 'unknown action: ' + a });
     }
@@ -134,6 +156,18 @@ function _tab(name, header, statusCol) {
 }
 function _donations() { return _tab(T_DON, DON_HEADER, DC.STATUS); }
 function _luckydraw() { return _tab(T_LD, LD_HEADER, LC.STATUS); }
+function _yearbook() { return _tab(T_YEARBOOK, YEARBOOK_HEADER); }
+
+/** the Drive folder photos are saved into — pin one via YEARBOOK_FOLDER_ID,
+    otherwise auto-create/reuse one by name (same create-or-reuse spirit as
+    _ss()'s SHEET_ID fallback). */
+function _yearbookFolder() {
+  var id = PROPS.getProperty('YEARBOOK_FOLDER_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) { /* fall through */ } }
+  var name = 'Vimusement Yearbook Photos';
+  var it = DriveApp.getFoldersByName(name);
+  return it.hasNext() ? it.next() : DriveApp.createFolder(name);
+}
 
 /** running number per prefix, collision-safe (LockService). */
 function _nextId(prefix) {
@@ -602,6 +636,84 @@ function drawStats() {
 }
 
 /* ============================================================
+   YEARBOOK  — visitor photo uploads (Drive) + a staff Approved gate
+
+   Reached over POST (a real <form target="hidden-iframe"> submit, not
+   fetch/XHR — see yearbook.js) so the browser can deliver a large base64
+   payload; doPost forwards to this exact same router, since Apps Script
+   populates e.parameter from a form-urlencoded POST body just like a GET
+   query string. Because the response lives behind an iframe on a
+   cross-origin googleusercontent.com document, the client can never read
+   whether this call succeeded — the write itself still happens
+   server-side regardless, so a submission is either fully saved or not
+   attempted at all, never left "confirmed" incorrectly.
+   ============================================================ */
+var YB_MAX_BYTES = 1600000;   // ~1.6MB decoded per photo — a generous safety cap, not a target
+var YB_DATA_URL_RE = /^data:image\/(jpeg|jpg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
+
+function submitYearbookPhotos(p) {
+  var name = String(p.name || '').trim().slice(0, 60);
+  var consent = /^(1|on|true|yes)$/i.test(String(p.consent || ''));
+  if (!name) return { error: 'Please add your name.' };
+  if (!consent) return { error: 'Please confirm consent to share your photo.' };
+
+  var raw = [p.photo1, p.photo2, p.photo3].filter(function (v) { return v; }).slice(0, 3);
+  if (!raw.length) return { error: 'Please add at least one photo.' };
+
+  var folder = _yearbookFolder();
+  var saved = [];
+  for (var i = 0; i < raw.length; i++) {
+    var m = YB_DATA_URL_RE.exec(String(raw[i]));
+    if (!m) continue;                                     // malformed — skip, don't fail the whole submission
+    var bytes;
+    try { bytes = Utilities.base64Decode(m[2]); } catch (e) { continue; }
+    if (!bytes.length || bytes.length > YB_MAX_BYTES) continue;
+    var blob = Utilities.newBlob(bytes, 'image/jpeg', 'yb-' + Utilities.getUuid().slice(0, 8) + '.jpg');
+    var file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    saved.push({ id: file.getId(), url: 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1000' });
+  }
+  if (!saved.length) return { error: 'No usable photos received — please try again.' };
+
+  _yearbook().appendRow([new Date(), name, 'Yes',
+    saved[0] ? saved[0].url : '', saved[0] ? saved[0].id : '',
+    saved[1] ? saved[1].url : '', saved[1] ? saved[1].id : '',
+    saved[2] ? saved[2].url : '', saved[2] ? saved[2].id : '', '']);
+  return { ok: true, count: saved.length };
+}
+
+/** public, paginated, newest submissions first. Only rows a staff member
+    has filled in Approved for are ever returned — see the header comment
+    on T_YEARBOOK/YEARBOOK_HEADER for why this defaults to hidden. */
+function getYearbookPhotos(p) {
+  var offset = Math.max(0, parseInt(p.offset, 10) || 0);
+  var limit = Math.min(30, Math.max(1, parseInt(p.limit, 10) || 12));
+  var sh = _yearbook();
+  var last = sh.getLastRow();
+  if (last < 2) return { photos: [], count: 0, hasMore: false };
+
+  var rows = sh.getRange(2, 1, last - 1, YEARBOOK_HEADER.length).getValues();
+  var approved = [];
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][YC.APPROVED - 1] || '').trim() !== '') approved.push(rows[i]);
+  }
+  approved.reverse();
+
+  var flat = [];
+  approved.forEach(function (r) {
+    var name = String(r[YC.NAME - 1] || '').trim();
+    var ts = new Date(r[YC.TS - 1]).toISOString();
+    [[YC.P1URL], [YC.P2URL], [YC.P3URL]].forEach(function (pair) {
+      var url = String(r[pair[0] - 1] || '').trim();
+      if (url) flat.push({ name: name, url: url, ts: ts });
+    });
+  });
+
+  var page = flat.slice(offset, offset + limit);
+  return { photos: page, count: flat.length, hasMore: offset + limit < flat.length };
+}
+
+/* ============================================================
    CONFIRM + NOTIFY  (donations AND lucky-draw UPI purchases)
    ============================================================ */
 function onSheetEdit(e) {
@@ -840,6 +952,7 @@ function confirmSelectedRows() {
 function _selfTest() {
   Logger.log('Donations tab: rows=' + _donations().getLastRow());
   Logger.log('LuckyDraw tab: rows=' + _luckydraw().getLastRow());
+  Logger.log('Yearbook tab: rows=' + _yearbook().getLastRow());
   var stf = _tab(T_STAFF, STAFF_HEADER);
   if (stf.getLastRow() < 2) {
     stf.appendRow(['roonah', 'Roonah', 'admin', 'Yes', 'add a row per counter volunteer (role = counter). Active = No locks them out.']);

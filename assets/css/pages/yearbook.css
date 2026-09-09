@@ -1,0 +1,125 @@
+/* ============================================================
+   PAGE — yearbook  (yearbook.html)
+   ============================================================ */
+
+.yb-hero{
+  background:var(--hero-bg);color:var(--c-ink-soft);
+  padding-block:clamp(3.5rem,9vw,6.5rem) clamp(2rem,5vw,3rem);
+  position:relative;overflow:hidden;border-bottom:1px solid var(--c-line);
+}
+.yb-hero .wrap{position:relative;z-index:1}
+.yb-hero::after{
+  content:"";position:absolute;right:-8%;top:-50%;width:52%;height:200%;
+  background:radial-gradient(50% 50% at 50% 50%,color-mix(in srgb,var(--c-teal) 22%,transparent),transparent 70%);
+  pointer-events:none;
+}
+.yb-hero h1{color:var(--c-ink);font-size:var(--fs-2xl);margin-block:.5rem;letter-spacing:var(--track-display);max-width:22ch}
+.yb-hero p{color:var(--c-ink-soft);max-width:48ch;font-size:var(--fs-md);line-height:1.45}
+.yb-hero .eyebrow::before{background:var(--c-teal)}
+
+.yb-panel{
+  background:var(--c-surface);
+  border:1px solid var(--c-line);border-radius:var(--r-lg);
+  padding:clamp(1.5rem,4vw,2.4rem);
+}
+.yb-panel h2{color:var(--c-ink);font-size:var(--fs-lg);margin-bottom:1.2rem}
+.yb-panel .field{margin-bottom:1.3rem}
+.donate-note{margin-top:1rem;font-size:var(--fs-sm);color:var(--c-ink-mute)}
+.donate-setup{
+  margin-top:1.3rem;border:1px solid var(--c-line);border-left:3px solid var(--c-gold);
+  border-radius:var(--r-md);background:var(--c-parchment);
+  padding:1rem 1.1rem;font-size:var(--fs-sm);color:var(--c-ink-soft);
+}
+.donate-setup code{font-family:var(--font-mono);font-size:.85em;background:var(--c-surface);padding:.1rem .4rem;border-radius:var(--r-xs)}
+
+/* ---- photo sources: camera / gallery ---- */
+.yb-sources{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1rem}
+.yb-source-btn{display:inline-flex;align-items:center;gap:.5rem;cursor:pointer}
+.yb-source-btn svg{width:18px;height:18px;flex:none}
+
+.yb-thumbs{list-style:none;display:flex;gap:.6rem;flex-wrap:wrap;margin:0 0 1.3rem}
+.yb-thumb{position:relative;width:72px;height:72px;border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--shadow-image)}
+.yb-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.yb-thumb__x{
+  position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:#fff;border:0;cursor:pointer;font-size:.85rem;line-height:1;
+}
+
+/* ---- camera overlay ---- */
+.yb-camera[hidden]{display:none}
+.yb-camera{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(10,6,10,.92);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;
+  padding:1.5rem;
+}
+.yb-camera__stage{
+  position:relative;width:min(92vw,480px);aspect-ratio:3/4;border-radius:var(--r-lg);
+  overflow:hidden;background:#000;box-shadow:0 20px 60px -20px rgba(0,0,0,.6);
+}
+.yb-camera__video{width:100%;height:100%;object-fit:cover;display:block}
+.yb-camera__flip[hidden]{display:none}
+.yb-camera__close,.yb-camera__flip{
+  position:absolute;top:.8rem;width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:#fff;
+  display:grid;place-items:center;cursor:pointer;
+}
+.yb-camera__close{right:.8rem;font-size:1.3rem;line-height:1}
+.yb-camera__flip{left:.8rem}
+.yb-camera__flip svg{width:20px;height:20px}
+.yb-camera__shutter{
+  width:70px;height:70px;border-radius:50%;background:var(--c-gold);
+  border:4px solid rgba(255,255,255,.7);cursor:pointer;
+  box-shadow:0 6px 24px -4px color-mix(in srgb,var(--c-gold) 60%,transparent);
+}
+.yb-camera__shutter:active{transform:scale(.94)}
+.yb-camera__msg{color:#fff;font-size:var(--fs-sm);text-align:center;max-width:32ch}
+
+/* ---- the scrapbook wall ---- */
+.yb-wall-tile{padding-block:clamp(2.5rem,6vw,4rem)}
+.yb-wall-tile [hidden]{display:none}
+.yb-wall-tile .eyebrow::before{background:var(--c-teal)}
+.yb-wall-tile h2{margin-bottom:1.4rem}
+
+.polaroid-wall{
+  list-style:none;margin:0;column-gap:1.2rem;column-count:1;
+}
+@media (min-width:640px){ .polaroid-wall{column-count:2} }
+@media (min-width:980px){ .polaroid-wall{column-count:3} }
+.yb-wall__empty,.yb-wall__loading{
+  color:var(--c-on-dark-soft);font-size:var(--fs-sm);text-align:center;padding:2rem 1rem;
+}
+
+.polaroid{
+  break-inside:avoid;margin-bottom:1.2rem;position:relative;
+  background:#fdfaf3;border-radius:var(--r-sm);padding:.7rem .7rem 1.3rem;
+  box-shadow:var(--shadow-image);
+  transform:rotate(var(--r,0deg));
+  transition:transform var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out);
+}
+.polaroid:hover,.polaroid:focus-within{
+  transform:rotate(0deg) translateY(-4px);
+  box-shadow:0 20px 40px -12px rgba(0,0,0,.4);
+  outline:none;
+}
+.polaroid__img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:2px;display:block;background:#eee}
+.polaroid__cap{
+  display:block;margin-top:.6rem;text-align:center;
+  font-family:var(--font-display);font-style:italic;font-weight:var(--weight-light);
+  color:#2a2036;font-size:.92rem;
+}
+.polaroid__tape{
+  position:absolute;top:-10px;width:56px;height:24px;color:color-mix(in srgb,var(--c-gold) 55%,#fff);
+  opacity:.75;mix-blend-mode:multiply;
+}
+.polaroid__tape svg{width:100%;height:100%;fill:currentColor;stroke:none}
+.polaroid__tape--tl{left:6%;transform:rotate(-8deg)}
+.polaroid__tape--tr{right:6%;transform:rotate(8deg)}
+.polaroid__doodle{
+  position:absolute;bottom:-8px;right:-8px;width:26px;height:26px;
+  color:var(--c-rose);opacity:.55;pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .polaroid{transition:none}
+}
