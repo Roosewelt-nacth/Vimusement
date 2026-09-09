@@ -9,13 +9,8 @@
    confirm success from here; the UI stays honest about that
    ("submitted", never "success").
 
-   Backend action names stayed "Yearbook" internally (sheet tab,
-   action names) — only the user-facing name changed to "scrapbook",
-   same as how the candle wall kept "candle" internally after it
-   became star-themed on the page.
-
-   Data (write): {api}?action=submitYearbook       (POST, hidden iframe)
-   Data (read):  {api}?action=getYearbookPhotos&offset=&limit=  (JSONP)
+   Data (write): {api}?action=submitScrapbook       (POST, hidden iframe)
+   Data (read):  {api}?action=getScrapbookPhotos&offset=&limit=  (JSONP)
                  -> { photos:[{name,url,ts}], count, hasMore }
 
    Markup: see scrapbook.html — [data-yb-form] [data-yb-files]
@@ -248,7 +243,7 @@ Vim.register("scrapbook", function (ctx) {
     if (LOADING || !api) return;
     LOADING = true;
     if (reset) { OFFSET = 0; wall.innerHTML = '<li class="yb-wall__loading">Loading the scrapbook…</li>'; }
-    jsonp({ action: "getYearbookPhotos", offset: OFFSET, limit: LIMIT })
+    jsonp({ action: "getScrapbookPhotos", offset: OFFSET, limit: LIMIT })
       .then(function (data) {
         LOADING = false;
         var items = (data && data.photos) || [];
