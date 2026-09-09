@@ -236,7 +236,7 @@ Vim.register("scrapbook", function (ctx) {
     return (
       '<li class="polaroid" style="--r:' + rot + 'deg" tabindex="0">' +
         '<span class="polaroid__tape polaroid__tape--' + tapeCorner + '" aria-hidden="true">' + TAPE_SVG + '</span>' +
-        '<img class="polaroid__img" src="' + esc(photo.url) + '" loading="lazy" alt="' + alt + '">' +
+        '<span class="polaroid__imgwrap"><img class="polaroid__img" src="' + esc(photo.url) + '" loading="lazy" alt="' + alt + '"></span>' +
         '<span class="polaroid__cap">' + name + '</span>' +
         doodle +
       '</li>'
@@ -304,7 +304,9 @@ Vim.register("scrapbook", function (ctx) {
       var rot = (Math.random() * 50 - 25).toFixed(1);
       var scale = (0.7 + Math.random() * 0.7).toFixed(2);
       var op = (0.12 + Math.random() * 0.16).toFixed(2);
-      html += '<span class="yb-art__piece" style="left:' + x + '%;top:' + y + '%;--rot:' + rot + 'deg;--scale:' + scale + ';--op:' + op + ';color:' + color + '">' + shape + '</span>';
+      var dur = (7 + Math.random() * 6).toFixed(1) + "s";
+      var delay = (-(Math.random() * 12)).toFixed(1) + "s";   // negative = starts mid-cycle, so pieces don't drift in sync
+      html += '<span class="yb-art__piece" style="left:' + x + '%;top:' + y + '%;--rot:' + rot + 'deg;--scale:' + scale + ';--op:' + op + ';--dur:' + dur + ';--delay:' + delay + ';color:' + color + '">' + shape + '</span>';
     }
     artEl.innerHTML = html;
   }
