@@ -89,10 +89,24 @@ Vim.register("tickets", function (ctx) {
     });
   }
 
+  /* Real ticket IDs (_nextId in Code.gs) look like "LD-2026-0001" — far
+     wider than the 4-char "····" placeholder the gold italic size was
+     tuned for. Split off everything but the last dash-segment as a small
+     label line, so only the short serial gets the big treatment. */
+  function splitId(num) {
+    var parts = String(num).split('-');
+    if (parts.length < 2) return { prefix: '', tail: num };
+    return { prefix: parts.slice(0, -1).join(' · '), tail: parts[parts.length - 1] };
+  }
+
   /* one real ticket card per Lucky Draw number (not a text list) — same
      visual design as the live preview shown at purchase (drawticket.js),
      just filled with the confirmed name/number instead of a provisional one */
   function ticketCard(opts) {
+    var idPart = opts.split ? splitId(opts.num) : { prefix: '', tail: opts.num };
+    var numHtml = idPart.prefix
+      ? '<p class="tk-num-prefix">' + esc(idPart.prefix) + '</p><p class="tk-num tk-num--id">' + esc(idPart.tail) + '</p>'
+      : '<p class="tk-num' + (opts.wordy ? ' tk-num--word' : '') + '">' + esc(idPart.tail) + '</p>';
     return '<div class="ticket-preview lookup-ticket">' +
       '<div class="ticket-preview__frame">' +
       '<div class="ticket-preview__card">' +
@@ -100,7 +114,7 @@ Vim.register("tickets", function (ctx) {
         '<div class="ticket-preview__field">' +
           '<p class="tk-eyebrow">' + esc(opts.eyebrow) + '</p>' +
           '<p class="tk-title">Vimusement ' + year + '</p>' +
-          '<p class="tk-admit">Admit<span class="tk-name">' + esc(opts.name || "Friend") + '</span></p>' +
+          '<p class="tk-admit">Admit<span class="tk-name">' + esc(opts.name || "Guest") + '</span></p>' +
           (mark
             ? '<div class="tk-lockup"><img src="' + mark + '" alt="" class="tk-lockup__img' + markFix + '">' +
               '<span>' + esc(venue) + '<br>Drawn live on stage on the night</span></div>'
@@ -108,7 +122,7 @@ Vim.register("tickets", function (ctx) {
         '</div>' +
         '<div class="ticket-preview__stub">' +
           '<p class="tk-no">' + esc(opts.numLabel) + '</p>' +
-          '<p class="tk-num' + (opts.wordy ? ' tk-num--word' : '') + '">' + esc(opts.num) + '</p>' +
+          numHtml +
           '<p class="tk-tag">' + esc(opts.status) + '</p>' +
           (opts.meta ? '<p class="tk-meta">' + esc(opts.meta) + '</p>' : '') +
         '</div>' +
@@ -125,7 +139,7 @@ Vim.register("tickets", function (ctx) {
           r.ids.forEach(function (id) {
             cards.push(ticketCard({
               eyebrow: 'Lucky Draw', name: r.name, num: id, numLabel: 'No.',
-              status: r.status, meta: r.ref, seed: id
+              status: r.status, meta: r.ref, seed: id, split: true
             }));
           });
         } else {

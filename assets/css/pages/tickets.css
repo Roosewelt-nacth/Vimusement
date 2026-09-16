@@ -20,3 +20,16 @@
 /* a word like "Confirmed"/"Pending" (donation status) instead of a short
    ticket number — the default tk-num size is tuned for 4-5 digit numbers */
 .tk-num--word { font-size: 1.15rem; word-break: break-word; }
+
+/* real ticket IDs are "LD-2026-0001" — everything but the last segment
+   (the short serial) shows here as a small label instead of blowing out
+   the big gold number */
+.tk-num-prefix {
+  margin: .3rem 0 0;
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--tk-mute);
+}
+.tk-num--id { margin-top: .05rem; }
