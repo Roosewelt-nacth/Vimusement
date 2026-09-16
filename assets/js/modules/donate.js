@@ -10,8 +10,8 @@
 
    Markup (donate.html):
      [data-donate-chips]   [data-donate-custom]   [data-donate-amount]
-     [data-donate-name]    [data-donate-email]    [data-donate-wall]
-     [data-donate-go]      [data-donate-status]
+     [data-donate-name]    [data-donate-email]    [data-donate-phone]
+     [data-donate-wall]    [data-donate-go]       [data-donate-status]
      [data-upi-panel]      (built here; hidden until pledged)
    ============================================================ */
 Vim.register("donate", function (ctx) {
@@ -30,6 +30,7 @@ Vim.register("donate", function (ctx) {
   var fundsEl = ctx.$("[data-donate-funds]");
   var nameEl = ctx.$("[data-donate-name]");
   var emailEl = ctx.$("[data-donate-email]");
+  var phoneEl = ctx.$("[data-donate-phone]");
   var wallEl = ctx.$("[data-donate-wall]");
   var go     = ctx.$("[data-donate-go]");
   var out    = ctx.$("[data-donate-amount]");
@@ -187,7 +188,8 @@ Vim.register("donate", function (ctx) {
     go.disabled = true;
     say("Setting up your payment…");
     var wall = wallEl && !wallEl.checked ? "no" : "yes";
-    jsonp({ action: "pledge", amount: amount, name: nm, email: em, wall: wall })
+    var ph = ((phoneEl && phoneEl.value) || "").trim();
+    jsonp({ action: "pledge", amount: amount, name: nm, email: em, phone: ph, wall: wall })
       .then(function (res) {
         go.disabled = false;
         if (res.error || !res.upiUri) { say(res.error || "Could not start the payment.", "warn"); return; }
