@@ -180,17 +180,20 @@ window.VIM_YEARS["2026"] = {
   ],
 
   /* ---------- STALLS  (the stalls.html page) ----------
-     Fill `open[]` with the stalls still available and set the table
-     `rates` when the committee decides. The page renders whatever is here. */
+     Rates are locked (2026 Stall Committee). `open[]` still empty — which
+     specific stalls/categories are available hasn't been decided yet;
+     fill it in once the category caps are set. Games are handled
+     separately by Victorians (internal, not a vendor slot — see
+     program.games below) and aren't priced here. */
   stalls: {
-    intro: "Bring a stall to Vimusement: food, a game or a craft table. You keep it running on the night and share the takings with the cause.",
-    ratesNote: "Table rates are being finalised. Message to reserve a spot now.",
+    intro: "Bring a stall to Vimusement: food or a craft table. You keep it running on the night and share the takings with the cause.",
+    ratesNote: "Extra tables/chairs beyond what's included: ₹50 each. Lights & electricity are included free with every stall.",
     rates: [
-      // { name: "Food stall (own gas/electric)", price: "TBC" },
-      // { name: "Game or craft table",           price: "TBC" }
+      { name: "Full stall (own gas/electric)",            price: "₹5,000" },
+      { name: "Half stall (incl. craft / non-food table)", price: "₹3,000" }
     ],
     open: [
-      // "Snack stall", "Craft table", "Game booth"
+      // "Snack stall", "Craft table"
     ],
     contactWhatsApp: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20run%20a%20stall%20at%20Vimusement%202026.",
     contactInstagram: "https://ig.me/m/victorians.youth"
