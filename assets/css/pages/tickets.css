@@ -1,39 +1,22 @@
 /* ============================================================
    PAGE — tickets.html (self-serve "find my ticket" lookup)
-   Reuses donate.css's .donate-panel / .field / .donate-status —
-   this file only adds the results-card list.
+   Reuses donate.css's .donate-panel / .field / .donate-status
+   and ticket.css's .ticket-preview ticket design (drawticket.js's
+   live-preview look, filled with the confirmed name/number here
+   instead of a provisional one) — this file only adjusts spacing
+   for a stacked list of results instead of one live preview.
    ============================================================ */
 
 .lookup-results {
   display: grid;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-top: 1.4rem;
 }
 .lookup-results[hidden] { display: none; }
 
-.lookup-card {
-  border: 1px solid var(--c-line, rgba(0,0,0,.1));
-  border-radius: var(--radius-md, 12px);
-  padding: 1rem 1.1rem;
-  background: var(--c-surface-2, rgba(0,0,0,.02));
-}
+.lookup-ticket { margin: 0; }
+.lookup-ticket .ticket-preview__frame { max-width: 460px; margin: 0; }
 
-.lookup-card__type {
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-}
-
-.lookup-card__status {
-  display: inline-block;
-  font-size: 0.85rem;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  background: var(--c-gold-tint, rgba(212,175,55,.16));
-  color: var(--c-ink, inherit);
-  margin: 0 0 0.4rem;
-}
-
-.lookup-card__ids {
-  margin: 0;
-  color: var(--c-ink-soft, inherit);
-}
+/* a word like "Confirmed"/"Pending" (donation status) instead of a short
+   ticket number — the default tk-num size is tuned for 4-5 digit numbers */
+.tk-num--word { font-size: 1.15rem; word-break: break-word; }

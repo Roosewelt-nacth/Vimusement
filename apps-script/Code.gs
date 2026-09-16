@@ -471,21 +471,22 @@ function lookupByPhone(p) {
     for (var i = 0; i < dv.length; i++) {
       if (String(dv[i][DC.REF - 1]).toUpperCase() !== ref) continue;
       if (_normPhone(dv[i][DC.PHONE - 1]) !== phone) continue;
-      results.push({ type: 'Donation', ref: ref, status: String(dv[i][DC.STATUS - 1]).trim() });
+      results.push({ type: 'Donation', ref: ref, status: String(dv[i][DC.STATUS - 1]).trim(), name: String(dv[i][DC.NAME - 1] || '') });
     }
   }
 
   var ld = _luckydraw(), ll = ld.getLastRow();
   if (ll > 1) {
     var lv = ld.getRange(2, 1, ll - 1, LD_HEADER.length).getValues();
-    var ids = [], status = '';
+    var ids = [], status = '', name = '';
     for (var j = 0; j < lv.length; j++) {
       if (String(lv[j][LC.REF - 1]).toUpperCase() !== ref) continue;
       if (_normPhone(lv[j][LC.PHONE - 1]) !== phone) continue;
       status = String(lv[j][LC.STATUS - 1]).trim();
+      name = String(lv[j][LC.NAME - 1] || '');
       if (status !== 'Cancelled') { var tid = lv[j][LC.TID - 1]; if (tid) ids.push(String(tid)); }
     }
-    if (status) results.push({ type: 'Lucky Draw', ref: ref, status: status, ids: ids });
+    if (status) results.push({ type: 'Lucky Draw', ref: ref, status: status, ids: ids, name: name });
   }
 
   if (!results.length) return { error: 'No records found for that phone number and reference.' };
