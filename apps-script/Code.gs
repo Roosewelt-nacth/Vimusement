@@ -33,6 +33,10 @@
  *   LD_PRICE         lucky-draw ticket price in rupees, default 50
  *   LD_MAX           max tickets per online buyer, default 25
  *   ENABLE_EMAIL_RECONCILE / RECONCILE_LABEL   phase-2 bank-alert auto-confirm
+ *   SMS_API_URL      SMS gateway send endpoint (optional — texts are
+ *                    skipped, not failed, if unset)
+ *   SMS_API_KEY      SMS gateway auth key
+ *   SMS_SENDER_ID    optional 6-char sender ID some Indian gateways require
  *
  * ---- Triggers ----
  *   onSheetEdit    — From spreadsheet, On edit
@@ -45,9 +49,12 @@ var _CB = '';   // JSONP callback name for the current request (set in doGet)
 
 /* ---------- tab schemas ---------- */
 var T_DON = 'Donations';
+/* 'Phone' appended at the END, not slotted in the middle — this tab already
+   has live rows, and inserting a column mid-header would misalign every
+   existing row's data against the new header. Appending is always safe. */
 var DON_HEADER = ['Timestamp', 'Reference', 'Name', 'Email', 'Amount (INR)',
-  'Channel', 'By', 'Donor UPI ref', 'Status', 'Show on wall', 'Confirmed at', 'Notes'];
-var DC = { TS:1, REF:2, NAME:3, EMAIL:4, AMOUNT:5, CHANNEL:6, BY:7, UTR:8, STATUS:9, WALL:10, CONFIRMED:11, NOTES:12 };
+  'Channel', 'By', 'Donor UPI ref', 'Status', 'Show on wall', 'Confirmed at', 'Notes', 'Phone'];
+var DC = { TS:1, REF:2, NAME:3, EMAIL:4, AMOUNT:5, CHANNEL:6, BY:7, UTR:8, STATUS:9, WALL:10, CONFIRMED:11, NOTES:12, PHONE:13 };
 
 var T_LD = 'LuckyDraw';
 var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
@@ -91,6 +98,9 @@ function doGet(e) {
       case 'drawPool':        return _json(drawPool(e.parameter));
       case 'drawRecordWinner':return _json(drawRecordWinner(e.parameter));
       case 'drawStats':       return _json(drawStats());
+
+      /* self-serve lookup */
+      case 'lookupByPhone':   return _json(lookupByPhone(e.parameter));
 
       default:                return _json({ error: 'unknown action: ' + a });
     }
@@ -181,6 +191,45 @@ function _mail(to, subject, body) {
   return true;
 }
 
+/** canonical 10-digit Indian mobile number, or '' if it doesn't look like one.
+    Centralised (rather than each caller inlining its own .replace()) because
+    the SMS gateway needs one consistent format, unlike the old display-only
+    stripping this replaces. */
+function _normPhone(s) {
+  var d = String(s || '').replace(/\D/g, '');
+  if (d.length > 10 && d.slice(-10).length === 10) d = d.slice(-10);   // drop a leading 91/+91
+  return d.length === 10 ? d : '';
+}
+
+/** SMS, alongside email — never instead of it, never blocking the caller.
+    Skips quietly (not an error) if SMS_API_URL isn't configured, so this
+    is safe to call everywhere even before a gateway is set up. Failures
+    are logged to _Log, same audit trail as everything else, so a gateway
+    outage is visible to staff instead of silently swallowed. */
+function _sendSms(phone, message) {
+  var num = _normPhone(phone);
+  var url = PROPS.getProperty('SMS_API_URL');
+  if (!num || !url) return false;
+  try {
+    var res = UrlFetchApp.fetch(url, {
+      method: 'post',
+      muteHttpExceptions: true,
+      payload: {
+        authorization: PROPS.getProperty('SMS_API_KEY') || '',
+        route: 'q',
+        sender_id: PROPS.getProperty('SMS_SENDER_ID') || 'FSTSMS',
+        message: message,
+        numbers: '91' + num
+      }
+    });
+    if (res.getResponseCode() >= 300) { _log('system', 'sms fail', num + ' — HTTP ' + res.getResponseCode()); return false; }
+    return true;
+  } catch (e) {
+    _log('system', 'sms fail', num + ' — ' + (e && e.message || e));
+    return false;
+  }
+}
+
 /* ============================================================
    STAFF ACCESS  — username + PIN, from the Staff tab
    (or a STAFF_JSON script property if you'd rather keep it there).
@@ -263,13 +312,14 @@ function pledge(p) {
 
   var name = String(p.name || '').trim().slice(0, 80);
   var email = String(p.email || '').trim().slice(0, 120);
+  var phone = _normPhone(p.phone);   // optional — email stays the required channel
   if (!name) return { error: 'Please add your name' };
   if (!_validEmail(email)) return { error: 'Please add a valid email so we can confirm your gift' };
   var wall = String(p.wall) === 'no' ? 'No' : 'Yes';
 
   var ref = _newRef();
   var u = _upiUri(rupees, ref);
-  _donations().appendRow([new Date(), ref, name, email, rupees, 'UPI', '', '', 'Pending', wall, '', '']);
+  _donations().appendRow([new Date(), ref, name, email, rupees, 'UPI', '', '', 'Pending', wall, '', '', phone]);
   return { ref: ref, amount: rupees, vpa: u.vpa, payeeName: u.payeeName, upiUri: u.upiUri };
 }
 
@@ -355,10 +405,11 @@ function donateCash(p) {
   if (!(rupees >= 1 && rupees <= 500000)) return { error: 'amount 1–500000' };
   var name = String(p.name || 'Counter donor').trim().slice(0, 80);
   var email = String(p.email || '').trim().slice(0, 120);
+  var phone = _normPhone(p.phone);
   var wall = String(p.wall) === 'no' ? 'No' : 'Yes';
   var ref = _newRef();
   var now = new Date();
-  _donations().appendRow([now, ref, name, email, rupees, 'Cash', st.user, '', 'Confirmed', wall, now, '']);
+  _donations().appendRow([now, ref, name, email, rupees, 'Cash', st.user, '', 'Confirmed', wall, now, '', phone]);
   _log(st.user, 'cash donation', '₹' + rupees + ' ' + ref);
   if (_validEmail(email)) {
     _mail(email, 'Your gift to Vimusement is confirmed 💛',
@@ -366,6 +417,7 @@ function donateCash(p) {
       ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
       (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
   }
+  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '.');
   return { ok: true, ref: ref, amount: rupees };
 }
 
@@ -397,6 +449,47 @@ function getStats() {
     if (String(rows[i][DC.STATUS - 1]).trim() === 'Confirmed') { total += Number(rows[i][DC.AMOUNT - 1]) || 0; count++; }
   }
   return { total: total, count: count };
+}
+
+/** self-serve "find my ticket" — requires BOTH the phone number AND the
+    reference code (already sent by SMS/email) together, so a visitor can't
+    just guess phone numbers to see what a stranger bought/gave. Never
+    returns amounts — same public-safe posture as getDonors(). A miss
+    returns one generic message, so it never reveals which half (phone or
+    ref) was wrong. Donations + LuckyDraw only for now — Movies gets the
+    same treatment once that feature merges to master. */
+function lookupByPhone(p) {
+  var phone = _normPhone(p.phone);
+  var ref = String(p.ref || '').trim().toUpperCase();
+  if (!phone || !ref) return { error: 'Enter both your phone number and reference code.' };
+
+  var results = [];
+
+  var don = _donations(), dl = don.getLastRow();
+  if (dl > 1) {
+    var dv = don.getRange(2, 1, dl - 1, DON_HEADER.length).getValues();
+    for (var i = 0; i < dv.length; i++) {
+      if (String(dv[i][DC.REF - 1]).toUpperCase() !== ref) continue;
+      if (_normPhone(dv[i][DC.PHONE - 1]) !== phone) continue;
+      results.push({ type: 'Donation', ref: ref, status: String(dv[i][DC.STATUS - 1]).trim() });
+    }
+  }
+
+  var ld = _luckydraw(), ll = ld.getLastRow();
+  if (ll > 1) {
+    var lv = ld.getRange(2, 1, ll - 1, LD_HEADER.length).getValues();
+    var ids = [], status = '';
+    for (var j = 0; j < lv.length; j++) {
+      if (String(lv[j][LC.REF - 1]).toUpperCase() !== ref) continue;
+      if (_normPhone(lv[j][LC.PHONE - 1]) !== phone) continue;
+      status = String(lv[j][LC.STATUS - 1]).trim();
+      if (status !== 'Cancelled') { var tid = lv[j][LC.TID - 1]; if (tid) ids.push(String(tid)); }
+    }
+    if (status) results.push({ type: 'Lucky Draw', ref: ref, status: status, ids: ids });
+  }
+
+  if (!results.length) return { error: 'No records found for that phone number and reference.' };
+  return { results: results };
 }
 
 /* ============================================================
@@ -457,6 +550,7 @@ function drawIssueCash(p) {
   _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
 
   if (_validEmail(email)) _mailTickets(email, name, ids);
+  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm.');
   return { ref: ref, qty: qty, amount: qty * price, ids: ids };
 }
 
@@ -631,6 +725,7 @@ function processConfirmations() {
         'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
         'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
         'Thank you for standing with the cause.\n\n— ' + (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
+      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '.');
       n++;
     }
   }
@@ -655,11 +750,11 @@ function processLuckyDraw() {
 
   var issued = 0;
   Object.keys(refsToFinish).forEach(function (ref) {
-    var rowsForRef = [], anyPending = false, email = '', name = '';
+    var rowsForRef = [], anyPending = false, email = '', name = '', phone = '';
     for (var j = 0; j < data.length; j++) {
       if (String(data[j][LC.REF - 1]) !== String(ref)) continue;
       rowsForRef.push(j + 2);
-      email = data[j][LC.EMAIL - 1]; name = data[j][LC.NAME - 1];
+      email = data[j][LC.EMAIL - 1]; name = data[j][LC.NAME - 1]; phone = data[j][LC.PHONE - 1];
     }
     // 1. confirm + issue IDs for every row of this reference
     rowsForRef.forEach(function (row) {
@@ -672,18 +767,27 @@ function processLuckyDraw() {
         issued++;
       }
     });
-    // 2. email the buyer once (marker in the Notes cell of the first row)
+    // 2. notify the buyer once per channel — email and SMS each get their own
+    //    "already sent" marker in Notes, so a re-run never double-sends either,
+    //    and one channel failing doesn't stop the other from being attempted.
     var firstRow = rowsForRef[0];
     var notes = String(sh.getRange(firstRow, LC.NOTES).getValue());
-    if (notes.indexOf('emailed') === -1 && _validEmail(email)) {
+    var needEmail = notes.indexOf('emailed') === -1 && _validEmail(email);
+    var needSms = notes.indexOf('texted') === -1 && !!_normPhone(phone);
+    if (needEmail || needSms) {
       var ids = [];
       rowsForRef.forEach(function (row) {
         var t = sh.getRange(row, LC.TID).getValue();
         if (t && !String(sh.getRange(row, LC.STATUS).getValue()).match(/cancelled/i)) ids.push(String(t));
       });
       if (ids.length) {
-        _mailTickets(email, name, ids);
-        sh.getRange(firstRow, LC.NOTES).setValue((notes ? notes + ' · ' : '') + 'emailed ' + new Date().toLocaleString());
+        var did = [];
+        if (needEmail) { _mailTickets(email, name, ids); did.push('emailed'); }
+        if (needSms) {
+          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm.');
+          did.push('texted');
+        }
+        sh.getRange(firstRow, LC.NOTES).setValue((notes ? notes + ' · ' : '') + did.join(' · ') + ' ' + new Date().toLocaleString());
       }
     }
   });
@@ -847,6 +951,6 @@ function _selfTest() {
   }
   _tab(T_LOG, LOG_HEADER);   // hidden audit log
   Logger.log('Staff rows: ' + (stf.getLastRow() - 1) + ' · UPI_VPA set: ' + !!PROPS.getProperty('UPI_VPA') +
-    ' · ADMIN_KEY set: ' + !!PROPS.getProperty('ADMIN_KEY'));
+    ' · ADMIN_KEY set: ' + !!PROPS.getProperty('ADMIN_KEY') + ' · SMS_API_URL set: ' + !!PROPS.getProperty('SMS_API_URL'));
   Logger.log('drawInfo: ' + JSON.stringify(drawInfo()));
 }

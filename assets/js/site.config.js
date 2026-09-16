@@ -20,6 +20,7 @@ window.VIM_SITE = {
     { label: "Lucky Draw",    file: "draw.html",      icon: "ticket", primary: true },
     { label: "Gallery",       file: "gallery.html",   icon: "photos" },
     { label: "Get Involved",  file: "involve.html",   icon: "people" },
+    { label: "Find My Ticket", file: "tickets.html",  icon: "search" },
     // { label: "Developers", file: "developers.html", icon: "code" },   // hidden for now — page still exists, just not linked
     { label: "Donate",        file: "donate.html",    icon: "gift", cta: true }
   ],
