@@ -14,6 +14,7 @@
 <style>
   html,body{margin:0;height:100%;background:#0d0509;overflow:hidden;font-family:var(--font-body,system-ui,sans-serif)}
   a-scene{width:100%;height:100%}
+  a-scene canvas{touch-action:none}
 
   .ar-hud{
     position:fixed;inset:0;z-index:10;pointer-events:none;
@@ -60,7 +61,7 @@
   arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
 >
   <a-marker type="pattern" url="assets/ar/hiro.patt" id="vim-marker" emitevents="true">
-    <a-entity position="0 0 0">
+    <a-entity id="content-group" position="0 0 0">
 
       <!-- title banner, gently bobbing -->
       <a-entity position="0 1.05 0" animation="property: position; dir: alternate; dur: 1600; easing: easeInOutSine; loop: true; to: 0 1.18 0">
@@ -99,7 +100,7 @@
     <p>An early test of "point your phone at a Vimusement poster and watch it come alive." This demo uses a placeholder marker while we try the idea — real posters get their own artwork next.</p>
   </div>
 
-  <p class="ar-found" data-ar-found>Marker found — enjoy!</p>
+  <p class="ar-found" data-ar-found>Found it — drag with your finger to spin</p>
 
   <div class="ar-target-hint">
     <img src="assets/ar/hiro-marker.png" alt="The demo marker to point your camera at">
@@ -115,6 +116,38 @@
       marker.addEventListener('markerFound', function () { found.classList.add('is-shown'); });
       marker.addEventListener('markerLost', function () { found.classList.remove('is-shown'); });
     }
+
+    /* drag-to-spin — applied to the group's own object3D, alongside (not
+       instead of) each child's own auto-animation (bobbing title, spinning
+       box, orbiting sparkles), so a finger drag adds a free spin on top of
+       the idle motion rather than fighting it. */
+    var scene = document.querySelector('a-scene');
+    function initDrag() {
+      var group = document.querySelector('#content-group');
+      var canvas = scene.canvas;
+      var dragging = false, lastX = 0, lastY = 0;
+      var rotX = 0, rotY = 0;
+      var MAX_TILT = 0.6;
+
+      canvas.addEventListener('pointerdown', function (e) {
+        dragging = true; lastX = e.clientX; lastY = e.clientY;
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+      canvas.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        e.preventDefault();
+        var dx = e.clientX - lastX, dy = e.clientY - lastY;
+        lastX = e.clientX; lastY = e.clientY;
+        rotY += dx * 0.012;
+        rotX = Math.max(-MAX_TILT, Math.min(MAX_TILT, rotX + dy * 0.012));
+        group.object3D.rotation.y = rotY;
+        group.object3D.rotation.x = rotX;
+      });
+      ['pointerup', 'pointercancel'].forEach(function (ev) {
+        canvas.addEventListener(ev, function () { dragging = false; });
+      });
+    }
+    if (scene.hasLoaded) initDrag(); else scene.addEventListener('loaded', initDrag);
   });
 </script>
 </body>
