@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Find My Ticket · Vimusement {year}</title>
-<meta name="description" content="Look up your Vimusement Lucky Draw or donation reference by phone number, anytime.">
+<meta name="description" content="Look up your Vimusement Lucky Draw tickets and donations by phone number, anytime.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
 (function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
@@ -27,7 +27,7 @@
   <div class="wrap wrap--narrow">
     <p class="eyebrow" data-animate="fade-up">Find my ticket</p>
     <h1 data-animate="fade-up" data-animate-delay="0.07">Lost the text? Look up your ticket here</h1>
-    <p data-animate="fade-up" data-animate-delay="0.14">Enter the phone number you gave us and the reference code from your SMS or email to see your Lucky Draw numbers or donation status.</p>
+    <p data-animate="fade-up" data-animate-delay="0.14">Enter the phone number you gave us to see your Lucky Draw numbers and donation status.</p>
   </div>
 </header>
 
@@ -36,10 +36,9 @@
 
     <div class="donate-panel" data-animate="fade-up">
       <h2>Look up your ticket</h2>
-      <p class="lead" style="color:var(--c-ink-soft);opacity:1">Both fields are needed so no one else can look up your details.</p>
+      <p class="lead" style="color:var(--c-ink-soft);opacity:1">Just the phone number you gave us at purchase.</p>
 
       <label class="field field--text" for="lkPhone"><input id="lkPhone" data-lookup-phone type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone number"></label>
-      <label class="field field--text" for="lkRef"><input id="lkRef" data-lookup-ref type="text" autocapitalize="characters" placeholder="Reference code (e.g. VIM-XXXXX)"></label>
 
       <a class="btn btn--gold btn--block btn--lg" data-lookup-go href="#">Find my ticket</a>
       <p class="donate-status" data-lookup-status hidden></p>

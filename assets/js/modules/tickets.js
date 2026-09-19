@@ -1,15 +1,13 @@
 /* ============================================================
    MODULE — tickets  (tickets.html)
    Self-serve "find my ticket" lookup, for anyone without email
-   who lost their SMS. Needs BOTH the phone number and the
-   reference code together — same posture as staff needing the
-   real UTR to confirm a payment — so no one can browse other
-   people's records by guessing a phone number.
+   who lost their SMS. Phone number only — shows every Lucky Draw
+   ticket and donation tied to it.
 
-     GET {api}?action=lookupByPhone&phone=..&ref=..
+     GET {api}?action=lookupByPhone&phone=..
 
    Markup (tickets.html):
-     [data-lookup-phone]  [data-lookup-ref]  [data-lookup-go]
+     [data-lookup-phone]  [data-lookup-go]
      [data-lookup-status] [data-lookup-results]
    ============================================================ */
 Vim.register("tickets", function (ctx) {
@@ -23,7 +21,6 @@ Vim.register("tickets", function (ctx) {
   var mark = org.logoLight || org.logo || "";
   var markFix = mark && !org.logoLight ? " tk-lockup--fix" : "";
   var phoneEl = ctx.$("[data-lookup-phone]");
-  var refEl = ctx.$("[data-lookup-ref]");
   var status = ctx.$("[data-lookup-status]");
   var results = ctx.$("[data-lookup-results]");
 
@@ -162,17 +159,16 @@ Vim.register("tickets", function (ctx) {
   function begin() {
     if (!api) { say("Lookups aren't switched on yet. Please check back soon.", "warn"); return; }
     var phone = ((phoneEl && phoneEl.value) || "").trim();
-    var ref = ((refEl && refEl.value) || "").trim();
-    if (!phone || !ref) { say("Please enter both your phone number and reference code.", "warn"); return; }
+    if (!phone) { say("Please enter your phone number.", "warn"); return; }
 
     go.setAttribute("aria-disabled", "true");
     results.hidden = true;
     say("Looking up your ticket…");
-    jsonp({ action: "lookupByPhone", phone: phone, ref: ref })
+    jsonp({ action: "lookupByPhone", phone: phone })
       .then(function (res) {
         go.removeAttribute("aria-disabled");
         if (res.error || !res.results || !res.results.length) {
-          say(res.error || "No records found for that phone number and reference.", "warn");
+          say(res.error || "No records found for that phone number.", "warn");
           return;
         }
         say("");
@@ -182,19 +178,16 @@ Vim.register("tickets", function (ctx) {
   }
 
   go.addEventListener("click", function (e) { e.preventDefault(); begin(); });
-  [phoneEl, refEl].forEach(function (el) {
-    if (!el) return;
-    el.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); begin(); } });
-  });
+  if (phoneEl) {
+    phoneEl.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); begin(); } });
+  }
 
-  /* the SMS link is tickets.html?phone=..&ref=.. — land here already
-     filled in and looked up, no typing needed */
+  /* the SMS link is tickets.html?phone=.. — land here already filled in
+     and looked up, no typing needed */
   var qs = new URLSearchParams(location.search);
   var qPhone = (qs.get("phone") || "").trim();
-  var qRef = (qs.get("ref") || "").trim();
-  if (qPhone && qRef) {
+  if (qPhone) {
     if (phoneEl) phoneEl.value = qPhone;
-    if (refEl) refEl.value = qRef;
     begin();
   }
 });

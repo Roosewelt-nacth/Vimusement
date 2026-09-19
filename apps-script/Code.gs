@@ -234,16 +234,13 @@ function _sendSms(phone, message) {
   }
 }
 
-/** the tickets.html lookup page, pre-filled with phone + ref so the SMS
-    link opens straight to the result — no typing required. The phone in
-    the link is the recipient's own number (it's their SMS), and the ref
-    is already being sent to them today, so this reveals nothing a
-    forwarded text wouldn't already; same two-factor posture as the
-    manual lookup form, just pre-filled. */
-function _ticketLink(phone, ref) {
+/** the tickets.html lookup page, pre-filled with the phone number so the
+    SMS link opens straight to every ticket/donation on that number — no
+    typing required. */
+function _ticketLink(phone) {
   var base = PROPS.getProperty('SITE_URL') || 'https://roosewelt-nacth.github.io/Vimusement/';
   if (base.charAt(base.length - 1) !== '/') base += '/';
-  return base + 'tickets.html?phone=' + encodeURIComponent(_normPhone(phone)) + '&ref=' + encodeURIComponent(ref);
+  return base + 'tickets.html?phone=' + encodeURIComponent(_normPhone(phone));
 }
 
 /* ============================================================
@@ -433,7 +430,7 @@ function donateCash(p) {
       ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
       (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
   }
-  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '. View: ' + _ticketLink(phone, ref));
+  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '. View: ' + _ticketLink(phone));
   return { ok: true, ref: ref, amount: rupees };
 }
 
@@ -467,17 +464,17 @@ function getStats() {
   return { total: total, count: count };
 }
 
-/** self-serve "find my ticket" — requires BOTH the phone number AND the
-    reference code (already sent by SMS/email) together, so a visitor can't
-    just guess phone numbers to see what a stranger bought/gave. Never
-    returns amounts — same public-safe posture as getDonors(). A miss
-    returns one generic message, so it never reveals which half (phone or
-    ref) was wrong. Donations + LuckyDraw only for now — Movies gets the
-    same treatment once that feature merges to master. */
+/** self-serve "find my ticket" — phone number only, returns every
+    Donation + Lucky Draw purchase tied to it. Never returns amounts —
+    same public-safe posture as getDonors(). Donations used to also
+    require the reference code (a second factor, so a stranger with just
+    a phone number couldn't see whether someone gave), but that's been
+    dropped for simplicity at the donor's/organiser's request — a phone
+    number alone is now enough. Donations + LuckyDraw only for now —
+    Movies gets the same treatment once that feature merges to master. */
 function lookupByPhone(p) {
   var phone = _normPhone(p.phone);
-  var ref = String(p.ref || '').trim().toUpperCase();
-  if (!phone || !ref) return { error: 'Enter both your phone number and reference code.' };
+  if (!phone) return { error: 'Enter your phone number.' };
 
   var results = [];
 
@@ -485,27 +482,29 @@ function lookupByPhone(p) {
   if (dl > 1) {
     var dv = don.getRange(2, 1, dl - 1, DON_HEADER.length).getValues();
     for (var i = 0; i < dv.length; i++) {
-      if (String(dv[i][DC.REF - 1]).toUpperCase() !== ref) continue;
       if (_normPhone(dv[i][DC.PHONE - 1]) !== phone) continue;
-      results.push({ type: 'Donation', ref: ref, status: String(dv[i][DC.STATUS - 1]).trim(), name: String(dv[i][DC.NAME - 1] || '') });
+      results.push({
+        type: 'Donation', ref: String(dv[i][DC.REF - 1]),
+        status: String(dv[i][DC.STATUS - 1]).trim(), name: String(dv[i][DC.NAME - 1] || '')
+      });
     }
   }
 
   var ld = _luckydraw(), ll = ld.getLastRow();
   if (ll > 1) {
     var lv = ld.getRange(2, 1, ll - 1, LD_HEADER.length).getValues();
-    var ids = [], status = '', name = '';
+    var byRef = {}, order = [];
     for (var j = 0; j < lv.length; j++) {
-      if (String(lv[j][LC.REF - 1]).toUpperCase() !== ref) continue;
       if (_normPhone(lv[j][LC.PHONE - 1]) !== phone) continue;
-      status = String(lv[j][LC.STATUS - 1]).trim();
-      name = String(lv[j][LC.NAME - 1] || '');
-      if (status !== 'Cancelled') { var tid = lv[j][LC.TID - 1]; if (tid) ids.push(String(tid)); }
+      var ref = String(lv[j][LC.REF - 1]);
+      if (!byRef[ref]) { byRef[ref] = { type: 'Lucky Draw', ref: ref, status: '', ids: [], name: String(lv[j][LC.NAME - 1] || '') }; order.push(ref); }
+      byRef[ref].status = String(lv[j][LC.STATUS - 1]).trim();
+      if (byRef[ref].status !== 'Cancelled') { var tid = lv[j][LC.TID - 1]; if (tid) byRef[ref].ids.push(String(tid)); }
     }
-    if (status) results.push({ type: 'Lucky Draw', ref: ref, status: status, ids: ids, name: name });
+    order.forEach(function (ref) { results.push(byRef[ref]); });
   }
 
-  if (!results.length) return { error: 'No records found for that phone number and reference.' };
+  if (!results.length) return { error: 'No records found for that phone number.' };
   return { results: results };
 }
 
@@ -567,7 +566,7 @@ function drawIssueCash(p) {
   _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
 
   if (_validEmail(email)) _mailTickets(email, name, ids);
-  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone, ref));
+  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone));
   return { ref: ref, qty: qty, amount: qty * price, ids: ids };
 }
 
@@ -742,7 +741,7 @@ function processConfirmations() {
         'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
         'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
         'Thank you for standing with the cause.\n\n— ' + (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
-      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1], r[DC.REF - 1]));
+      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1]));
       n++;
     }
   }
@@ -801,7 +800,7 @@ function processLuckyDraw() {
         var did = [];
         if (needEmail) { _mailTickets(email, name, ids); did.push('emailed'); }
         if (needSms) {
-          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone, ref));
+          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone));
           did.push('texted');
         }
         sh.getRange(firstRow, LC.NOTES).setValue((notes ? notes + ' · ' : '') + did.join(' · ') + ' ' + new Date().toLocaleString());
