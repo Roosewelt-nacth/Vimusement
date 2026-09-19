@@ -186,4 +186,15 @@ Vim.register("tickets", function (ctx) {
     if (!el) return;
     el.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); begin(); } });
   });
+
+  /* the SMS link is tickets.html?phone=..&ref=.. — land here already
+     filled in and looked up, no typing needed */
+  var qs = new URLSearchParams(location.search);
+  var qPhone = (qs.get("phone") || "").trim();
+  var qRef = (qs.get("ref") || "").trim();
+  if (qPhone && qRef) {
+    if (phoneEl) phoneEl.value = qPhone;
+    if (refEl) refEl.value = qRef;
+    begin();
+  }
 });

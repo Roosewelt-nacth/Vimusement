@@ -37,6 +37,10 @@
  *                    skipped, not failed, if unset)
  *   SMS_API_KEY      SMS gateway auth key
  *   SMS_SENDER_ID    optional 6-char sender ID some Indian gateways require
+ *   SITE_URL         the site's live base URL, e.g.
+ *                    https://roosewelt-nacth.github.io/Vimusement/
+ *                    (optional — falls back to a hardcoded default below;
+ *                    only needed if the site ever moves)
  *
  * ---- Triggers ----
  *   onSheetEdit    — From spreadsheet, On edit
@@ -230,6 +234,18 @@ function _sendSms(phone, message) {
   }
 }
 
+/** the tickets.html lookup page, pre-filled with phone + ref so the SMS
+    link opens straight to the result — no typing required. The phone in
+    the link is the recipient's own number (it's their SMS), and the ref
+    is already being sent to them today, so this reveals nothing a
+    forwarded text wouldn't already; same two-factor posture as the
+    manual lookup form, just pre-filled. */
+function _ticketLink(phone, ref) {
+  var base = PROPS.getProperty('SITE_URL') || 'https://roosewelt-nacth.github.io/Vimusement/';
+  if (base.charAt(base.length - 1) !== '/') base += '/';
+  return base + 'tickets.html?phone=' + encodeURIComponent(_normPhone(phone)) + '&ref=' + encodeURIComponent(ref);
+}
+
 /* ============================================================
    STAFF ACCESS  — username + PIN, from the Staff tab
    (or a STAFF_JSON script property if you'd rather keep it there).
@@ -417,7 +433,7 @@ function donateCash(p) {
       ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
       (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
   }
-  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '.');
+  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '. View: ' + _ticketLink(phone, ref));
   return { ok: true, ref: ref, amount: rupees };
 }
 
@@ -551,7 +567,7 @@ function drawIssueCash(p) {
   _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
 
   if (_validEmail(email)) _mailTickets(email, name, ids);
-  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm.');
+  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone, ref));
   return { ref: ref, qty: qty, amount: qty * price, ids: ids };
 }
 
@@ -726,7 +742,7 @@ function processConfirmations() {
         'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
         'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
         'Thank you for standing with the cause.\n\n— ' + (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
-      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '.');
+      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1], r[DC.REF - 1]));
       n++;
     }
   }
@@ -785,7 +801,7 @@ function processLuckyDraw() {
         var did = [];
         if (needEmail) { _mailTickets(email, name, ids); did.push('emailed'); }
         if (needSms) {
-          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm.');
+          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone, ref));
           did.push('texted');
         }
         sh.getRange(firstRow, LC.NOTES).setValue((notes ? notes + ' · ' : '') + did.join(' · ') + ' ' + new Date().toLocaleString());
