@@ -7,6 +7,7 @@
 <meta name="description" content="Look up your Vimusement Lucky Draw tickets and donations by phone number, anytime.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{if(localStorage.getItem("vim-lang")==="ta")document.documentElement.setAttribute("data-lang","ta");}catch(e){}})();
 (function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,11 +57,14 @@
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
 <script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/strings.js"></script>
 <script defer src="years/2026.config.js"></script>
 <script defer src="years/current.js"></script>
 <script defer src="assets/js/site.config.js"></script>
 <script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/lang.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
 <script defer src="assets/js/modules/render.js"></script>

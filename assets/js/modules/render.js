@@ -41,7 +41,8 @@
     };
     ctx.$$("[data-bind]").forEach(function (el) {
       var k = el.getAttribute("data-bind");
-      if (text[k] != null && text[k] !== "") el.textContent = text[k];
+      var v = ctx.L(text[k]);
+      if (v != null && v !== "") el.textContent = v;
     });
 
     /* ---- href bindings ---- */
@@ -128,7 +129,7 @@
             return '<li><span>' + esc(r.name) + '</span><b>' + esc(r.price) + '</b></li>';
           }).join("");
         } else {
-          rates.innerHTML = '<li class="stalls__tbc">Table rates to be confirmed</li>';
+          rates.innerHTML = '<li class="stalls__tbc">' + ctx.t("stalls.ratesTbc") + '</li>';
         }
       }
       var open = ctx.$("[data-stalls-open]");
@@ -136,7 +137,7 @@
         if (s.open && s.open.length) {
           open.innerHTML = s.open.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("");
         } else {
-          open.innerHTML = '<li class="stalls__tbc">The list of open stalls is being drawn up. Message us to reserve one now.</li>';
+          open.innerHTML = '<li class="stalls__tbc">' + ctx.t("stalls.openTbc") + '</li>';
         }
       }
     })();
@@ -161,7 +162,7 @@
       if (kind === "involve") {
         var href = item.form && Y.forms[item.form] ? Y.forms[item.form] : mailFallback(item.title);
         var ext = /^https?:\/\//.test(href) ? ' target="_blank" rel="noopener"' : "";
-        cta = '<a class="btn btn--gold" href="' + esc(href) + '"' + ext + '>' + esc(item.cta || "Learn more") + "</a>";
+        cta = '<a class="btn btn--gold" href="' + esc(href) + '"' + ext + '>' + esc(item.cta || ctx.t("card.learnMore")) + "</a>";
       }
       return '<article class="card' + accent + '" data-animate="fade-up">'
            +   '<div class="card__icon">' + icon + "</div>"
