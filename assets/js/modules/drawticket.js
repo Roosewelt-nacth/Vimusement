@@ -28,23 +28,23 @@ Vim.register("drawticket", function (ctx) {
     '<div class="ticket-preview__card">' +
       '<svg class="ticket-preview__fx" viewBox="0 0 460 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>' +
       '<div class="ticket-preview__field">' +
-        '<p class="tk-eyebrow">Lucky Draw</p>' +
+        '<p class="tk-eyebrow">' + ctx.t("draw.ticket.eyebrow") + '</p>' +
         '<p class="tk-title">Vimusement ' + year + '</p>' +
-        '<p class="tk-admit">Admit<span class="tk-name is-empty">Your name</span></p>' +
+        '<p class="tk-admit">' + ctx.t("draw.ticket.admit") + '<span class="tk-name is-empty">' + ctx.t("draw.ticket.yourName") + '</span></p>' +
         (mark
           ? '<div class="tk-lockup"><img src="' + mark + '" alt="" class="tk-lockup__img' + markFix + '">' +
-            '<span>' + esc(venue) + '<br>Drawn live on stage on the night</span></div>'
+            '<span>' + esc(venue) + '<br>' + ctx.t("draw.ticket.venueCaption") + '</span></div>'
           : '') +
       '</div>' +
       '<div class="ticket-preview__stub">' +
-        '<p class="tk-no">No.</p>' +
+        '<p class="tk-no">' + ctx.t("tickets.card.number") + '</p>' +
         '<p class="tk-num">····</p>' +
-        '<p class="tk-tag">Provisional</p>' +
+        '<p class="tk-tag">' + ctx.t("draw.ticket.provisional") + '</p>' +
         '<p class="tk-meta" data-tk-meta>₹' + price + '</p>' +
       '</div>' +
     '</div>' +
     '</div>' +
-    '<p class="ticket-preview__hint">A preview. Your real number is assigned once payment is confirmed.</p>';
+    '<p class="ticket-preview__hint">' + ctx.t("draw.ticket.hint") + '</p>';
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
@@ -98,7 +98,7 @@ Vim.register("drawticket", function (ctx) {
       nameOut.textContent = raw.length > 28 ? raw.slice(0, 27) + "…" : raw;
       nameOut.classList.remove("is-empty");
     } else {
-      nameOut.textContent = "Your name";
+      nameOut.textContent = ctx.t("draw.ticket.yourName");
       nameOut.classList.add("is-empty");
     }
 
