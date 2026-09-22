@@ -29,6 +29,7 @@ Vim.register("draw", function (ctx) {
   var totEl = ctx.$("[data-draw-total]");
   var nameEl = ctx.$("[data-draw-name]");
   var emailEl = ctx.$("[data-draw-email]");
+  var emailConfirmEl = ctx.$("[data-draw-email-confirm]");
   var phoneEl = ctx.$("[data-draw-phone]");
   var go = ctx.$("[data-draw-go]");
   var status = ctx.$("[data-draw-status]");
@@ -148,9 +149,14 @@ Vim.register("draw", function (ctx) {
     if (!api) { say(ctx.t("draw.status.notLive"), "warn"); return; }
     var nm = ((nameEl && nameEl.value) || "").trim();
     var em = ((emailEl && emailEl.value) || "").trim();
+    var emc = ((emailConfirmEl && emailConfirmEl.value) || "").trim();
     var ph = ((phoneEl && phoneEl.value) || "").trim();
     if (!nm) { say(ctx.t("draw.status.needName"), "warn"); nameEl && nameEl.focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { say(ctx.t("draw.status.needEmail"), "warn"); emailEl && emailEl.focus(); return; }
+    /* typos are the real failure mode a format check can't catch — the ticket
+       silently never arrives, and nobody finds out until they ask for it. a
+       retyped confirmation is the cheap, reliable catch for that. */
+    if (em.toLowerCase() !== emc.toLowerCase()) { say(ctx.t("draw.status.emailMismatch"), "warn"); emailConfirmEl && emailConfirmEl.focus(); return; }
     if (ph.replace(/\D/g, "").length < 10) { say(ctx.t("draw.status.needPhone"), "warn"); phoneEl && phoneEl.focus(); return; }
 
     go.disabled = true; say(ctx.t("draw.status.settingUp"));

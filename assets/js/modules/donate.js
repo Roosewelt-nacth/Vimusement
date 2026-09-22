@@ -30,6 +30,7 @@ Vim.register("donate", function (ctx) {
   var fundsEl = ctx.$("[data-donate-funds]");
   var nameEl = ctx.$("[data-donate-name]");
   var emailEl = ctx.$("[data-donate-email]");
+  var emailConfirmEl = ctx.$("[data-donate-email-confirm]");
   var phoneEl = ctx.$("[data-donate-phone]");
   var wallEl = ctx.$("[data-donate-wall]");
   var go     = ctx.$("[data-donate-go]");
@@ -190,9 +191,11 @@ Vim.register("donate", function (ctx) {
     if (!api) { say(ctx.t("donate.status.notLive"), "warn"); return; }
     var nm = ((nameEl && nameEl.value) || "").trim();
     var em = ((emailEl && emailEl.value) || "").trim();
+    var emc = ((emailConfirmEl && emailConfirmEl.value) || "").trim();
     if (!(amount >= minAmt)) { say(ctx.t("donate.status.minAmount").replace("{amt}", fmt(minAmt)), "warn"); return; }
     if (!nm) { say(ctx.t("donate.status.needName"), "warn"); nameEl && nameEl.focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { say(ctx.t("donate.status.needEmail"), "warn"); emailEl && emailEl.focus(); return; }
+    if (em.toLowerCase() !== emc.toLowerCase()) { say(ctx.t("donate.status.emailMismatch"), "warn"); emailConfirmEl && emailConfirmEl.focus(); return; }
 
     go.disabled = true;
     say(ctx.t("donate.status.settingUp"));
