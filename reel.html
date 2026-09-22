@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video · Vimusement 2026</title>
+<meta name="description" content="A short animated video about Vimusement 2026 — games, food, movies and the cause, in under 30 seconds.">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  /* This page is a fixed keepsake of the 2026 "Doomsday" theme, not a
+     live reflection of tokens.css — unlike the rest of the site it
+     does not need to re-theme itself next year, so its palette is
+     hardcoded here rather than pulled from the shared stylesheet. */
+  :root{
+    --void:#020403; --bg1:#0a130e; --bg2:#101a15;
+    --emerald:#2fa872; --emerald-bright:#4fd98c; --emerald-deep:#1f6b45;
+    --gold:#ddae4c; --gold-deep:#c9962e; --wine:#a0455a;
+    --ink:#eaf2e6; --ink-soft:#9db39a; --ink-mute:#6f8570;
+    --line: rgba(79,217,140,.28);
+    --font-display:"Cormorant Garamond","Georgia",serif;
+    --font-body:"Hanken Grotesk",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(60% 50% at 50% 0%, color-mix(in srgb, var(--emerald) 10%, transparent), transparent 60%),
+      var(--void);
+    color:var(--ink);
+    font-family:var(--font-body);
+    padding-inline:16px;
+    padding-block: max(28px, env(safe-area-inset-top,0px)) max(40px, env(safe-area-inset-bottom,0px));
+    display:flex;flex-direction:column;align-items:center;gap:24px;
+    min-height:100vh;
+  }
+
+  .back-link{
+    align-self:flex-start;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;
+    color:var(--ink-mute);text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;
+  }
+  .back-link:hover{color:var(--emerald-bright)}
+
+  .kicker{
+    font-family:var(--font-mono);font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-mute);text-align:center;
+  }
+  .kicker b{color:var(--gold);font-weight:600}
+
+  /* ================= THE REEL FRAME ================= */
+  .reel-shell{
+    position:relative;width:min(400px, 100%);
+    border-radius:34px;padding:10px;
+    background:linear-gradient(160deg, #1a2b20, #060a07 70%);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(79,217,140,.12);
+  }
+  .reel{
+    position:relative;width:100%;aspect-ratio:9/16;border-radius:26px;overflow:hidden;
+    background:
+      radial-gradient(60% 70% at 74% 16%, color-mix(in srgb, var(--emerald) 28%, transparent), transparent 60%),
+      linear-gradient(118deg, transparent 34%, color-mix(in srgb, var(--gold) 14%, transparent) 48%, transparent 62%),
+      radial-gradient(120% 95% at 50% 0%, var(--bg2) 0%, var(--bg1) 55%, var(--void) 100%);
+  }
+  .reel canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.95}
+  .reel__grain{
+    position:absolute;inset:0;mix-blend-mode:overlay;opacity:.35;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:140px 140px;
+  }
+  .reel__crack{
+    position:absolute;top:0;left:0;right:0;height:16px;pointer-events:none;opacity:.9;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='20'%3E%3Cdefs%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='1.6'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M0 10 L20 9 L35 12 L55 8 L75 11 L95 7 L115 10 L135 6 L155 11 L175 8 L195 12 L215 7 L235 10 L255 8 L275 11 L300 9' fill='none' stroke='%232fa872' stroke-width='3' stroke-opacity='0.55' filter='url(%23b)'/%3E%3Cpath d='M0 10 L20 9 L35 12 L55 8 L75 11 L95 7 L115 10 L135 6 L155 11 L175 8 L195 12 L215 7 L235 10 L255 8 L275 11 L300 9' fill='none' stroke='%23ddae4c' stroke-width='1' stroke-opacity='0.9'/%3E%3C/svg%3E") repeat-x;
+    background-size:300px 20px;
+  }
+  .reel__vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 90px 20px rgba(0,0,0,.55)}
+
+  .progress{position:absolute;top:22px;left:18px;right:18px;height:3px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden;z-index:5}
+  .progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--emerald-bright));border-radius:2px}
+
+  /* ================= SCENES ================= */
+  .scene{
+    position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:20px 26px;gap:10px;
+    opacity:0;transform:scale(.96);
+    transition:opacity .7s cubic-bezier(.22,.68,.32,1), transform .8s cubic-bezier(.22,.68,.32,1);
+    pointer-events:none;
+  }
+  .scene.is-active{opacity:1;transform:scale(1)}
+
+  .mark{width:40px;height:40px;color:var(--ink);opacity:.9;margin-bottom:2px}
+  .eyebrow{
+    font-family:var(--font-mono);font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before,.eyebrow::after{content:"";width:16px;height:1px;background:var(--gold);opacity:.6}
+
+  .wordmark{
+    font-family:var(--font-display);font-weight:700;font-size:clamp(2.1rem,11vw,2.7rem);line-height:.95;
+    letter-spacing:-.01em;color:var(--ink);
+    text-shadow:0 0 46px color-mix(in srgb, var(--emerald) 55%, transparent);
+  }
+  .wordmark b{
+    font-weight:700;
+    background:linear-gradient(100deg,var(--gold),var(--wine) 50%,var(--emerald-bright));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tagline{font-size:.98rem;line-height:1.45;color:var(--ink-soft);max-width:29ch}
+  .tagline em{font-style:italic;color:var(--ink)}
+
+  .hl-list{display:flex;flex-direction:column;gap:14px;width:100%;max-width:280px}
+  .hl-row{
+    display:flex;align-items:center;gap:14px;text-align:left;
+    opacity:0;transform:translateX(-14px);
+    animation:hl-in .6s cubic-bezier(.22,.68,.32,1) both;
+  }
+  .scene.is-active .hl-row:nth-child(1){animation-delay:.15s}
+  .scene.is-active .hl-row:nth-child(2){animation-delay:.55s}
+  .scene.is-active .hl-row:nth-child(3){animation-delay:.95s}
+  .scene.is-active .hl-row:nth-child(4){animation-delay:1.35s}
+  .scene.is-active .hl-row:nth-child(5){animation-delay:1.75s}
+  @keyframes hl-in{to{opacity:1;transform:translateX(0)}}
+  .hl-icon{
+    flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+    background:color-mix(in srgb, var(--emerald) 16%, transparent);color:var(--emerald-bright);
+    box-shadow:0 0 22px -6px color-mix(in srgb, var(--emerald) 60%, transparent);
+  }
+  .hl-icon svg{width:21px;height:21px}
+  .hl-text b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.08rem;color:var(--ink)}
+  .hl-text span{display:block;font-size:.78rem;color:var(--ink-mute)}
+
+  .cd-grid{display:flex;gap:.5rem;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+  .cd-cell{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .cd-num{
+    font-family:var(--font-display);font-weight:700;font-size:1.9rem;color:var(--ink);line-height:1;
+    text-shadow:0 0 22px color-mix(in srgb, var(--emerald) 55%, transparent);
+  }
+  .cd-unit{font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
+  .cd-flash{
+    font-family:var(--font-display);font-weight:700;font-size:clamp(1.7rem,9vw,2.1rem);color:var(--emerald-bright);
+    opacity:0;text-shadow:0 0 40px color-mix(in srgb, var(--emerald) 90%, transparent);
+  }
+  .scene.is-active .cd-flash{animation:cd-flash-in .5s .1s cubic-bezier(.34,1.4,.44,1) both}
+  @keyframes cd-flash-in{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
+
+  .cause-line{
+    font-family:var(--font-display);font-style:italic;font-weight:500;font-size:1.3rem;line-height:1.4;
+    color:var(--ink);max-width:24ch;
+  }
+  .cause-stat{
+    margin-top:4px;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold);
+  }
+
+  .end-date{
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;
+    padding:.6rem 1.1rem;border:1px solid var(--line);border-radius:999px;
+    background:color-mix(in srgb, var(--emerald) 10%, transparent);color:var(--ink);
+  }
+  .end-date b{color:var(--emerald-bright)}
+  .end-venue{font-size:.78rem;color:var(--ink-mute)}
+  .end-ctas{display:flex;gap:.6rem;margin-top:8px}
+  .btn{
+    font-family:var(--font-body);font-weight:700;font-size:.82rem;text-decoration:none;
+    padding:.65rem 1.15rem;border-radius:999px;
+  }
+  .btn--gold{background:var(--gold);color:#241703}
+  .btn--ghost{border:1px solid var(--emerald-bright);color:var(--emerald-bright)}
+
+  @media (prefers-reduced-motion:reduce){
+    .scene{transition:opacity .2s linear;transform:none}
+    .hl-row{animation:none;opacity:1;transform:none}
+    .cd-flash{animation:none;opacity:1}
+  }
+
+  /* ================= BELOW-REEL CONTROLS ================= */
+  .replay{
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--void);background:var(--emerald-bright);border:0;border-radius:999px;
+    padding:.6rem 1.3rem;cursor:pointer;
+  }
+  .replay:active{transform:scale(.97)}
+
+  .captions{width:min(400px,100%);display:flex;flex-direction:column;gap:12px}
+  .captions h2{
+    font-family:var(--font-display);font-weight:700;font-size:1.2rem;color:var(--ink);margin:0;
+  }
+  .cap-card{
+    border:1px solid var(--line);border-radius:16px;padding:14px 16px;
+    background:color-mix(in srgb, var(--emerald) 6%, transparent);
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .cap-card p{margin:0;font-size:.9rem;line-height:1.5;color:var(--ink-soft)}
+  .cap-copy{
+    align-self:flex-start;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;
+    background:none;border:1px solid var(--ink-mute);color:var(--ink-soft);border-radius:999px;
+    padding:.4rem .85rem;cursor:pointer;transition:border-color .2s,color .2s;
+  }
+  .cap-copy:hover{border-color:var(--emerald-bright);color:var(--emerald-bright)}
+  .cap-copy.is-copied{border-color:var(--emerald-bright);color:var(--emerald-bright)}
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">&larr; Back to Vimusement</a>
+<p class="kicker">A short, shareable teaser for <b>Vimusement 2026</b> &mdash; press play, or screen-record the frame</p>
+
+<div class="reel-shell">
+  <div class="reel" id="reel">
+    <canvas id="embers"></canvas>
+    <div class="reel__grain"></div>
+    <div class="reel__crack"></div>
+    <div class="progress"><i id="progressFill"></i></div>
+
+    <div class="scene" data-scene="0">
+      <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="1.6"/><path d="M12 3v16M4 11h16M6.3 5.3l11.4 11.4M17.7 5.3 6.3 16.7"/></svg>
+      <p class="eyebrow">An initiative of Victorians Youth</p>
+      <p class="wordmark">Vimusement</p>
+    </div>
+
+    <div class="scene" data-scene="1">
+      <p class="eyebrow">Annual parish fundraiser</p>
+      <p class="wordmark">Doomsday is <b>coming</b></p>
+      <p class="tagline">Games, food stalls and movie screenings on the church grounds &mdash; <em>for a cause bigger than the fair itself.</em></p>
+    </div>
+
+    <div class="scene" data-scene="2">
+      <p class="eyebrow">What's on</p>
+      <div class="hl-list">
+        <div class="hl-row"><span class="hl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 11h4M8 9v4"/><circle cx="15.5" cy="10.5" r="1"/><circle cx="17.5" cy="13.5" r="1"/></svg></span><span class="hl-text"><b>Games &amp; stalls</b><span>Ring toss, hoopla, carrom &amp; more</span></span></div>
+        <div class="hl-row"><span class="hl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M14 8s0-5 3-5 3 5 3 5-1 3-3 3-3-3-3-3ZM17 11v10"/></svg></span><span class="hl-text"><b>Food street</b><span>Biryani to candy floss, cashless UPI</span></span></div>
+        <div class="hl-row"><span class="hl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5 6 9M13 5l-2 4M18 5l-2 4"/></svg></span><span class="hl-text"><b>Movie screenings</b><span>Basement &amp; the AV room, all day</span></span></div>
+        <div class="hl-row"><span class="hl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.8L6.6 19.6l1-6L3.3 9.4l6-.9L12 3Z"/></svg></span><span class="hl-text"><b>Lucky draw</b><span>&#8377;50 a ticket, drawn live on stage</span></span></div>
+        <div class="hl-row"><span class="hl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span class="hl-text"><b>It's all for the cause</b><span>Scholarships, medical &amp; hardship aid</span></span></div>
+      </div>
+    </div>
+
+    <div class="scene" data-scene="3">
+      <p class="eyebrow">Counting down</p>
+      <div class="cd-grid" id="cdGrid">
+        <div class="cd-cell"><span class="cd-num" data-cd="d">32</span><span class="cd-unit">Days</span></div>
+        <div class="cd-cell"><span class="cd-num" data-cd="h">14</span><span class="cd-unit">Hrs</span></div>
+        <div class="cd-cell"><span class="cd-num" data-cd="m">08</span><span class="cd-unit">Min</span></div>
+        <div class="cd-cell"><span class="cd-num" data-cd="s">59</span><span class="cd-unit">Sec</span></div>
+      </div>
+      <p class="cd-flash">Doomsday is here.</p>
+    </div>
+
+    <div class="scene" data-scene="4">
+      <p class="eyebrow">Why it matters</p>
+      <p class="cause-line">"One night of fun becomes a year of scholarships, hospital bills paid, and neighbours helped."</p>
+      <p class="cause-stat">100% of what's raised, after costs</p>
+    </div>
+
+    <div class="scene" data-scene="5">
+      <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="1.6"/><path d="M12 3v16M4 11h16M6.3 5.3l11.4 11.4M17.7 5.3 6.3 16.7"/></svg>
+      <p class="wordmark">Vimusement <b>2026</b></p>
+      <p class="end-date">Sunday <b>25 October</b> &middot; Gates 7:30am</p>
+      <p class="end-venue">Ascension Church, Aminjikkarai</p>
+      <div class="end-ctas">
+        <a class="btn btn--gold" href="donate.html">Donate</a>
+        <a class="btn btn--ghost" href="draw.html">Get tickets</a>
+      </div>
+    </div>
+
+    <div class="reel__vignette"></div>
+  </div>
+</div>
+
+<button class="replay" id="replayBtn" hidden>Play again</button>
+
+<div class="captions">
+  <h2>Share captions</h2>
+  <div class="cap-card">
+    <p>Doomsday is coming to the church grounds. Games, food, movie screenings &mdash; and every rupee becomes a scholarship or a hospital bill paid. Vimusement 2026. 25 October, Ascension Church, Aminjikkarai.</p>
+    <button class="cap-copy" data-copy="Doomsday is coming to the church grounds. Games, food, movie screenings — and every rupee becomes a scholarship or a hospital bill paid. Vimusement 2026. 25 October, Ascension Church, Aminjikkarai.">Copy caption</button>
+  </div>
+  <div class="cap-card">
+    <p>The countdown has started. Doomsday is here &mdash; Vimusement 2026, Sunday 25 October. See you there.</p>
+    <button class="cap-copy" data-copy="The countdown has started. Doomsday is here — Vimusement 2026, Sunday 25 October. See you there.">Copy caption</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- ember particles, same recipe as the live site's hero ---- */
+  var cv = document.getElementById("embers");
+  var g = cv.getContext("2d");
+  var COLS = [[47,190,125],[221,174,76],[160,69,90]];
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var w=0,h=0,parts=[],raf=0;
+
+  function size(){
+    var host = cv.parentElement;
+    w = host.clientWidth; h = host.clientHeight;
+    cv.width = w*dpr; cv.height = h*dpr;
+    cv.style.width = w+"px"; cv.style.height = h+"px";
+    g.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function build(){
+    var n = Math.round(Math.min(46, Math.max(20, w*h/22000)));
+    parts = [];
+    for (var i=0;i<n;i++){
+      var flare = Math.random() < 0.18;
+      parts.push({
+        x: Math.random()*w, y: Math.random()*h,
+        r: (flare?9:3) + Math.random()*(flare?12:6),
+        c: COLS[(Math.random()*3)|0],
+        a: 0.35 + Math.random()*0.35,
+        vx: (Math.random()-0.5)*0.12,
+        vy: -(0.05 + Math.random()*0.22),
+        ph: Math.random()*6.28, ps: 0.02 + Math.random()*0.05
+      });
+    }
+  }
+  function paint(t){
+    g.clearRect(0,0,w,h);
+    g.globalCompositeOperation = "lighter";
+    for (var i=0;i<parts.length;i++){
+      var p = parts[i];
+      var pulse = 0.6 + Math.sin(p.ph + t*p.ps)*0.4;
+      var grd = g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+      var al = p.a*pulse;
+      grd.addColorStop(0, "rgba("+p.c[0]+","+p.c[1]+","+p.c[2]+","+al+")");
+      grd.addColorStop(1, "rgba("+p.c[0]+","+p.c[1]+","+p.c[2]+",0)");
+      g.fillStyle = grd;
+      g.beginPath(); g.arc(p.x,p.y,p.r,0,6.2832); g.fill();
+    }
+    g.globalCompositeOperation = "source-over";
+  }
+  function step(now){
+    for (var i=0;i<parts.length;i++){
+      var p = parts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20) p.x = w+20; else if (p.x > w+20) p.x = -20;
+      if (p.y < -20) p.y = h+20; else if (p.y > h+20) p.y = -20;
+    }
+    paint(now);
+    raf = requestAnimationFrame(step);
+  }
+  size(); build();
+  if (!reduceMotion) raf = requestAnimationFrame(step); else paint(0);
+  window.addEventListener("resize", function(){ size(); build(); if(reduceMotion) paint(0); });
+
+  /* ---- scene timeline: a single self-correcting clock rather than a
+     pile of independent setTimeouts — at every tick it derives which
+     scene SHOULD be showing from elapsed time, so it can't drift into
+     two scenes active at once no matter how play() gets called ---- */
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+  var progressFill = document.getElementById("progressFill");
+  var replayBtn = document.getElementById("replayBtn");
+  var TIMELINE = [0, 2700, 5900, 9200, 12600, 17200];
+  var END_HOLD = 6000;
+  var TOTAL = TIMELINE[TIMELINE.length-1] + END_HOLD;
+  var ticker = null;
+
+  function play(){
+    if (ticker) clearInterval(ticker);
+    replayBtn.hidden = true;
+    var startTime = performance.now();
+    progressFill.style.transition = "none";
+    progressFill.style.width = "0%";
+    void progressFill.offsetWidth;
+    progressFill.style.transition = "width " + (TOTAL/1000) + "s linear";
+    requestAnimationFrame(function(){ progressFill.style.width = "100%"; });
+
+    function tick(){
+      var elapsed = performance.now() - startTime;
+      var target = 0;
+      for (var i = 0; i < TIMELINE.length; i++) { if (elapsed >= TIMELINE[i]) target = i; }
+      scenes.forEach(function(s, i){ s.classList.toggle("is-active", i === target); });
+      if (elapsed >= TOTAL) { clearInterval(ticker); ticker = null; replayBtn.hidden = false; }
+    }
+    tick();
+    ticker = setInterval(tick, 120);
+  }
+
+  /* fake a quick dramatic countdown tick during the countdown scene */
+  var cdVals = { d:32, h:14, m:8, s:59 };
+  setInterval(function(){
+    cdVals.s -= 7;
+    if (cdVals.s < 0){ cdVals.s += 60; cdVals.m -= 1; }
+    if (cdVals.m < 0){ cdVals.m = 59; cdVals.h -= 1; }
+    if (cdVals.h < 0){ cdVals.h = 23; cdVals.d -= 1; }
+    if (cdVals.d < 0){ cdVals = { d:0,h:0,m:0,s:0 }; }
+    document.querySelectorAll("[data-cd]").forEach(function(el){
+      var k = el.getAttribute("data-cd");
+      el.textContent = String(cdVals[k]).padStart(2,"0");
+    });
+  }, 140);
+
+  play();
+  replayBtn.addEventListener("click", play);
+
+  /* ---- copy caption ---- */
+  document.querySelectorAll(".cap-copy").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var text = btn.getAttribute("data-copy");
+      var done = function(){
+        var orig = btn.textContent;
+        btn.textContent = "Copied";
+        btn.classList.add("is-copied");
+        setTimeout(function(){ btn.textContent = orig; btn.classList.remove("is-copied"); }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){});
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

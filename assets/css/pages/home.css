@@ -82,6 +82,23 @@
 .hero__fx{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.92}
 @media (prefers-reduced-motion:reduce){ .hero__fx{opacity:.7} }
 
+/* the hype-reel link is a keepsake of this year's theme (reel.html
+   is hand-themed to 2026, not re-skinned from tokens.css), so it
+   only appears while the year theme it documents is active */
+.hero__reel-link{display:none}
+[data-year-theme="doomsday"] .hero__reel-link{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:1.1rem;
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;
+  color:var(--c-on-dark-soft);text-decoration:none;
+  padding:.5rem .95rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--c-primary) 35%,transparent);
+  transition:color var(--dur-2),border-color var(--dur-2),background var(--dur-2);
+}
+[data-year-theme="doomsday"] .hero__reel-link:hover{
+  color:var(--c-primary-ink);border-color:var(--c-primary-ink);
+  background:color-mix(in srgb,var(--c-primary) 10%,transparent);
+}
+[data-year-theme="doomsday"] .hero__reel-link svg{flex:none;color:var(--c-primary-ink)}
+
 .hero__org{
   display:flex;width:fit-content;align-items:center;gap:.85rem;margin-bottom:1.8rem;
   text-decoration:none;color:var(--c-ink-soft);
