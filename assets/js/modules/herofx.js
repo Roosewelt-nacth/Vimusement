@@ -1,12 +1,20 @@
 /* ============================================================
    MODULE — herofx
-   Ambient fairground bokeh behind the hero. Soft warm lights
-   drifting and pulsing on their own — no pointer/tilt tracking
-   (that "interactive" parallax read as broken on mobile, where
-   device-tilt either needs an iOS permission prompt we never
-   asked for, or just jittered the lights around unhelpfully).
-   ~2KB, pauses when the hero scrolls out of view, goes static
-   under prefers-reduced-motion.
+   Ambient particle field behind the hero, drifting and pulsing on
+   its own — no pointer/tilt tracking (that "interactive" parallax
+   read as broken on mobile, where device-tilt either needs an iOS
+   permission prompt we never asked for, or just jittered the
+   lights around unhelpfully). ~2KB, pauses when the hero scrolls
+   out of view, goes static under prefers-reduced-motion.
+
+   Two looks, same engine: the default is soft warm fairground
+   bokeh; under this year's Doomsday theme (see tokens.css) it
+   switches to sharper emerald/gold/wine embers rising off the
+   bottom of the hero, like sparks off a dying fire — smaller,
+   brighter, faster-flickering, and drifting up instead of just
+   floating. Swap is read once at boot from the same
+   [data-year-theme] attribute the palette itself uses, so both
+   revert together next year.
 
    Markup:  <canvas class="hero__fx" data-hero-fx></canvas>
             (inside .hero, behind .hero .wrap)
@@ -17,12 +25,19 @@ Vim.register("herofx", function (ctx) {
   var host = cv.parentElement;
   var g = cv.getContext("2d");
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var doomsday = document.documentElement.getAttribute("data-year-theme") === "doomsday";
 
-  var COLS = [
-    [231, 184, 92],   // gold
-    [228, 138, 160],  // rose
-    [246, 237, 225]   // cream
-  ];
+  var COLS = doomsday
+    ? [
+        [47, 190, 125],   // emerald spark
+        [201, 150, 46],   // gold ember
+        [122, 35, 51]     // deep wine cinder
+      ]
+    : [
+        [231, 184, 92],   // gold
+        [228, 138, 160],  // rose
+        [246, 237, 225]   // cream
+      ];
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var w = 0, h = 0, lights = [], raf = 0, running = false;
 
@@ -34,6 +49,25 @@ Vim.register("herofx", function (ctx) {
   }
 
   function build() {
+    if (doomsday) {
+      var ne = Math.round(Math.min(42, Math.max(16, w * h / 28000)));
+      lights = [];
+      for (var j = 0; j < ne; j++) {
+        var flare = Math.random() < 0.18;
+        lights.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: (flare ? 9 : 3) + Math.random() * (flare ? 13 : 6),
+          c: COLS[(Math.random() * 3) | 0],
+          a: 0.35 + Math.random() * 0.35,
+          vx: (Math.random() - 0.5) * 0.1,
+          vy: -(0.05 + Math.random() * 0.2),        // embers rise
+          ph: Math.random() * 6.28,
+          ps: 0.02 + Math.random() * 0.05             // faster flicker than a slow pulse
+        });
+      }
+      return;
+    }
     var n = Math.round(Math.min(70, Math.max(28, w * h / 16000)));
     lights = [];
     for (var i = 0; i < n; i++) {

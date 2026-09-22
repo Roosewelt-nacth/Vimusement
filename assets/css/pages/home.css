@@ -17,6 +17,60 @@
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='126' height='44'%3E%3Cpath d='M0 4 H126' stroke='rgba(120,100,105,.4)' stroke-width='2'/%3E%3Cpolygon points='4,5 30,5 17,38' fill='%23D9703C'/%3E%3Cpolygon points='34,5 60,5 47,38' fill='%23D6335A'/%3E%3Cpolygon points='64,5 90,5 77,38' fill='%239B2F4A'/%3E%3Cpolygon points='94,5 120,5 107,38' fill='%23C2213A'/%3E%3C/svg%3E") repeat-x;
   background-size:126px 44px;
 }
+/* the bunting reads as carnival pennants — doesn't fit the theme at
+   all, so Doomsday gets its own top-edge motif instead: a jagged
+   glowing fracture line, echoing the cracked-window backdrop below
+   rather than trying to reuse the festival-flag shape. */
+[data-year-theme="doomsday"] .hero__bunting{
+  height:20px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='20'%3E%3Cdefs%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='1.6'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M0 10 L20 9 L35 12 L55 8 L75 11 L95 7 L115 10 L135 6 L155 11 L175 8 L195 12 L215 7 L235 10 L255 8 L275 11 L300 9' fill='none' stroke='%232FA872' stroke-width='3' stroke-opacity='0.55' filter='url(%23b)'/%3E%3Cpath d='M0 10 L20 9 L35 12 L55 8 L75 11 L95 7 L115 10 L135 6 L155 11 L175 8 L195 12 L215 7 L235 10 L255 8 L275 11 L300 9' fill='none' stroke='%23C9962E' stroke-width='1' stroke-opacity='0.9'/%3E%3C/svg%3E") repeat-x;
+  background-size:300px 20px;
+}
+/* the gentle "flags swaying" bob doesn't suit a crack line — a faint
+   power-flicker reads better with the rest of this theme's "signal"
+   language (see the countdown's own flash/pulse) */
+[data-year-theme="doomsday"] .anim-bob{animation:doomsday-bunting-flicker 3.4s ease-in-out infinite}
+@keyframes doomsday-bunting-flicker{
+  0%,88%,100%{opacity:1}
+  90%{opacity:.55}
+  92%{opacity:1}
+  94%{opacity:.7}
+  96%{opacity:1}
+}
+
+/* ---- Doomsday hero — a dark cinematic scene regardless of the site's
+   own light/dark toggle (the mood calls for it): a deep vignette,
+   crossing light shafts, and a film-grain texture over the top —
+   the same recipe most moody poster-key-art uses, rather than literal
+   line-art shapes (an earlier pass tried a drawn window/logo watermark
+   here and it read as a flat sticker/wireframe, not atmosphere). ---- */
+[data-year-theme="doomsday"] .hero{
+  background:
+    radial-gradient(60% 70% at 74% 18%, color-mix(in srgb,var(--c-primary) 30%,transparent), transparent 60%),
+    linear-gradient(118deg, transparent 32%, color-mix(in srgb,var(--c-gold) 16%,transparent) 46%, transparent 60%),
+    linear-gradient(72deg, transparent 58%, color-mix(in srgb,var(--c-primary) 20%,transparent) 68%, transparent 80%),
+    radial-gradient(90% 60% at 50% 100%, rgba(0,0,0,.65), transparent 65%),
+    radial-gradient(120% 95% at 50% 0%, #101a15 0%, #070c08 55%, #020403 100%);
+  color:var(--c-on-dark-soft);
+}
+[data-year-theme="doomsday"] .hero h1,
+[data-year-theme="doomsday"] .hero h2{color:var(--c-on-dark)}
+[data-year-theme="doomsday"] .hero .eyebrow,
+[data-year-theme="doomsday"] .hero__tag,
+[data-year-theme="doomsday"] .hero__org{color:var(--c-on-dark-soft)}
+/* scoped to .hero specifically (not .hero__org alone) — that class is
+   reused for every subpage's pagehead lockup too (see chrome.js), and
+   those follow the normal light/dark toggle same as everywhere else;
+   only this always-dark hero needs the logo permanently inverted */
+[data-year-theme="doomsday"] .hero .hero__org img{filter:invert(1) brightness(1.6)}
+/* film grain — an SVG turbulence filter tiled and blended over the
+   gradient, the thing that stops a big flat gradient looking "digital" */
+[data-year-theme="doomsday"] .hero::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  mix-blend-mode:overlay;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:140px 140px;
+}
 .hero__photo{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;opacity:.1;filter:saturate(.9)}
 .hero__fx{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.92}
 @media (prefers-reduced-motion:reduce){ .hero__fx{opacity:.7} }

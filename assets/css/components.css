@@ -353,6 +353,63 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 }
 .countdown__num.is-flip{animation:digit-flip .45s var(--ease-out)}
 
+/* ---- Doomsday countdown — the stark "mission-clock" read from the
+   Doomsday countdown reference: plain glowing digits with colon
+   separators, no boxed cells, a small ambient pulse behind the whole
+   strip, and the seconds digit picked out as the one visibly ticking.
+   Scoped to the year theme, same as the palette — reverts with
+   everything else next year. ---- */
+[data-year-theme="doomsday"] .countdown{position:relative}
+[data-year-theme="doomsday"] .countdown::before{
+  content:"";position:absolute;inset:-28px -18px;z-index:-1;border-radius:var(--r-lg);
+  background:radial-gradient(60% 100% at 50% 50%, color-mix(in srgb,var(--c-primary) 18%,transparent), transparent 72%);
+  filter:blur(20px);pointer-events:none;
+  animation:doomsday-pulse 3.2s ease-in-out infinite;
+}
+@keyframes doomsday-pulse{
+  0%,100%{opacity:.5;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.05)}
+}
+[data-year-theme="doomsday"] .countdown__grid{gap:0}
+[data-year-theme="doomsday"] .countdown__cell{
+  background:none;border:0;padding:0 .4rem;min-width:auto;
+}
+[data-year-theme="doomsday"] .countdown__num{
+  color:var(--c-on-dark);
+  text-shadow:0 0 22px color-mix(in srgb,var(--c-primary) 45%,transparent);
+}
+[data-year-theme="doomsday"] .countdown__label,
+[data-year-theme="doomsday"] .countdown__unit{color:var(--c-on-dark-soft)}
+/* colon between segments, hung off the number itself so it never
+   drops to its own line when the strip wraps */
+[data-year-theme="doomsday"] .countdown__cell:not(:last-child) .countdown__num::after{
+  content:":";display:inline-block;margin-left:.14em;
+  color:var(--c-primary-on-dark);opacity:.75;
+}
+/* the seconds digit is the one visibly "alive" */
+[data-year-theme="doomsday"] .countdown__cell:last-child .countdown__num{
+  color:var(--c-primary-on-dark);
+  animation:doomsday-tick 1s steps(1) infinite;
+}
+@keyframes doomsday-tick{
+  0%,90%{text-shadow:0 0 22px color-mix(in srgb,var(--c-primary) 45%,transparent)}
+  95%{text-shadow:0 0 34px color-mix(in srgb,var(--c-primary) 95%,transparent)}
+}
+/* every digit gets a brief green flash on change, on top of the
+   existing site-wide flip — a "signal tick", not a colour change */
+[data-year-theme="doomsday"] .countdown__num.is-flip{
+  animation:digit-flip .45s var(--ease-out), doomsday-flash .6s var(--ease-out);
+}
+@keyframes doomsday-flash{
+  0%{text-shadow:0 0 26px color-mix(in srgb,var(--c-primary) 90%,transparent)}
+  100%{text-shadow:0 0 22px color-mix(in srgb,var(--c-primary) 45%,transparent)}
+}
+@media (prefers-reduced-motion:reduce){
+  [data-year-theme="doomsday"] .countdown::before,
+  [data-year-theme="doomsday"] .countdown__cell:last-child .countdown__num{animation:none}
+  [data-year-theme="doomsday"] .countdown__num.is-flip{animation:none}
+}
+
 /* ---------- FORM CONTROLS ---------- */
 .field{
   display:flex;align-items:center;gap:.5rem;

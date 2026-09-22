@@ -18,7 +18,7 @@
    --font-body / --font-mono actually use in this file.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+Tamil:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif+Tamil:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 
 :root{
   /* ---- Neutrals (warm, red undertone) ---- */
@@ -227,6 +227,127 @@
   --vm-grass:#221419; --vm-grass-dot:#2c1a20; --vm-edge:#3d2830;
   --vm-build:#2a1a20; --vm-build-edge:#472f38; --vm-path:#2c1a22;
   --vm-zone:#271820; --vm-zone-edge:#4a3540; --vm-zone-ink:#e9dce0; --vm-note:#8b8098;
+}
+
+/* ============================================================
+   2026 YEAR THEME — "Doomsday"
+   Palette-only reskin inspired by the Avengers: Doomsday teaser
+   art (Doctor Doom emerald + gothic near-black + a warm regal
+   gold glow). Scoped to [data-year-theme="doomsday"] on <html>
+   (set as a plain static attribute per page — no JS, no flash)
+   so it's a one-year overlay, not a rewrite of the base palette
+   above: next year, drop the attribute (or swap in a new theme
+   block) and the site is back to "Crimson" with zero other edits.
+   Only hex values are touched here, same rule as the rest of this
+   file — gradients/mesh/glass tokens elsewhere already reference
+   these via var(), so they pick the new palette up automatically.
+   ============================================================ */
+:root[data-year-theme="doomsday"]{
+  --c-paper:        #F1F3EE;
+  --c-parchment:    #E6E9DF;
+  --c-surface:      #FFFFFF;
+  --c-ink:          #12180F;
+  --c-ink-soft:     #3E463A;
+  --c-ink-mute:     #63705F;
+  --c-line:         #DCE0D2;
+
+  --c-primary:      #1F6B45;   /* Doom emerald — every "click me" */
+  --c-primary-ink:  #1B5D3B;
+  --c-on-primary:   #F5FBF3;
+
+  --c-gold:  #C9962E;   /* regal amber — the throne-glow accent */
+  --c-rose:  #7A2333;   /* deep wine, in place of bright rose */
+  --c-teal:  #35544A;   /* gunmetal green, in place of wine-teal */
+
+  --c-tile-dark:   #0E1712;
+  --c-tile-void:   #070B08;
+  --c-on-dark:      #EAF2E6;
+  --c-on-dark-soft: #B9C7B2;
+  --c-primary-on-dark: #4FD98C;
+
+  /* venue map plan (light) */
+  --vm-grass:      #E9EEE3;
+  --vm-grass-dot:  #D5DECB;
+  --vm-edge:       #CFD8C4;
+  --vm-build:      #E3E8DA;
+  --vm-build-edge: #B9C6AC;
+  --vm-path:       #E7ECDF;
+  --vm-zone:       #FFFFFF;
+  --vm-zone-edge:  #CFD8C4;
+  --vm-zone-ink:   #253022;
+  --vm-note:       #8B9481;
+
+  /* the live-draw stage screen is always its own dark world,
+     regardless of light/dark mode — reskin it too so the gold
+     crimson reel doesn't clash with an otherwise green site */
+  --stage-bg:   #0A130E;
+  --stage-bg-2: #172B1E;
+  --stage-ink:  #EAF2E6;
+  --stage-dim:  #9DB39A;
+  --stage-a1:   #C9962E;
+  --stage-a2:   #2FA872;
+  --stage-a3:   #1B5D3B;
+
+  /* a bold, flowing display face instead of the usual editorial serif
+     — real lowercase letterforms (an earlier pass here used Cinzel,
+     which is inscriptional-capitals-only and just read as shouted
+     all-caps at any weight). Body copy stays on Hanken Grotesk; a
+     whole page set in a display face is a readability risk this
+     theme doesn't need to take. */
+  --font-display: "Cormorant Garamond", "Playfair Display", serif;
+  --font-display-italic: "Cormorant Garamond", "Playfair Display", serif;   /* has a real italic cut, unlike Cinzel */
+}
+@media (prefers-color-scheme: dark){
+  :root[data-year-theme="doomsday"]:not([data-theme="light"]){
+    --c-paper:      #0E1310;
+    --c-parchment:  #141C16;
+    --c-surface:    #182019;
+    --c-ink:        #EAF2E6;
+    --c-ink-soft:   #C7D4C2;
+    --c-ink-mute:   #8FA089;
+    --c-line:       #2B372C;
+
+    --c-primary-ink:#4FD98C;
+    --c-gold: #DDAE4C;
+    --c-rose: #A0455A;
+    --c-teal: #5C7A6E;
+
+    --c-tile-dark: #0C1310;
+    --c-tile-void: #07100B;
+
+    --tile-a-bg: #151D17;               --tile-a-fg: var(--c-on-dark);
+    --tile-b-bg: #1A2419;               --tile-b-fg: var(--c-on-dark);
+    --tile-c-bg: #0C1310;               --tile-c-fg: var(--c-on-dark);
+
+    --vm-grass:#141C16; --vm-grass-dot:#1C271E; --vm-edge:#2B372C;
+    --vm-build:#1A2419; --vm-build-edge:#33452F; --vm-path:#1C2620;
+    --vm-zone:#182019; --vm-zone-edge:#33452F; --vm-zone-ink:#DCE6D6; --vm-note:#7C8B76;
+  }
+}
+:root[data-year-theme="doomsday"][data-theme="dark"]{
+  --c-paper:      #0E1310;
+  --c-parchment:  #141C16;
+  --c-surface:    #182019;
+  --c-ink:        #EAF2E6;
+  --c-ink-soft:   #C7D4C2;
+  --c-ink-mute:   #8FA089;
+  --c-line:       #2B372C;
+
+  --c-primary-ink:#4FD98C;
+  --c-gold: #DDAE4C;
+  --c-rose: #A0455A;
+  --c-teal: #5C7A6E;
+
+  --c-tile-dark: #0C1310;
+  --c-tile-void: #07100B;
+
+  --tile-a-bg: #151D17;               --tile-a-fg: var(--c-on-dark);
+  --tile-b-bg: #1A2419;               --tile-b-fg: var(--c-on-dark);
+  --tile-c-bg: #0C1310;               --tile-c-fg: var(--c-on-dark);
+
+  --vm-grass:#141C16; --vm-grass-dot:#1C271E; --vm-edge:#2B372C;
+  --vm-build:#1A2419; --vm-build-edge:#33452F; --vm-path:#1C2620;
+  --vm-zone:#182019; --vm-zone-edge:#33452F; --vm-zone-ink:#DCE6D6; --vm-note:#7C8B76;
 }
 
 /* ---- Tamil — Playfair Display / Hanken Grotesk have zero Tamil glyph

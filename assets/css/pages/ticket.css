@@ -13,6 +13,16 @@
   --tk-gold:#E7B85C;
   margin:.2rem 0 1.4rem;
 }
+/* the ticket keeps its own fixed identity regardless of site theme
+   (see the file header) — so like the stage screen, a per-year theme
+   needs its own copy of these rather than picking up tokens.css */
+[data-year-theme="doomsday"] .ticket-preview{
+  --tk-field:#12351F;
+  --tk-stub:#0A1F14;
+  --tk-ink:#EAF2E6;
+  --tk-mute:#9DB39A;
+  --tk-gold:#DDAE4C;
+}
 
 .ticket-preview__frame{
   position:relative;
