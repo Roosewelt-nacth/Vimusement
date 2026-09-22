@@ -29,6 +29,35 @@
   pointer-events:none;
 }
 
+/* ---- Doomsday pagehead — the same cinematic language as the home
+   hero (dark gradient, light shafts, film grain) at a lighter weight:
+   no ember canvas, just the backdrop, so every page reads as part of
+   the same theme rather than only the homepage looking "finished". ---- */
+[data-year-theme="doomsday"] .pagehead{
+  background:
+    radial-gradient(60% 70% at 74% 18%, color-mix(in srgb,var(--c-primary) 22%,transparent), transparent 60%),
+    linear-gradient(118deg, transparent 40%, color-mix(in srgb,var(--c-gold) 12%,transparent) 52%, transparent 66%),
+    radial-gradient(120% 100% at 50% 0%, #101a15 0%, #070c08 60%, #020403 100%);
+  border-bottom-color:color-mix(in srgb,var(--c-primary) 25%,transparent);
+  color:var(--c-on-dark-soft);
+  --c-primary-ink:#4FD98C;
+}
+[data-year-theme="doomsday"] .pagehead h1{color:var(--c-on-dark)}
+[data-year-theme="doomsday"] .pagehead .eyebrow,
+[data-year-theme="doomsday"] .pagehead .hero__org,
+[data-year-theme="doomsday"] .pagehead__lead{color:var(--c-on-dark-soft)}
+[data-year-theme="doomsday"] .pagehead .hero__org img{filter:invert(1) brightness(1.6)}
+[data-year-theme="doomsday"] .pagehead::after{
+  background:radial-gradient(50% 50% at 50% 50%,
+    color-mix(in srgb,var(--c-primary) 26%,transparent),transparent 70%);
+}
+[data-year-theme="doomsday"] .pagehead::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  mix-blend-mode:overlay;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:140px 140px;
+}
+
 /* generic content section on a subpage — more breathing room than a tile */
 .subsection{padding-block:clamp(2.5rem,6vw,4.5rem)}
 .subsection + .subsection{border-top:1px solid var(--c-line)}

@@ -30,10 +30,13 @@ Vim.register("countdown", function (ctx) {
     }
   }
 
+  var doomsday = document.documentElement.getAttribute("data-year-theme") === "doomsday";
+
   function tick() {
     var diff = target - Date.now();
     if (diff <= 0) {
-      if (label) label.textContent = ctx.t("index.countdown.open");
+      if (label) label.textContent = ctx.t(doomsday ? "index.countdown.openDoomsday" : "index.countdown.open");
+      if (doomsday) root.classList.add("is-open");
       Object.keys(cells).forEach(function (k) { put(cells[k], "00"); });
       clearInterval(timer);
       return;

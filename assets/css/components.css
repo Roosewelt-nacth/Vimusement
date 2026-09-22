@@ -409,6 +409,20 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   [data-year-theme="doomsday"] .countdown__cell:last-child .countdown__num{animation:none}
   [data-year-theme="doomsday"] .countdown__num.is-flip{animation:none}
 }
+/* the moment the clock hits zero — a bigger, glowing "it's here" beat
+   instead of quietly swapping to plain text */
+[data-year-theme="doomsday"] .countdown.is-open .countdown__label{
+  color:var(--c-primary-ink);font-size:1.05rem;letter-spacing:.04em;
+  text-transform:none;font-family:var(--font-display);font-weight:var(--weight-bold);
+  animation:doomsday-arrived 2.2s ease-in-out infinite;
+}
+@keyframes doomsday-arrived{
+  0%,100%{text-shadow:0 0 18px color-mix(in srgb,var(--c-primary) 55%,transparent)}
+  50%{text-shadow:0 0 34px color-mix(in srgb,var(--c-primary) 95%,transparent)}
+}
+@media (prefers-reduced-motion:reduce){
+  [data-year-theme="doomsday"] .countdown.is-open .countdown__label{animation:none}
+}
 
 /* ---------- FORM CONTROLS ---------- */
 .field{
