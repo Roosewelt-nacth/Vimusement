@@ -218,11 +218,11 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .dock__more-link svg{width:18px;height:18px;flex:none}
 .dock__more-link:hover,.dock__more-link:focus-visible{color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 9%,transparent)}
 .dock__more-link[aria-current]{color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 14%,transparent)}
-/* the dropdown row is the narrow-phone home for the language toggle —
-   hidden everywhere else, since the bar circle (.lang-toggle--bar)
-   already covers it there; must come BEFORE the 430px media query
-   below so that query's display:flex can actually win at that width */
-.dock__more-lang{display:none;width:100%;background:none;border:0;cursor:pointer;font:inherit;text-align:left}
+/* the language toggle lives ONLY in the "More" dropdown, at every
+   screen size — no separate circle out on the bar itself (see
+   .lang-toggle--bar below, permanently hidden) */
+.dock__more-lang{display:flex;width:100%;background:none;border:0;cursor:pointer;font:inherit;text-align:left}
+.lang-toggle--bar{display:none}
 
 /* ---- minimised state (scrolling down) — scale from the centre ---- */
 .dock{transform-origin:bottom center}
@@ -259,16 +259,12 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
    pill + the theme toggle don't quite fit an ~350px-wide dock with
    room to spare — tighten the spacing first, then ease every icon
    control down together, by the same amount, so nothing in the row
-   reads as bigger or smaller than its neighbours. The language
-   circle is the one dropped from the bar entirely at this width (not
-   shrunk in step with the rest) — it relocates into the "More"
-   dropdown instead (.dock__more-lang below), so switching language
-   is still one tap away, just not competing for bar space. */
+   reads as bigger or smaller than its neighbours. (The language
+   toggle is already out of this row entirely, at every width — see
+   .lang-toggle--bar above.) */
 @media (max-width:430px){
   .dock__inner{padding:.32rem .3rem;gap:0}
   .dock__links{gap:0}
-  .lang-toggle--bar{display:none}
-  .dock__more-lang{display:flex}
 }
 @media (max-width:400px){
   .dock__link,.dock__cta,.dock__more,.theme-toggle{width:40px;height:40px;min-width:40px;min-height:40px}
