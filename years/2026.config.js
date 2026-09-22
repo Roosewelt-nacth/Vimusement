@@ -243,7 +243,8 @@ window.VIM_YEARS["2026"] = {
     open: [
       // "Snack stall", "Craft table"
     ],
-    contactWhatsApp: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20run%20a%20stall%20at%20Vimusement%202026.",
+    // Stall enquiries go to Janet, the 2026 Stall Committee Head (not Austin — that's the general volunteer contact above).
+    contactWhatsApp: "https://wa.me/917550217454?text=Hi%20Janet%2C%20I%27d%20like%20to%20run%20a%20stall%20at%20Vimusement%202026.",
     contactInstagram: "https://ig.me/m/victorians.youth"
   },
 

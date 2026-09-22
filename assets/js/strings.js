@@ -195,7 +195,7 @@ window.VIM_STRINGS = {
     "involve.stalls.title": "Run a stall of your own",
     "involve.stalls.lead": "Food, games or crafts. Bring a stall and share the takings with the cause. The list of open stalls and the table rates are on the stalls page.",
     "involve.stalls.cta": "See stalls &amp; rates",
-    "involve.stalls.wa": "Message Austin on WhatsApp",
+    "involve.stalls.wa": "Message Janet on WhatsApp",
     "involve.prevLink": "← Gallery",
     "involve.nextLink": "Donate →",
 
@@ -531,7 +531,7 @@ window.VIM_STRINGS = {
     "involve.stalls.title": "உங்கள் சொந்த கடையை நடத்துங்கள்",
     "involve.stalls.lead": "உணவு, விளையாட்டுகள் அல்லது கைவினைப் பொருட்கள். ஒரு கடையை கொண்டு வந்து வருமானத்தை நோக்கத்துடன் பகிருங்கள். திறந்திருக்கும் கடைகளின் பட்டியலும் மேசை கட்டணங்களும் கடைகள் பக்கத்தில் உள்ளன.",
     "involve.stalls.cta": "கடைகள் & கட்டணங்களை பார்க்கவும்",
-    "involve.stalls.wa": "WhatsApp-ல் ஆஸ்டினுக்கு செய்தி அனுப்பவும்",
+    "involve.stalls.wa": "WhatsApp-ல் ஜேனட்டுக்கு செய்தி அனுப்பவும்",
     "involve.prevLink": "← புகைப்படங்கள்",
     "involve.nextLink": "நன்கொடை →",
 
