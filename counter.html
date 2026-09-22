@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Counter · Vimusement</title>
+<title data-i18n-title="counter.title">Counter · Vimusement</title>
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
 (function(){try{if(localStorage.getItem("vim-lang")==="ta")document.documentElement.setAttribute("data-lang","ta");}catch(e){}})();
@@ -25,23 +25,27 @@
   .desk__x{display:none}
   .counter-howto{max-width:520px;margin:1.8rem auto 0;padding:0 16px}
   .counter-howto h2{font-size:1rem;color:var(--c-ink);margin-bottom:.9rem}
+  .counter-langbar{max-width:520px;margin:0 auto;padding:10px 16px 0;text-align:right}
 </style>
 </head>
 <body>
+<div class="counter-langbar">
+  <button type="button" class="theme-toggle lang-toggle" data-lang-toggle aria-label="Switch language" style="display:inline-grid"></button>
+</div>
 <div class="counter-head">
-  <h1>Vimusement counter</h1>
-  <p>Issue lucky-draw tickets &amp; record cash donations</p>
+  <h1 data-i18n="counter.title.h1">Vimusement counter</h1>
+  <p data-i18n="counter.head.sub">Issue lucky-draw tickets &amp; record cash donations</p>
 </div>
 <section data-desk data-desk-standalone></section>
 
 <div class="counter-howto">
-  <h2>How to use this</h2>
+  <h2 data-i18n="counter.howto.title">How to use this</h2>
   <ol class="desk-steps">
-    <li><span>Log in with your <strong>username</strong> and today’s <strong>desk key</strong> — the committee gives these out at the start of your shift.</span></li>
-    <li><span>Pick a tab: <strong>Lucky Draw</strong> for a ticket sale, <strong>Cash Donation</strong> for a cash gift, or <strong>Confirm UPI</strong> once you see someone’s online payment land in the bank app.</span></li>
-    <li><span>Fill in the buyer or donor’s details and submit. The ticket numbers or reference appear on screen — <strong>read them out or write them on the ticket</strong> before the next sale.</span></li>
-    <li><span>The bar at the top keeps a running <strong>total to hand over</strong> — that’s what you should have in the cash box when your shift ends.</span></li>
-    <li><span>Tap <strong>End shift</strong> when you’re done. It resets the tally and logs you out for the next volunteer.</span></li>
+    <li><span data-i18n="counter.howto.step1">Log in with your <strong>username</strong> and today’s <strong>desk key</strong> — the committee gives these out at the start of your shift.</span></li>
+    <li><span data-i18n="counter.howto.step2">Pick a tab: <strong>Lucky Draw</strong> for a ticket sale, <strong>Cash Donation</strong> for a cash gift, or <strong>Confirm UPI</strong> once you see someone’s online payment land in the bank app.</span></li>
+    <li><span data-i18n="counter.howto.step3">Fill in the buyer or donor’s details and submit. The ticket numbers or reference appear on screen — <strong>read them out or write them on the ticket</strong> before the next sale.</span></li>
+    <li><span data-i18n="counter.howto.step4">The bar at the top keeps a running <strong>total to hand over</strong> — that’s what you should have in the cash box when your shift ends.</span></li>
+    <li><span data-i18n="counter.howto.step5">Tap <strong>End shift</strong> when you’re done. It resets the tally and logs you out for the next volunteer.</span></li>
   </ol>
 </div>
 
