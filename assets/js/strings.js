@@ -18,6 +18,7 @@ window.VIM_STRINGS = {
   en: {
     "lang.toggle.en": "Language: English. Tap for தமிழ்.",
     "lang.toggle.ta": "மொழி: தமிழ். Tap for English.",
+    "lang.menu.label": "Language",
 
     "nav.more": "More pages",
     "footer.pages": "Pages",
@@ -353,6 +354,7 @@ window.VIM_STRINGS = {
   ta: {
     "lang.toggle.en": "மொழி: ஆங்கிலம். தமிழுக்கு தட்டவும்.",
     "lang.toggle.ta": "Language: Tamil. Tap for English.",
+    "lang.menu.label": "மொழி",
 
     "nav.more": "மேலும் பக்கங்கள்",
     "footer.pages": "பக்கங்கள்",
