@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vimusement {year}</title>
-<meta name="description" content="A day of games, food stalls and movie screenings on the church grounds, raising scholarships, medical-emergency funds and help for neighbours in need.">
+<title data-i18n-title="index.title">Vimusement {year}</title>
+<meta name="description" data-i18n-content="index.meta.description" content="A day of games, food stalls and movie screenings on the church grounds, raising scholarships, medical-emergency funds and help for neighbours in need.">
 <meta property="og:title" content="Vimusement 2026">
 <meta property="og:description" content="Carnival games, food stalls and movie screenings on the church grounds, for a good cause. Save the date.">
 <meta property="og:type" content="website">
@@ -13,6 +13,7 @@
 <script>
 document.documentElement.className+=" js";
 (function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{if(localStorage.getItem("vim-lang")==="ta")document.documentElement.setAttribute("data-lang","ta");}catch(e){}})();
 (function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();
 </script>
 
@@ -39,22 +40,22 @@ document.documentElement.className+=" js";
   <div class="wrap">
     <a class="hero__org" href="https://www.instagram.com/victorians.youth/" target="_blank" rel="noopener" data-animate="fade-up">
       <img src="assets/img/shared/victorians-mark.png" alt="" width="52" height="46">
-      <span>An initiative of<br>Victorians Youth</span>
+      <span><span data-i18n="hero.orgLockup">An initiative of</span><br>Victorians Youth</span>
     </a>
-    <p class="eyebrow" data-animate="fade-up">Annual Parish Fundraiser · Church Grounds</p>
+    <p class="eyebrow" data-animate="fade-up" data-i18n="index.hero.eyebrow">Annual Parish Fundraiser · Church Grounds</p>
     <h1 class="hero__title" data-animate="fade-up" data-animate-delay="0.07">Vimusement <span class="hero__year" data-bind="year">2026</span></h1>
-    <p class="hero__tag" data-animate="fade-up" data-animate-delay="0.14">A day of games, food stalls and movie screenings, turned into scholarships, a medical-emergency fund, and help for neighbours in need.</p>
+    <p class="hero__tag" data-animate="fade-up" data-animate-delay="0.14" data-i18n="index.hero.tag">A day of games, food stalls and movie screenings, turned into scholarships, a medical-emergency fund, and help for neighbours in need.</p>
     <div class="hero__cta" data-animate="fade-up" data-animate-delay="0.21">
-      <a class="btn btn--gold btn--lg" href="donate.html">Donate</a>
-      <a class="btn btn--pill-ghost btn--lg" href="draw.html">Lucky Draw tickets</a>
+      <a class="btn btn--gold btn--lg" href="donate.html" data-i18n="donate.go.short">Donate</a>
+      <a class="btn btn--pill-ghost btn--lg" href="draw.html" data-i18n="index.hero.drawCta">Lucky Draw tickets</a>
     </div>
     <div class="countdown" data-countdown data-animate="fade-up" data-animate-delay="0.28">
-      <p class="countdown__label" data-cd-label>Counting down to the gates opening</p>
+      <p class="countdown__label" data-cd-label data-i18n="index.countdown.label">Counting down to the gates opening</p>
       <div class="countdown__grid">
-        <div class="countdown__cell"><span class="countdown__num" data-cd="days">–</span><span class="countdown__unit">Days</span></div>
-        <div class="countdown__cell"><span class="countdown__num" data-cd="hours">–</span><span class="countdown__unit">Hours</span></div>
-        <div class="countdown__cell"><span class="countdown__num" data-cd="minutes">–</span><span class="countdown__unit">Minutes</span></div>
-        <div class="countdown__cell"><span class="countdown__num" data-cd="seconds">–</span><span class="countdown__unit">Seconds</span></div>
+        <div class="countdown__cell"><span class="countdown__num" data-cd="days">–</span><span class="countdown__unit" data-i18n="index.countdown.days">Days</span></div>
+        <div class="countdown__cell"><span class="countdown__num" data-cd="hours">–</span><span class="countdown__unit" data-i18n="index.countdown.hours">Hours</span></div>
+        <div class="countdown__cell"><span class="countdown__num" data-cd="minutes">–</span><span class="countdown__unit" data-i18n="index.countdown.minutes">Minutes</span></div>
+        <div class="countdown__cell"><span class="countdown__num" data-cd="seconds">–</span><span class="countdown__unit" data-i18n="index.countdown.seconds">Seconds</span></div>
       </div>
     </div>
   </div>
@@ -67,14 +68,14 @@ document.documentElement.className+=" js";
 <section class="tile tile--c cv-auto" id="why">
   <div class="wrap">
     <div class="tile__intro">
-      <p class="eyebrow" data-animate="fade-up">Why we do it</p>
-      <h2 class="section__title" data-animate="fade-up">One day of fun. A year of difference.</h2>
-      <p class="lead" data-animate="fade-up">Every rupee raised after event costs goes straight to scholarships, a medical-emergency fund, and hardship support, decided by the parish committee and published in full.</p>
+      <p class="eyebrow" data-animate="fade-up" data-i18n="index.why.eyebrow">Why we do it</p>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="index.why.title">One day of fun. A year of difference.</h2>
+      <p class="lead" data-animate="fade-up" data-i18n="index.why.lead">Every rupee raised after event costs goes straight to scholarships, a medical-emergency fund, and hardship support, decided by the parish committee and published in full.</p>
     </div>
     <div class="grid grid--auto impact-strip" data-list="impact"></div>
     <div class="home-cta" data-animate="fade-up">
-      <a class="btn btn--gold btn--lg" href="donate.html">Donate to the cause</a>
-      <a class="btn btn--ghost btn--lg" href="cause.html">See where it goes</a>
+      <a class="btn btn--gold btn--lg" href="donate.html" data-i18n="index.why.donateCta">Donate to the cause</a>
+      <a class="btn btn--ghost btn--lg" href="cause.html" data-i18n="index.why.seeCta">See where it goes</a>
     </div>
   </div>
 </section>
@@ -83,24 +84,24 @@ document.documentElement.className+=" js";
 <section class="tile tile--a cv-auto" id="explore">
   <div class="wrap">
     <div class="tile__intro">
-      <p class="eyebrow" data-animate="fade-up">The day</p>
-      <h2 class="section__title" data-animate="fade-up">Find your way in</h2>
+      <p class="eyebrow" data-animate="fade-up" data-i18n="index.explore.eyebrow">The day</p>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="index.explore.title">Find your way in</h2>
     </div>
     <div class="grid grid--auto card-grid explore-grid">
       <a class="card card--link card--rose" href="programme.html" data-animate="fade-up">
-        <h3>Programme &amp; map</h3>
-        <p>Games, the movie line-up, and a plan of the grounds so you know where everything is.</p>
-        <span class="card__go">See the programme →</span>
+        <h3 data-i18n="index.explore.programme.title">Programme &amp; map</h3>
+        <p data-i18n="index.explore.programme.text">Games, the movie line-up, and a plan of the grounds so you know where everything is.</p>
+        <span class="card__go" data-i18n="index.explore.programme.cta">See the programme →</span>
       </a>
       <a class="card card--link card--gold" href="draw.html" data-animate="fade-up" data-animate-delay="0.06">
-        <h3>Lucky Draw</h3>
-        <p>Buy a numbered ticket for <span data-draw-price>₹50</span> and it could be your name called live on stage.</p>
-        <span class="card__go">Get tickets →</span>
+        <h3 data-i18n="index.explore.draw.title">Lucky Draw</h3>
+        <p><span data-i18n="index.explore.draw.textPrefix">Buy a numbered ticket for</span> <span data-draw-price>₹50</span> <span data-i18n="index.explore.draw.textSuffix">and it could be your name called live on stage.</span></p>
+        <span class="card__go" data-i18n="index.explore.draw.cta">Get tickets →</span>
       </a>
       <a class="card card--link card--teal" href="involve.html" data-animate="fade-up" data-animate-delay="0.12">
-        <h3>Get involved</h3>
-        <p>Volunteer a few hours, sponsor the fair, or run a stall of your own.</p>
-        <span class="card__go">Lend a hand →</span>
+        <h3 data-i18n="index.explore.involve.title">Get involved</h3>
+        <p data-i18n="index.explore.involve.text">Volunteer a few hours, sponsor the fair, or run a stall of your own.</p>
+        <span class="card__go" data-i18n="index.explore.involve.cta">Lend a hand →</span>
       </a>
     </div>
   </div>
@@ -110,9 +111,9 @@ document.documentElement.className+=" js";
 <section class="tile tile--b tile--tight cv-auto" id="reveal" hidden>
   <div class="wrap">
     <div class="reveal-card reveal-card--compact" data-animate="zoom-in">
-      <p class="eyebrow">The community banner</p>
-      <h3>The banner drops when <em>the community</em> builds it</h3>
-      <p>Every tap adds a tile to the banner. When the grid fills, it is unveiled on the grounds.</p>
+      <p class="eyebrow" data-i18n="index.reveal.eyebrow">The community banner</p>
+      <h3 data-i18n="index.reveal.title">The banner drops when <em>the community</em> builds it</h3>
+      <p data-i18n="index.reveal.text">Every tap adds a tile to the banner. When the grid fills, it is unveiled on the grounds.</p>
       <div class="mosaic" data-mosaic aria-hidden="true"></div>
       <div class="progress"><i class="progress__fill" data-reveal-bar data-progress="0"></i></div>
       <p class="reveal-card__cap" data-reveal-count>Opens closer to the night.</p>
@@ -125,11 +126,11 @@ document.documentElement.className+=" js";
   <div class="wrap">
     <div class="venue__grid">
       <div class="venue__info">
-        <p class="eyebrow" data-animate="fade-up">The venue</p>
+        <p class="eyebrow" data-animate="fade-up" data-i18n="index.venue.eyebrow">The venue</p>
         <h2 class="section__title" data-animate="fade-up" data-venue-quote>See you there.</h2>
         <p class="venue__name" data-animate="fade-up" data-venue-name>Ascension Church, Aminjikkarai</p>
         <p class="venue__address" data-animate="fade-up" data-venue-address>Address to be announced.</p>
-        <a class="btn btn--gold" data-animate="fade-up" data-venue-directions href="#" target="_blank" rel="noopener">Get directions</a>
+        <a class="btn btn--gold" data-animate="fade-up" data-venue-directions href="#" target="_blank" rel="noopener" data-i18n="index.venue.directions">Get directions</a>
       </div>
       <div class="venue__map" data-venue-map data-animate="zoom-in"></div>
     </div>
@@ -143,11 +144,14 @@ document.documentElement.className+=" js";
 
 <!-- ================= SCRIPTS (order matters) ================= -->
 <script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/strings.js"></script>
 <script defer src="years/2026.config.js"></script>
 <script defer src="years/current.js"></script>
 <script defer src="assets/js/site.config.js"></script>
 <script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/lang.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
 <script defer src="assets/js/modules/render.js"></script>

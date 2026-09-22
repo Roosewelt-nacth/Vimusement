@@ -20,8 +20,9 @@ Vim.register("draw", function (ctx) {
   var api = ctx.year.api || "";
   var price = Number(L.price || 50);
   var maxQ = Number(L.maxOnline || 25);
-  var within = L.confirmWithinText || "usually within a day";
+  var within = ctx.L(L.confirmWithinText) || "usually within a day";
   var qty = 1;
+  var unit = function (n) { return ctx.t(n === 1 ? "draw.unit.ticket" : "draw.unit.tickets"); };
 
   var decEl = ctx.$("[data-draw-dec]");
   var incEl = ctx.$("[data-draw-inc]");
@@ -38,6 +39,11 @@ Vim.register("draw", function (ctx) {
     return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
+  }
+  function errText(e) {
+    if (!e) return "";
+    var t = ctx.t("err." + e);
+    return t === "err." + e ? e : t;
   }
   function say(m, k) { if (status) { status.textContent = m || ""; status.dataset.kind = k || ""; status.hidden = !m; } }
   /* JSONP — Apps Script redirects /exec off-origin; fetch() is CORS-blocked from GitHub Pages. */
@@ -58,7 +64,7 @@ Vim.register("draw", function (ctx) {
   }
   function sync() {
     qtyEl.textContent = qty;
-    if (totEl) totEl.textContent = fmt(qty * price) + " · " + qty + (qty === 1 ? " ticket" : " tickets");
+    if (totEl) totEl.textContent = fmt(qty * price) + " · " + qty + " " + unit(qty);
     if (decEl) decEl.disabled = qty <= 1;
     if (incEl) incEl.disabled = qty >= maxQ;
   }
@@ -77,39 +83,39 @@ Vim.register("draw", function (ctx) {
     panel.innerHTML =
       '<div class="upi__head">' +
         '<p class="upi__amount">' + fmt(res.amount) + '</p>' +
-        '<p class="upi__ref">' + res.qty + (res.qty === 1 ? " ticket" : " tickets") +
-          ' · reference <b>' + esc(res.ref) + '</b></p>' +
+        '<p class="upi__ref">' + res.qty + " " + unit(res.qty) +
+          ' · ' + ctx.t("donate.upi.reference").toLowerCase() + ' <b>' + esc(res.ref) + '</b></p>' +
       '</div>' +
       (qr ? '<img class="upi__qr" alt="UPI QR code" src="' + qr + '">' : "") +
-      '<p class="upi__to">to <b>' + esc(res.vpa) + '</b> ' +
-        '<button type="button" class="upi__copy" data-copy="' + esc(res.vpa) + '">copy</button></p>' +
-      '<a class="btn btn--gold btn--block upi__open" href="' + esc(res.upiUri) + '">Open my UPI app</a>' +
-      '<p class="upi__note">Pay the <b>exact amount</b>. Keep <b>' + esc(res.ref) + '</b> in the note if your app allows.</p>' +
+      '<p class="upi__to">' + ctx.t("donate.upi.to") + ' <b>' + esc(res.vpa) + '</b> ' +
+        '<button type="button" class="upi__copy" data-copy="' + esc(res.vpa) + '">' + ctx.t("common.copy") + '</button></p>' +
+      '<a class="btn btn--gold btn--block upi__open" href="' + esc(res.upiUri) + '">' + ctx.t("donate.upi.openApp") + '</a>' +
+      '<p class="upi__note">' + ctx.t("draw.upi.note").replace("{ref}", esc(res.ref)) + '</p>' +
       '<div class="upi__paid">' +
-        '<button type="button" class="btn btn--outline btn--block" data-ipaid>I’ve paid</button>' +
+        '<button type="button" class="btn btn--outline btn--block" data-ipaid>' + ctx.t("donate.upi.paid") + '</button>' +
         '<div class="upi__utr" hidden>' +
-          '<p class="upi__utr-help">Almost there. Please enter the <b>12-digit UPI reference number</b> for your payment so we can match it and send your ticket' + (res.qty === 1 ? "" : "s") + ' quickly.</p>' +
+          '<p class="upi__utr-help">' + ctx.t("draw.utr.help").replace("{unit}", unit(res.qty)) + '</p>' +
           '<ul class="upi__utr-where">' +
-            '<li>Google Pay: “UPI transaction ID”</li>' +
-            '<li>PhonePe / Paytm: “UTR” or “UPI Ref. No.”</li>' +
-            '<li>BHIM / bank apps: “UPI Ref. ID”</li>' +
+            '<li>' + ctx.t("donate.utr.whereGpay") + '</li>' +
+            '<li>' + ctx.t("donate.utr.wherePhonepe") + '</li>' +
+            '<li>' + ctx.t("donate.utr.whereBank") + '</li>' +
           '</ul>' +
-          '<label class="field field--text"><input data-utr type="text" inputmode="numeric" autocomplete="off" maxlength="22" placeholder="12-digit reference number"></label>' +
+          '<label class="field field--text"><input data-utr type="text" inputmode="numeric" autocomplete="off" maxlength="22" placeholder="' + ctx.t("donate.utr.placeholder") + '"></label>' +
           '<p class="upi__utr-msg" data-utr-msg hidden></p>' +
-          '<button type="button" class="btn btn--gold btn--block" data-ipaid-done>Send my ticket' + (res.qty === 1 ? "" : "s") + '</button>' +
-          '<button type="button" class="upi__utr-skip" data-ipaid-skip>I can’t find my reference number</button>' +
+          '<button type="button" class="btn btn--gold btn--block" data-ipaid-done>' + ctx.t("draw.utr.send").replace("{unit}", unit(res.qty)) + '</button>' +
+          '<button type="button" class="upi__utr-skip" data-ipaid-skip>' + ctx.t("donate.utr.skip") + '</button>' +
         '</div>' +
       '</div>';
     panel.hidden = false;
     panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
-    var first = esc(String((nameEl && nameEl.value) || "friend").split(" ")[0]);
+    var first = esc(String((nameEl && nameEl.value) || ctx.t("common.friend")).split(" ")[0]);
     var mailTo = esc((emailEl && emailEl.value) || "");
 
     panel.querySelector("[data-copy]").addEventListener("click", function () {
       var v = this.getAttribute("data-copy"), self = this;
       (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject())
-        .then(function () { self.textContent = "copied"; }).catch(function () {});
+        .then(function () { self.textContent = ctx.t("common.copied"); }).catch(function () {});
     });
     var paidBtn = panel.querySelector("[data-ipaid]"), utrBox = panel.querySelector(".upi__utr");
     paidBtn.addEventListener("click", function () { paidBtn.hidden = true; utrBox.hidden = false; panel.querySelector("[data-utr]").focus(); });
@@ -117,10 +123,12 @@ Vim.register("draw", function (ctx) {
     function finish(utr) {
       var p = { action: "ipaid", ref: res.ref }; if (utr) p.utr = utr;
       jsonp(p).catch(function () { return {}; }).then(function () {
+        var thanks = ctx.t("draw.done.thanks")
+          .replace("{first}", first).replace("{mailTo}", mailTo)
+          .replace("{utrNote}", utr ? ctx.t("donate.done.utrNote") : "");
         panel.innerHTML = '<div class="upi__done">' +
-          '<p>Thank you, ' + first + '. Once we’ve checked your payment against our records, your <b>' + res.qty + '</b> ticket number' + (res.qty === 1 ? "" : "s") +
-          ' ' + (res.qty === 1 ? "is" : "are") + ' emailed to <b>' + mailTo + '</b>' + (utr ? ', usually within a few hours' : '') + ', and by the end of the day at the latest.</p>' +
-          '<p class="upi__note">Winners are drawn live on stage on the night.</p></div>';
+          '<p>' + thanks + '</p>' +
+          '<p class="upi__note">' + ctx.t("draw.done.note") + '</p></div>';
       });
     }
     var msg = panel.querySelector("[data-utr-msg]");
@@ -128,7 +136,7 @@ Vim.register("draw", function (ctx) {
       var digits = (panel.querySelector("[data-utr]").value || "").replace(/\D/g, "");
       if (digits.length < 12) {
         msg.hidden = false;
-        msg.textContent = "That isn’t a 12-digit reference yet. Check your payment confirmation screen.";
+        msg.textContent = ctx.t("donate.utr.invalid");
         return;
       }
       finish(digits.slice(-12));
@@ -137,22 +145,22 @@ Vim.register("draw", function (ctx) {
   }
 
   function begin() {
-    if (!api) { say("Ticket sales aren’t switched on yet. Please check back soon.", "warn"); return; }
+    if (!api) { say(ctx.t("draw.status.notLive"), "warn"); return; }
     var nm = ((nameEl && nameEl.value) || "").trim();
     var em = ((emailEl && emailEl.value) || "").trim();
     var ph = ((phoneEl && phoneEl.value) || "").trim();
-    if (!nm) { say("Please add your name.", "warn"); nameEl && nameEl.focus(); return; }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { say("Please add a valid email. Your tickets go there.", "warn"); emailEl && emailEl.focus(); return; }
-    if (ph.replace(/\D/g, "").length < 10) { say("Please add a valid phone number.", "warn"); phoneEl && phoneEl.focus(); return; }
+    if (!nm) { say(ctx.t("draw.status.needName"), "warn"); nameEl && nameEl.focus(); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { say(ctx.t("draw.status.needEmail"), "warn"); emailEl && emailEl.focus(); return; }
+    if (ph.replace(/\D/g, "").length < 10) { say(ctx.t("draw.status.needPhone"), "warn"); phoneEl && phoneEl.focus(); return; }
 
-    go.disabled = true; say("Setting up your payment…");
+    go.disabled = true; say(ctx.t("draw.status.settingUp"));
     jsonp({ action: "drawPledge", qty: qty, name: nm, email: em, phone: ph })
       .then(function (res) {
         go.disabled = false;
-        if (res.error || !res.upiUri) { say(res.error || "Could not start the payment.", "warn"); return; }
+        if (res.error || !res.upiUri) { say(errText(res.error) || ctx.t("draw.status.couldNotStart"), "warn"); return; }
         say(""); showUpiPanel(res);
       })
-      .catch(function () { go.disabled = false; say("Network problem. Please try again.", "warn"); });
+      .catch(function () { go.disabled = false; say(ctx.t("draw.status.networkProblem"), "warn"); });
   }
 
   if (go) go.addEventListener("click", function (e) { e.preventDefault(); begin(); });

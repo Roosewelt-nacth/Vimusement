@@ -18,7 +18,7 @@
    --font-body / --font-mono actually use in this file.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+Tamil:wght@500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 
 :root{
   /* ---- Neutrals (warm, red undertone) ---- */
@@ -227,4 +227,14 @@
   --vm-grass:#221419; --vm-grass-dot:#2c1a20; --vm-edge:#3d2830;
   --vm-build:#2a1a20; --vm-build-edge:#472f38; --vm-path:#2c1a22;
   --vm-zone:#271820; --vm-zone-edge:#4a3540; --vm-zone-ink:#e9dce0; --vm-note:#8b8098;
+}
+
+/* ---- Tamil — Playfair Display / Hanken Grotesk have zero Tamil glyph
+   coverage, so the toggle (modules/lang.js) swaps to a Tamil-capable
+   pairing instead. --font-mono is untouched: ticket IDs, amounts and
+   timers stay Latin/numeral regardless of language. ---- */
+:root[data-lang="ta"]{
+  --font-display: "Noto Serif Tamil", "Noto Sans Tamil", serif;
+  --font-display-italic: "Noto Serif Tamil", "Noto Sans Tamil", serif;   /* Tamil has no italic style — reuse upright */
+  --font-body: "Noto Sans Tamil", system-ui, -apple-system, sans-serif;
 }

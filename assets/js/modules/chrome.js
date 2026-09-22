@@ -47,7 +47,7 @@
       function linkHTML(p, cls) {
         var active = p.file === here ? ' aria-current="page"' : '';
         return '<a class="dock__link' + (cls ? " " + cls : "") + '" href="' + p.file + '"' + active + '>' +
-          svg(p.icon) + '<span class="dock__label">' + p.label + '</span></a>';
+          svg(p.icon) + '<span class="dock__label">' + ctx.L(p.label) + '</span></a>';
       }
       /* every link renders in the row — tablet/desktop show them all;
          data-dock-secondary is what the narrow-phone CSS hides, folding
@@ -59,24 +59,25 @@
       var cta = pages.filter(function (p) { return p.cta; })[0];
       var ctaHTML = cta ? (
         '<a class="btn dock__cta" href="' + cta.file + '"' +
-          (cta.file === here ? ' aria-current="page"' : '') + ' aria-label="' + cta.label + '">' +
+          (cta.file === here ? ' aria-current="page"' : '') + ' aria-label="' + ctx.L(cta.label) + '">' +
           '<svg class="dock__cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS.heart + '</svg>' +
-          '<span class="dock__label">' + cta.label + '</span></a>'
+          '<span class="dock__label">' + ctx.L(cta.label) + '</span></a>'
       ) : '';
 
       /* pages without `primary:true` (see site.config.js) never sit
          directly on the bar, at any screen size — they only ever
          live in this "More" popover instead */
+      var moreLabel = ctx.t("nav.more");
       var moreHTML = secondary.length ? (
         '<div class="dock__more-wrap">' +
-          '<button class="dock__more" type="button" data-dock-more aria-haspopup="true" aria-expanded="false" aria-label="More pages">' +
+          '<button class="dock__more" type="button" data-dock-more aria-haspopup="true" aria-expanded="false" aria-label="' + moreLabel + '">' +
             svg("more") +
           '</button>' +
           '<div class="dock__more-menu" data-dock-more-menu role="menu" hidden>' +
             secondary.map(function (p) {
               var active = p.file === here ? ' aria-current="page"' : '';
               return '<a class="dock__more-link" role="menuitem" href="' + p.file + '"' + active + '>' +
-                svg(p.icon) + '<span>' + p.label + '</span></a>';
+                svg(p.icon) + '<span>' + ctx.L(p.label) + '</span></a>';
             }).join("") +
           '</div>' +
         '</div>'
@@ -94,6 +95,7 @@
           '<button class="theme-toggle" data-theme-toggle aria-label="Switch colour theme">' +
             '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 3.6 3.6M20.4 20.4 19 19M19 5l1.4-1.4M3.6 20.4 5 19"/></svg>' +
           '</button>' +
+          '<button class="theme-toggle lang-toggle" data-lang-toggle aria-label="Switch language"></button>' +
         '</div>';
     }
 
@@ -103,13 +105,13 @@
       var year = Y.year || new Date().getFullYear();
       var ig = (S.social || {}).instagram || "";
       var nav = pages.map(function (p) {
-        return '<a href="' + p.file + '">' + p.label + '</a>';
+        return '<a href="' + p.file + '">' + ctx.L(p.label) + '</a>';
       }).join("");
       var org = S.org || {};
       var orgBlock = org.name ? (
         '<a class="footer__org" href="' + (org.url || '#') + '"' + (org.url ? ' target="_blank" rel="noopener"' : '') + '>' +
           (org.logo ? '<img src="' + org.logo + '" alt="' + org.name + '" class="footer__org-logo" onerror="this.remove()">' : '') +
-          '<span>' + (org.tagline || ('An initiative of ' + org.name)) + '</span>' +
+          '<span>' + (org.tagline ? ctx.L(org.tagline) : ctx.t("footer.orgFallback").replace("{org}", org.name)) + '</span>' +
         '</a>'
       ) : '';
 
@@ -119,18 +121,18 @@
           '<div class="footer__grid">' +
             '<div>' +
               '<a href="index.html" class="footer__brand">Vimu<b>sement</b></a>' +
-              '<p class="footer__blurb">An annual fundraiser by the parish community. One night of games and films, turned into scholarships, care and dignity all year.</p>' +
+              '<p class="footer__blurb">' + ctx.t("footer.blurb") + '</p>' +
               orgBlock +
             '</div>' +
-            '<div><h4>Pages</h4>' + nav + '</div>' +
-            '<div><h4>Reach us</h4>' +
+            '<div><h4>' + ctx.t("footer.pages") + '</h4>' + nav + '</div>' +
+            '<div><h4>' + ctx.t("footer.reachUs") + '</h4>' +
               (Y.contactEmail ? '<a href="mailto:' + Y.contactEmail + '">' + Y.contactEmail + '</a>' : '') +
-              (ig ? '<a href="' + ig + '" target="_blank" rel="noopener">Instagram · @victorians.youth</a>' : '') +
+              (ig ? '<a href="' + ig + '" target="_blank" rel="noopener">' + ctx.t("footer.instagram") + '</a>' : '') +
               '<a href="programme.html">Ascension Church, Aminjikkarai</a>' +
             '</div>' +
           '</div>' +
-          '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote || "An annual parish fundraiser.") + '</p>' +
-          '<p class="footer__staff">For volunteers · <a href="counter.html">Staff desk</a> · <a href="stage.html">Live draw screen</a></p>' +
+          '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote ? ctx.L(S.footerNote) : "An annual parish fundraiser.") + '</p>' +
+          '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a> · <a href="stage.html">' + ctx.t("footer.liveDraw") + '</a></p>' +
         '</div>';
     }
 
@@ -142,7 +144,7 @@
         a.className = "hero__org";
         if (org.url) { a.href = org.url; a.target = "_blank"; a.rel = "noopener"; }
         a.innerHTML = '<img src="' + org.logo + '" alt="" height="44">' +
-          '<span>An initiative of<br>' + org.name + '</span>';
+          '<span>' + ctx.t("hero.orgLockup") + '<br>' + org.name + '</span>';
         w.insertBefore(a, w.firstChild);
       });
     }

@@ -187,6 +187,12 @@ function _upiUri(amount, ref) {
 
 function _validEmail(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || '')); }
 
+/** the backend doesn't know which language the visitor's browser was set
+    to by the time a confirmation fires, so plain-text emails and every SMS
+    carry both languages in one message rather than guessing — English
+    block, then a Tamil block underneath. */
+function _bi(en, ta) { return en + '\n\n--- தமிழில் / In Tamil ---\n\n' + ta; }
+
 function _mail(to, subject, body) {
   if (!_validEmail(to)) return false;
   var opts = { name: PROPS.getProperty('FROM_NAME') || 'Vimusement' };
@@ -277,10 +283,10 @@ function staffLogin(p) {
   var user = String(p.user || '').trim().toLowerCase();
   var k = String(p.k || '');
   var deskKey = PROPS.getProperty('COUNTER_KEY');
-  if (!user) return { error: 'Enter your username' };
-  if (!deskKey || k !== deskKey) return { error: 'Desk key not recognised' };
+  if (!user) return { error: 'need_username' };
+  if (!deskKey || k !== deskKey) return { error: 'bad_desk_key' };
   var s = _staffList().filter(function (x) { return x.user === user; })[0];
-  if (!s || !s.active) return { error: 'That username isn’t on the staff list' };
+  if (!s || !s.active) return { error: 'not_staff' };
   var token = Utilities.getUuid().replace(/-/g, '');
   CacheService.getScriptCache().put('sess_' + token, JSON.stringify({ user: user, name: s.name, role: s.role }), 28800); // 8h
   _log(user, 'login', 'role ' + s.role);
@@ -326,8 +332,8 @@ function pledge(p) {
   var name = String(p.name || '').trim().slice(0, 80);
   var email = String(p.email || '').trim().slice(0, 120);
   var phone = _normPhone(p.phone);   // optional — email stays the required channel
-  if (!name) return { error: 'Please add your name' };
-  if (!_validEmail(email)) return { error: 'Please add a valid email so we can confirm your gift' };
+  if (!name) return { error: 'need_name' };
+  if (!_validEmail(email)) return { error: 'need_email_donate' };
   var wall = String(p.wall) === 'no' ? 'No' : 'Yes';
 
   var ref = _newRef();
@@ -340,11 +346,11 @@ function pledge(p) {
     Works for both the Donations and LuckyDraw tabs. */
 function iPaid(p) {
   var ref = String(p.ref || '').trim().toUpperCase();
-  if (!ref) return { error: 'missing reference' };
+  if (!ref) return { error: 'missing_ref' };
   var utr = String(p.utr || '').replace(/\D/g, '').slice(0, 20);
   var hit = _markPaid(_donations(), DC.REF, DC.STATUS, DC.UTR, ref, utr);
   hit = _markPaid(_luckydraw(), LC.REF, LC.STATUS, LC.UTR, ref, utr) || hit;
-  return hit ? { ok: true } : { error: 'reference not found' };
+  return hit ? { ok: true } : { error: 'ref_not_found' };
 }
 /** staff: "I can see this UPI reference landed in the bank app" — confirm the
     matching Pending / Paid? donation or ticket-reference. The buyer must have
@@ -352,7 +358,7 @@ function iPaid(p) {
 function confirmByUtr(p) {
   var st = _auth(p);
   var key = String(p.utr || '').replace(/\D/g, '').slice(-12);
-  if (key.length < 10) return { error: 'Enter the 12-digit UPI reference' };
+  if (key.length < 10) return { error: 'need_utr' };
   var out = [];
 
   var don = _donations(), dl = don.getLastRow();
@@ -389,7 +395,7 @@ function confirmByUtr(p) {
     });
   }
 
-  if (!out.length) return { error: 'No pending payment found with that reference' };
+  if (!out.length) return { error: 'utr_not_found' };
   _log(st.user, 'confirm by UTR', key + ' → ' + out.join('; '));
   processConfirmations(); processLuckyDraw();
   return { ok: true, confirmed: out };
@@ -425,12 +431,19 @@ function donateCash(p) {
   _donations().appendRow([now, ref, name, email, rupees, 'Cash', st.user, '', 'Confirmed', wall, now, '', phone]);
   _log(st.user, 'cash donation', '₹' + rupees + ' ' + ref);
   if (_validEmail(email)) {
+    var cashFirst = name.split(' ')[0], cashCommittee = PROPS.getProperty('FROM_NAME') || 'Vimusement';
     _mail(email, 'Your gift to Vimusement is confirmed 💛',
-      'Dear ' + name.split(' ')[0] + ',\n\nWe\'ve received your gift of ₹' + rupees.toLocaleString('en-IN') +
-      ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
-      (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
+      _bi(
+        'Dear ' + cashFirst + ',\n\nWe\'ve received your gift of ₹' + rupees.toLocaleString('en-IN') +
+        ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
+        cashCommittee + ' committee',
+        'அன்புள்ள ' + cashFirst + ',\n\nவிமுஸ்மென்ட் கவுண்டரில் உங்கள் ₹' + rupees.toLocaleString('en-IN') +
+        ' நன்கொடையை பெற்றுக்கொண்டோம். குறிப்பு எண்: ' + ref + '.\n\nநோக்கத்துடன் நின்றதற்கு நன்றி.\n\n— ' +
+        cashCommittee + ' குழு'
+      ));
   }
-  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '. View: ' + _ticketLink(phone));
+  if (phone) _sendSms(phone, 'Vimusement: thank you! Your gift is confirmed. Ref: ' + ref + '. View: ' + _ticketLink(phone) +
+    ' | விமுஸ்மென்ட்: நன்றி! உங்கள் நன்கொடை உறுதிப்படுத்தப்பட்டது. குறிப்பு: ' + ref + '.');
   return { ok: true, ref: ref, amount: rupees };
 }
 
@@ -474,7 +487,7 @@ function getStats() {
     Movies gets the same treatment once that feature merges to master. */
 function lookupByPhone(p) {
   var phone = _normPhone(p.phone);
-  if (!phone) return { error: 'Enter your phone number.' };
+  if (!phone) return { error: 'need_phone' };
 
   var results = [];
 
@@ -504,7 +517,7 @@ function lookupByPhone(p) {
     order.forEach(function (ref) { results.push(byRef[ref]); });
   }
 
-  if (!results.length) return { error: 'No records found for that phone number.' };
+  if (!results.length) return { error: 'no_records' };
   return { results: results };
 }
 
@@ -525,9 +538,9 @@ function drawPledge(p) {
   var name = String(p.name || '').trim().slice(0, 80);
   var email = String(p.email || '').trim().slice(0, 120);
   var phone = String(p.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
-  if (!name) return { error: 'Please add your name' };
-  if (!_validEmail(email)) return { error: 'Please add a valid email — your tickets are sent there' };
-  if (phone.replace(/\D/g, '').length < 10) return { error: 'Please add a valid phone number' };
+  if (!name) return { error: 'need_name' };
+  if (!_validEmail(email)) return { error: 'need_email_tickets' };
+  if (phone.replace(/\D/g, '').length < 10) return { error: 'need_phone_valid' };
 
   var price = _ldPrice();
   var amount = qty * price;
@@ -549,8 +562,8 @@ function drawIssueCash(p) {
   var name = String(p.name || '').trim().slice(0, 80);
   var email = String(p.email || '').trim().slice(0, 120);
   var phone = String(p.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
-  if (!name) return { error: 'Enter the buyer name' };
-  if (phone.replace(/\D/g, '').length < 10) return { error: 'Enter the buyer phone number' };
+  if (!name) return { error: 'need_buyer_name' };
+  if (phone.replace(/\D/g, '').length < 10) return { error: 'need_buyer_phone' };
   var price = _ldPrice();
 
   var sh = _luckydraw();
@@ -566,7 +579,8 @@ function drawIssueCash(p) {
   _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
 
   if (_validEmail(email)) _mailTickets(email, name, ids);
-  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone));
+  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone) +
+    ' | விமுஸ்மென்ட்: உங்கள் லக்கி டிரா சீட்டு(கள்): ' + ids.join(', ') + '.');
   return { ref: ref, qty: qty, amount: qty * price, ids: ids };
 }
 
@@ -673,7 +687,7 @@ function drawRecordWinner(p) {
   var st = _auth(p, true);
   var id = String(p.id || '').trim().toUpperCase();
   var prize = String(p.prize || 'Prize').trim().slice(0, 60);
-  if (!id) return { error: 'missing id' };
+  if (!id) return { error: 'missing_id' };
   var sh = _luckydraw();
   var last = sh.getLastRow();
   var tids = sh.getRange(2, LC.TID, last - 1, 1).getValues();
@@ -684,16 +698,22 @@ function drawRecordWinner(p) {
       var name = String(sh.getRange(row, LC.NAME).getValue());
       var email = String(sh.getRange(row, LC.EMAIL).getValue());
       if (_validEmail(email)) {
+        var winFirst = name.split(' ')[0], winCommittee = PROPS.getProperty('FROM_NAME') || 'Vimusement';
         _mail(email, 'You won at the Vimusement lucky draw! 🎉',
-          'Dear ' + name.split(' ')[0] + ',\n\nTicket ' + id + ' has won the ' + prize +
-          ' in the Vimusement lucky draw. Congratulations!\n\nSomeone from the committee will be in touch about collecting your prize.\n\n— ' +
-          (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
+          _bi(
+            'Dear ' + winFirst + ',\n\nTicket ' + id + ' has won the ' + prize +
+            ' in the Vimusement lucky draw. Congratulations!\n\nSomeone from the committee will be in touch about collecting your prize.\n\n— ' +
+            winCommittee + ' committee',
+            'அன்புள்ள ' + winFirst + ',\n\nவிமுஸ்மென்ட் லக்கி டிராவில் சீட்டு ' + id + ' ' + prize +
+            ' வென்றது. வாழ்த்துக்கள்!\n\nஉங்கள் பரிசை பெறுவது குறித்து குழுவில் இருந்து ஒருவர் தொடர்பு கொள்வார்.\n\n— ' +
+            winCommittee + ' குழு'
+          ));
       }
       _log(st.user, 'winner', prize + ' → ' + id + ' (' + name + ')');
       return { ok: true, name: name.split(' ')[0], prize: prize };
     }
   }
-  return { error: 'ticket not found' };
+  return { error: 'ticket_not_found' };
 }
 
 function drawStats() {
@@ -736,12 +756,20 @@ function processConfirmations() {
       sh.getRange(row, DC.CONFIRMED).setValue(new Date());
       var first = String(r[DC.NAME - 1] || 'Friend').split(' ')[0];
       var amt = '₹' + Number(r[DC.AMOUNT - 1] || 0).toLocaleString('en-IN');
+      var committee = PROPS.getProperty('FROM_NAME') || 'Vimusement';
       _mail(r[DC.EMAIL - 1], 'Your gift to Vimusement is confirmed 💛',
-        'Dear ' + first + ',\n\nWe\'ve received and confirmed your gift of ' + amt + ' to Vimusement.\n' +
-        'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
-        'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
-        'Thank you for standing with the cause.\n\n— ' + (PROPS.getProperty('FROM_NAME') || 'Vimusement') + ' committee');
-      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1]));
+        _bi(
+          'Dear ' + first + ',\n\nWe\'ve received and confirmed your gift of ' + amt + ' to Vimusement.\n' +
+          'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
+          'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
+          'Thank you for standing with the cause.\n\n— ' + committee + ' committee',
+          'அன்புள்ள ' + first + ',\n\nவிமுஸ்மென்ட்டுக்கான உங்கள் ' + amt + ' நன்கொடையை பெற்று உறுதிப்படுத்தினோம்.\n' +
+          'குறிப்பு எண்: ' + r[DC.REF - 1] + '\n\nநிகழ்வு செலவுகளுக்குப் பிறகு ஒவ்வொரு ரூபாயும் உதவித்தொகை, எங்கள் ' +
+          'மருத்துவ அவசர நிதி, மற்றும் தேவைப்படும் அண்டை வீட்டாருக்கான உதவிக்கு செல்கிறது — நிகழ்வுக்குப் பிறகு முழு கணக்கு வெளியிடப்படும்.\n\n' +
+          'நோக்கத்துடன் நின்றதற்கு நன்றி.\n\n— ' + committee + ' குழு'
+        ));
+      if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1]) +
+        ' | விமுஸ்மென்ட்: நன்றி! உங்கள் நன்கொடை உறுதிப்படுத்தப்பட்டது. குறிப்பு: ' + r[DC.REF - 1] + '.');
       n++;
     }
   }
@@ -800,7 +828,8 @@ function processLuckyDraw() {
         var did = [];
         if (needEmail) { _mailTickets(email, name, ids); did.push('emailed'); }
         if (needSms) {
-          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone));
+          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone) +
+            ' | விமுஸ்மென்ட்: உங்கள் லக்கி டிரா சீட்டு(கள்): ' + ids.join(', ') + '.');
           did.push('texted');
         }
         sh.getRange(firstRow, LC.NOTES).setValue((notes ? notes + ' · ' : '') + did.join(' · ') + ' ' + new Date().toLocaleString());

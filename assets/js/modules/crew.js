@@ -14,9 +14,10 @@ Vim.register("crew", function (ctx) {
   var c = ctx.year.crew || {};
   var raw = c.photos && c.photos.length ? c.photos : (c.photo ? [c.photo] : []);
   var slides = raw.map(function (p, i) {
+    var fallback = "Vimusement " + ctx.year.year + " crew — photo " + (i + 1);
     return typeof p === "string"
-      ? { src: p, alt: "Vimusement " + ctx.year.year + " crew — photo " + (i + 1) }
-      : { src: p.src, alt: p.alt || "Vimusement " + ctx.year.year + " crew — photo " + (i + 1) };
+      ? { src: p, alt: fallback }
+      : { src: p.src, alt: ctx.L(p.alt) || fallback };
   });
 
   if (!slides.length) {
@@ -28,7 +29,7 @@ Vim.register("crew", function (ctx) {
   mount.classList.add("crew-carousel");
   mount.setAttribute("role", "region");
   mount.setAttribute("aria-roledescription", "carousel");
-  mount.setAttribute("aria-label", "Crew photos");
+  mount.setAttribute("aria-label", ctx.t("crew.photos"));
   mount.setAttribute("tabindex", "0");
 
   var single = slides.length === 1;
@@ -44,15 +45,15 @@ Vim.register("crew", function (ctx) {
       "</ul>" +
     "</div>" +
     (single ? "" :
-      '<button class="crew-carousel__nav crew-carousel__nav--prev" type="button" aria-label="Previous photo">' +
+      '<button class="crew-carousel__nav crew-carousel__nav--prev" type="button" aria-label="' + ctx.t("crew.prev") + '">' +
         '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>' +
       "</button>" +
-      '<button class="crew-carousel__nav crew-carousel__nav--next" type="button" aria-label="Next photo">' +
+      '<button class="crew-carousel__nav crew-carousel__nav--next" type="button" aria-label="' + ctx.t("crew.next") + '">' +
         '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>' +
       "</button>" +
-      '<div class="crew-carousel__dots" role="tablist" aria-label="Choose photo">' +
+      '<div class="crew-carousel__dots" role="tablist" aria-label="' + ctx.t("crew.choosePhoto") + '">' +
         slides.map(function (_, i) {
-          return '<button class="crew-carousel__dot" type="button" role="tab" aria-label="Photo ' + (i + 1) + '" aria-selected="' + (i === 0) + '"></button>';
+          return '<button class="crew-carousel__dot" type="button" role="tab" aria-label="' + ctx.t("crew.photoN").replace("{n}", i + 1) + '" aria-selected="' + (i === 0) + '"></button>';
         }).join("") +
       "</div>");
 

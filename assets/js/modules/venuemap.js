@@ -19,6 +19,20 @@
      program.games[]      { name, venue }
    ============================================================ */
 (function () {
+  /* labels baked into the hand-traced SVG plan itself — "|" is box()'s
+     own line-break separator, kept in the Tamil values too */
+  var PLAN_TA = {
+    "Stall": "கடை",
+    "ENTRY": "நுழைவு",
+    "Church": "தேவாலயம்",
+    "Basement": "பேஸ்மென்ட்",
+    "Gifts|&amp; tickets": "பரிசுகள்|& சீட்டுகள்",
+    "Chapel": "தேவாலய அறை",
+    "Food Counter": "உணவு கவுண்டர்",
+    "AV Room|3rd floor": "AV அறை|3வது மாடி",
+    "Center of|Attraction": "முக்கிய|கவர்ச்சி மையம்",
+    "Entry": "நுழைவு"
+  };
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -58,9 +72,10 @@
     '</g>';
   }
 
-  function builtinPlan() {
+  function builtinPlan(ctx) {
+    var t = function (en) { return ctx && ctx.lang === "ta" ? PLAN_TA[en] || en : en; };
     var stalls = STALLS.map(function (s) {
-      return '<g class="vm-zone vm-zone--stall" data-zone="s' + s[0] + '" tabindex="0" role="button" aria-label="Stall ' + s[0] + '">' +
+      return '<g class="vm-zone vm-zone--stall" data-zone="s' + s[0] + '" tabindex="0" role="button" aria-label="' + t("Stall") + ' ' + s[0] + '">' +
         '<rect x="' + s[1] + '" y="' + s[2] + '" width="' + s[3] + '" height="' + s[4] + '" rx="4"/>' +
         '<text x="' + (s[1] + s[3] / 2) + '" y="' + (s[2] + s[4] / 2 + 5) + '" text-anchor="middle">' + s[0] + '</text>' +
       '</g>';
@@ -77,22 +92,22 @@
       '<rect x="12" y="12" width="616" height="864" rx="16" fill="url(#vmGrass)" stroke="var(--vm-edge)"/>' +
       /* the entry gap at the foot */
       '<rect x="470" y="872" width="120" height="10" fill="var(--vm-grass)"/>' +
-      '<text x="530" y="892" class="vm-note" text-anchor="middle">ENTRY</text>' +
+      '<text x="530" y="892" class="vm-note" text-anchor="middle">' + t("ENTRY") + '</text>' +
 
       /* church block — centered on the grounds (canvas centre x=320) */
       '<g aria-hidden="true"><rect x="308" y="16" width="52" height="270" fill="var(--vm-build)" stroke="var(--vm-build-edge)"/>' +
         '<path d="M334 4l12 12h-24z" fill="var(--vm-build)" stroke="var(--vm-build-edge)"/></g>' +
-      box("church",  308, 220, 52, 66, "Church", "vm-zone--tall") +
-      box("basement", 178, 290, 96, 66, "Basement") +
-      box("tickets",  274, 290, 96, 66, "Gifts|&amp; tickets") +
-      box("chapel",   370, 290, 92, 66, "Chapel") +
+      box("church",  308, 220, 52, 66, t("Church"), "vm-zone--tall") +
+      box("basement", 178, 290, 96, 66, t("Basement")) +
+      box("tickets",  274, 290, 96, 66, t("Gifts|&amp; tickets")) +
+      box("chapel",   370, 290, 92, 66, t("Chapel")) +
 
-      box("food",   22, 18, 278, 58, "Food Counter") +
+      box("food",   22, 18, 278, 58, t("Food Counter")) +
       /* AV Room sits on the left of the 19–22 stall column, same
          floor footprint — it's upstairs (3rd floor) above that block */
-      box("av",       44, 482, 70, 202, "AV Room|3rd floor", "vm-zone--up") +
-      box("center", 214, 456, 196, 236, "Center of|Attraction", "vm-zone--hero") +
-      box("entry",  430, 802, 150, 48, "Entry") +
+      box("av",       44, 482, 70, 202, t("AV Room|3rd floor"), "vm-zone--up") +
+      box("center", 214, 456, 196, 236, t("Center of|Attraction"), "vm-zone--hero") +
+      box("entry",  430, 802, 150, 48, t("Entry")) +
 
       stalls +
     '</svg>';
@@ -113,7 +128,7 @@
     var legend = ctx.$("[data-venuemap-legend]");
     var scheduleEl = ctx.$("[data-venuemap-schedule]");
     var captionEl = ctx.$("[data-venuemap-caption]");
-    if (captionEl && M.caption) captionEl.textContent = M.caption;
+    if (captionEl && M.caption) captionEl.textContent = ctx.L(M.caption);
 
     var scrAll = P.screenings || [];
     var scrTitled = scrAll.filter(function (s) { return s.title; });
@@ -126,7 +141,7 @@
       } else if (!scrTitled.length) {
         // no titles yet — one line instead of a list of blanks
         scheduleEl.outerHTML = '<p class="venuemap__screenings-note">' +
-          esc(P.screeningsNote || "The line-up is announced closer to the date.") + '</p>';
+          esc(ctx.L(P.screeningsNote) || ctx.t("venuemap.lineupSoon")) + '</p>';
       } else {
         scheduleEl.innerHTML = scrTitled.map(function (s) {
           return '<li class="vm-scr">' +
@@ -134,7 +149,7 @@
             '<span class="vm-scr__title">' + esc(s.title) +
               (s.rating ? ' <span class="vm-panel__tag">' + esc(s.rating) + '</span>' : '') + '</span>' +
             '<button type="button" class="vm-scr__venue" data-zone="' + esc(venueToZone(s.venue)) + '">' +
-              esc(s.venue) + '</button>' +
+              esc(zoneLabel(s.venue)) + '</button>' +
           '</li>';
         }).join("");
         ctx.$$(".vm-scr__venue", scheduleEl).forEach(function (b) {
@@ -149,6 +164,12 @@
       for (var i = 0; i < zones.length; i++) if (String(zones[i].venue) === String(venue)) return zones[i].id;
       return "";
     }
+    /* venue is a plain matching key (see file-top note) — resolve it back
+       to the zone's translated display label wherever it's actually shown */
+    function zoneLabel(venue) {
+      for (var i = 0; i < zones.length; i++) if (String(zones[i].venue) === String(venue)) return ctx.L(zones[i].label);
+      return venue;
+    }
 
     /* ---- games grouped by area ---- */
     var gamesEl = ctx.$("[data-venuemap-games]");
@@ -157,11 +178,11 @@
       if (!games.length) { gamesEl.hidden = true; }
       else {
         var groups = {};
-        games.forEach(function (g) { (groups[g.venue] = groups[g.venue] || []).push(g.name); });
-        gamesEl.innerHTML = '<h3 class="venuemap__games-title">Games by area</h3>' +
+        games.forEach(function (g) { (groups[g.venue] = groups[g.venue] || []).push(ctx.L(g.name)); });
+        gamesEl.innerHTML = '<h3 class="venuemap__games-title">' + ctx.t("venuemap.gamesByArea") + '</h3>' +
           Object.keys(groups).map(function (v) {
             return '<div class="vm-games-group">' +
-              '<button type="button" class="vm-games-venue" data-zone="' + esc(venueToZone(v)) + '">' + esc(v) + '</button>' +
+              '<button type="button" class="vm-games-venue" data-zone="' + esc(venueToZone(v)) + '">' + esc(zoneLabel(v)) + '</button>' +
               '<ul>' + groups[v].map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ul>' +
             '</div>';
           }).join("");
@@ -190,16 +211,16 @@
     if (M.planImage) {
       fetch(M.planImage).then(function (r) { return r.text(); })
         .then(function (svg) { planBox.innerHTML = svg; wire(); select(zones[0].id); })
-        .catch(function () { planBox.innerHTML = builtinPlan(); wire(); select(zones[0].id); });
+        .catch(function () { planBox.innerHTML = builtinPlan(ctx); wire(); select(zones[0].id); });
     } else {
-      planBox.innerHTML = builtinPlan();
+      planBox.innerHTML = builtinPlan(ctx);
       wire();
     }
 
     /* ---- legend ---- */
     if (legend) {
       legend.innerHTML = zones.map(function (z) {
-        return '<li><button type="button" class="vm-chip" data-zone="' + z.id + '">' + esc(z.label) + '</button></li>';
+        return '<li><button type="button" class="vm-chip" data-zone="' + z.id + '">' + esc(ctx.L(z.label)) + '</button></li>';
       }).join("");
       ctx.$$(".vm-chip", legend).forEach(function (b) {
         b.addEventListener("click", function () { select(b.getAttribute("data-zone")); });
@@ -225,13 +246,12 @@
 
       if (stallN) {
         var n = stallN[1], info = stalls[n] || stalls[+n];
-        var sh = '<h3 class="vm-panel__title">Stall ' + n + '</h3>';
+        var sh = '<h3 class="vm-panel__title">' + ctx.t("venuemap.stall") + ' ' + n + '</h3>';
         if (info && (info.for || info.name)) {
           sh += '<p class="vm-panel__blurb">' + esc(info.for || info.name) +
             (info.by ? ' &middot; ' + esc(info.by) : '') + '</p>';
         } else {
-          sh += '<p class="vm-panel__empty">Not assigned yet. Fancy this one? ' +
-            'See &ldquo;Run a stall&rdquo; under Get Involved.</p>';
+          sh += '<p class="vm-panel__empty">' + ctx.t("venuemap.notAssigned") + '</p>';
         }
         panel.innerHTML = sh;
         return;
@@ -240,26 +260,26 @@
       var screenings = forVenue(P.screenings, z.venue);
       var titled = screenings.filter(function (s) { return s.title; });
       var games = forVenue(P.games, z.venue);
-      var html = '<h3 class="vm-panel__title">' + esc(z.label) + '</h3>';
-      if (z.blurb) html += '<p class="vm-panel__blurb">' + esc(z.blurb) + '</p>';
+      var html = '<h3 class="vm-panel__title">' + esc(ctx.L(z.label)) + '</h3>';
+      if (z.blurb) html += '<p class="vm-panel__blurb">' + esc(ctx.L(z.blurb)) + '</p>';
 
       if (titled.length) {
-        html += '<h4 class="vm-panel__h">Screenings</h4><ul class="vm-panel__list">' +
+        html += '<h4 class="vm-panel__h">' + ctx.t("venuemap.screenings") + '</h4><ul class="vm-panel__list">' +
           titled.map(function (s) {
             return '<li>' + (s.time ? '<span class="vm-panel__time">' + esc(s.time) + '</span> ' : '') +
               esc(s.title) + (s.rating ? ' <span class="vm-panel__tag">' + esc(s.rating) + '</span>' : '') + '</li>';
           }).join("") + '</ul>';
       } else if (screenings.length) {
-        html += '<h4 class="vm-panel__h">Screenings</h4><p class="vm-panel__list">' +
-          screenings.length + (screenings.length === 1 ? ' film here. ' : ' films here. ') +
-          'Line-up announced closer to the date.</p>';
+        html += '<h4 class="vm-panel__h">' + ctx.t("venuemap.screenings") + '</h4><p class="vm-panel__list">' +
+          ctx.t(screenings.length === 1 ? "venuemap.filmCount.one" : "venuemap.filmCount.many").replace("{n}", screenings.length) +
+          ' ' + ctx.t("venuemap.lineupSoon") + '</p>';
       }
       if (games.length) {
-        html += '<h4 class="vm-panel__h">Games</h4><ul class="vm-panel__list">' +
-          games.map(function (g) { return '<li>' + esc(g.name) + '</li>'; }).join("") + '</ul>';
+        html += '<h4 class="vm-panel__h">' + ctx.t("venuemap.games") + '</h4><ul class="vm-panel__list">' +
+          games.map(function (g) { return '<li>' + esc(ctx.L(g.name)) + '</li>'; }).join("") + '</ul>';
       }
       if (!screenings.length && !games.length) {
-        html += '<p class="vm-panel__empty">Details for this area are announced closer to the date.</p>';
+        html += '<p class="vm-panel__empty">' + ctx.t("venuemap.detailsSoon") + '</p>';
       }
       panel.innerHTML = html;
     }

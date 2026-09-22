@@ -111,10 +111,10 @@ Vim.register("tickets", function (ctx) {
         '<div class="ticket-preview__field">' +
           '<p class="tk-eyebrow">' + esc(opts.eyebrow) + '</p>' +
           '<p class="tk-title">Vimusement ' + year + '</p>' +
-          '<p class="tk-admit">Admit<span class="tk-name">' + esc(opts.name || "Guest") + '</span></p>' +
+          '<p class="tk-admit">' + ctx.t("draw.ticket.admit") + '<span class="tk-name">' + esc(opts.name || ctx.t("tickets.card.guest")) + '</span></p>' +
           (mark
             ? '<div class="tk-lockup"><img src="' + mark + '" alt="" class="tk-lockup__img' + markFix + '">' +
-              '<span>' + esc(venue) + '<br>Drawn live on stage on the night</span></div>'
+              '<span>' + esc(venue) + '<br>' + ctx.t("draw.ticket.venueCaption") + '</span></div>'
             : '') +
         '</div>' +
         '<div class="ticket-preview__stub">' +
@@ -128,6 +128,12 @@ Vim.register("tickets", function (ctx) {
       '</div>';
   }
 
+  function errText(e) {
+    if (!e) return "";
+    var t = ctx.t("err." + e);
+    return t === "err." + e ? e : t;
+  }
+
   function renderResults(list) {
     var cards = [];
     list.forEach(function (r) {
@@ -135,19 +141,19 @@ Vim.register("tickets", function (ctx) {
         if (r.ids && r.ids.length) {
           r.ids.forEach(function (id) {
             cards.push(ticketCard({
-              eyebrow: 'Lucky Draw', name: r.name, num: id, numLabel: 'No.',
+              eyebrow: ctx.t("draw.ticket.eyebrow"), name: r.name, num: id, numLabel: ctx.t("tickets.card.number"),
               status: r.status, meta: r.ref, seed: id, split: true
             }));
           });
         } else {
           cards.push(ticketCard({
-            eyebrow: 'Lucky Draw', name: r.name, num: '····', numLabel: 'No.',
+            eyebrow: ctx.t("draw.ticket.eyebrow"), name: r.name, num: '····', numLabel: ctx.t("tickets.card.number"),
             status: r.status, meta: r.ref, seed: r.ref
           }));
         }
       } else {
         cards.push(ticketCard({
-          eyebrow: r.type, name: r.name, num: r.status, numLabel: 'Status',
+          eyebrow: ctx.t("tickets.type.donation"), name: r.name, num: r.status, numLabel: ctx.t("tickets.card.status"),
           status: r.ref, meta: '', seed: r.ref, wordy: true
         }));
       }
@@ -157,24 +163,24 @@ Vim.register("tickets", function (ctx) {
   }
 
   function begin() {
-    if (!api) { say("Lookups aren't switched on yet. Please check back soon.", "warn"); return; }
+    if (!api) { say(ctx.t("tickets.err.notLive"), "warn"); return; }
     var phone = ((phoneEl && phoneEl.value) || "").trim();
-    if (!phone) { say("Please enter your phone number.", "warn"); return; }
+    if (!phone) { say(ctx.t("tickets.err.needPhone"), "warn"); return; }
 
     go.setAttribute("aria-disabled", "true");
     results.hidden = true;
-    say("Looking up your ticket…");
+    say(ctx.t("tickets.status.looking"));
     jsonp({ action: "lookupByPhone", phone: phone })
       .then(function (res) {
         go.removeAttribute("aria-disabled");
         if (res.error || !res.results || !res.results.length) {
-          say(res.error || "No records found for that phone number.", "warn");
+          say(errText(res.error) || ctx.t("tickets.err.noneFound"), "warn");
           return;
         }
         say("");
         renderResults(res.results);
       })
-      .catch(function () { go.removeAttribute("aria-disabled"); say("Network problem. Please try again.", "warn"); });
+      .catch(function () { go.removeAttribute("aria-disabled"); say(ctx.t("tickets.err.network"), "warn"); });
   }
 
   go.addEventListener("click", function (e) { e.preventDefault(); begin(); });

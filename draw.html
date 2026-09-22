@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lucky Draw · Vimusement {year}</title>
-<meta name="description" content="Buy a Vimusement lucky-draw ticket by UPI. A unique number, emailed to you, drawn live on stage on the night.">
+<title data-i18n-title="draw.title">Lucky Draw · Vimusement {year}</title>
+<meta name="description" data-i18n-content="draw.meta.description" content="Buy a Vimusement lucky-draw ticket by UPI. A unique number, emailed to you, drawn live on stage on the night.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>document.documentElement.className+=" js";(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{if(localStorage.getItem("vim-lang")==="ta")document.documentElement.setAttribute("data-lang","ta");}catch(e){}})();
 (function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,8 +25,8 @@
 <main id="main">
 <header class="donate-hero donate-hero--draw">
   <div class="wrap wrap--narrow">
-    <p class="eyebrow" data-animate="fade-up">Lucky draw</p>
-    <h1 data-animate="fade-up" data-animate-delay="0.07">One number could be yours, called live on stage</h1>
+    <p class="eyebrow" data-animate="fade-up" data-i18n="draw.hero.eyebrow">Lucky draw</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.07" data-i18n="draw.hero.title">One number could be yours, called live on stage</h1>
     <p data-animate="fade-up" data-animate-delay="0.14" data-draw-blurb>Every ticket is a number in the hat and a gift to the cause. Winners are drawn live on stage on the night.</p>
   </div>
 </header>
@@ -34,25 +35,25 @@
   <div class="wrap wrap--narrow stack" style="--flow:1.6rem">
 
     <div class="donate-panel" data-animate="fade-up">
-      <h2>Get your tickets</h2>
-      <p class="lead" style="color:var(--c-ink-soft);opacity:1"><span data-draw-price>₹50</span> a ticket · your number is emailed to you as a designed PDF</p>
+      <h2 data-i18n="draw.panel.title">Get your tickets</h2>
+      <p class="lead" style="color:var(--c-ink-soft);opacity:1"><span data-draw-price>₹50</span> <span data-i18n="draw.panel.lead">a ticket · your number is emailed to you as a designed PDF</span></p>
 
       <div class="ticket-preview" data-ticket-preview></div>
 
-      <div class="qty" role="group" aria-label="Number of tickets">
-        <button type="button" class="qty__btn" data-draw-dec aria-label="One fewer ticket">−</button>
+      <div class="qty" role="group" aria-label="Number of tickets" data-i18n-aria-label="draw.qty.group">
+        <button type="button" class="qty__btn" data-draw-dec aria-label="One fewer ticket" data-i18n-aria-label="draw.qty.dec">−</button>
         <span class="qty__n" data-draw-qty>1</span>
-        <button type="button" class="qty__btn" data-draw-inc aria-label="One more ticket">+</button>
+        <button type="button" class="qty__btn" data-draw-inc aria-label="One more ticket" data-i18n-aria-label="draw.qty.inc">+</button>
         <span class="qty__total" data-draw-total>₹50 · 1 ticket</span>
       </div>
 
-      <label class="field field--text" for="dName"><input id="dName" data-draw-name type="text" autocomplete="name" placeholder="Your name"></label>
-      <label class="field field--text" for="dEmail"><input id="dEmail" data-draw-email type="email" inputmode="email" autocomplete="email" placeholder="Email for your designed tickets"></label>
-      <label class="field field--text" for="dPhone"><input id="dPhone" data-draw-phone type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone number"></label>
+      <label class="field field--text" for="dName"><input id="dName" data-draw-name type="text" autocomplete="name" placeholder="Your name" data-i18n-placeholder="draw.field.name"></label>
+      <label class="field field--text" for="dEmail"><input id="dEmail" data-draw-email type="email" inputmode="email" autocomplete="email" placeholder="Email for your designed tickets" data-i18n-placeholder="draw.field.email"></label>
+      <label class="field field--text" for="dPhone"><input id="dPhone" data-draw-phone type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone number" data-i18n-placeholder="draw.field.phone"></label>
 
-      <a class="btn btn--gold btn--block btn--lg" data-draw-go href="#">Continue to pay</a>
+      <a class="btn btn--gold btn--block btn--lg" data-draw-go href="#" data-i18n="donate.go">Continue to pay</a>
       <p class="donate-status" data-donate-status data-draw-status hidden></p>
-      <p class="donate-note">Pay straight to the parish by <strong>UPI, with no fees</strong>. Non-refundable.</p>
+      <p class="donate-note" data-i18n="draw.panel.note">Pay straight to the parish by <strong>UPI, with no fees</strong>. Non-refundable.</p>
 
       <div class="upi-panel" data-upi-panel hidden></div>
 
@@ -62,18 +63,18 @@
     </div>
 
     <div class="donate-panel" data-animate="fade-up">
-      <h2>The prizes</h2>
+      <h2 data-i18n="draw.prizes.title">The prizes</h2>
       <ul class="prizes-list" data-list="prizes"></ul>
-      <p class="donate-note" style="margin-top:1rem">Prizes are announced closer to the date. The draw is run live on stage, and every sold, confirmed ticket is in the hat.</p>
+      <p class="donate-note" style="margin-top:1rem" data-i18n="draw.prizes.note">Prizes are announced closer to the date. The draw is run live on stage, and every sold, confirmed ticket is in the hat.</p>
     </div>
 
     <div class="donate-panel" data-animate="fade-up">
-      <h2>How it works</h2>
+      <h2 data-i18n="draw.how.title">How it works</h2>
       <ol class="draw-steps">
-        <li><span>Choose how many tickets and <strong>pay by UPI</strong>, or buy cash at any counter on the grounds.</span></li>
-        <li><span>Once we confirm the payment, your <strong>designed tickets</strong> (your name and a unique number) are emailed to you as a PDF to keep or print.</span></li>
-        <li><span>On the night, numbers are drawn <strong>live on stage</strong>. Winners are also contacted directly.</span></li>
-        <li><span>Win or not, <strong>your ₹50 already did its job</strong>. It’s a gift to the cause.</span></li>
+        <li><span data-i18n="draw.how.step1">Choose how many tickets and <strong>pay by UPI</strong>, or buy cash at any counter on the grounds.</span></li>
+        <li><span data-i18n="draw.how.step2">Once we confirm the payment, your <strong>designed tickets</strong> (your name and a unique number) are emailed to you as a PDF to keep or print.</span></li>
+        <li><span data-i18n="draw.how.step3">On the night, numbers are drawn <strong>live on stage</strong>. Winners are also contacted directly.</span></li>
+        <li><span data-i18n="draw.how.step4">Win or not, <strong>your ₹50 already did its job</strong>. It’s a gift to the cause.</span></li>
       </ol>
     </div>
 
@@ -87,11 +88,14 @@
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
 <script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/strings.js"></script>
 <script defer src="years/2026.config.js"></script>
 <script defer src="years/current.js"></script>
 <script defer src="assets/js/site.config.js"></script>
 <script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/lang.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
 <script defer src="assets/js/modules/render.js"></script>
