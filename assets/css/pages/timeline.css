@@ -33,6 +33,19 @@
   transition-delay:calc(var(--i,0) * .1s);
 }
 .timeline__track.is-drawn .timeline__dot{border-color:var(--c-primary);background:var(--c-primary)}
+.timeline__icon{
+  display:grid;place-items:center;width:23px;height:23px;border-radius:var(--r-md);
+  margin-bottom:.5rem;color:var(--c-primary-ink);
+  background:color-mix(in srgb,var(--c-primary) 14%,transparent);
+  transform:scale(.6);opacity:0;
+  transition:transform .4s var(--ease-spring),opacity .3s var(--ease-out);
+  transition-delay:calc(var(--i,0) * .1s + .1s);
+}
+.timeline__track.is-drawn .timeline__icon{transform:scale(1);opacity:1}
+.timeline__icon svg{width:14px;height:14px}
+@media (prefers-reduced-motion:reduce){
+  .timeline__icon{transform:none;opacity:1;transition:none}
+}
 
 .timeline__at{
   font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;

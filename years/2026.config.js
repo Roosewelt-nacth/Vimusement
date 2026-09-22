@@ -237,10 +237,10 @@ window.VIM_YEARS["2026"] = {
        working notes) — Promotional stalls fall under the Craft/mid-tier
        rate, not a separate price. */
     rates: [
-      { name: { en: "Food & Beverages — full stall", ta: "உணவு & பானங்கள் — முழு கடை" }, price: "₹7,000" },
-      { name: { en: "Food & Beverages — half stall", ta: "உணவு & பானங்கள் — அரை கடை" }, price: "₹4,000" },
-      { name: { en: "Craft, mid-tier & promotional — full stall", ta: "கைவினை, நடுத்தர & விளம்பர — முழு கடை" }, price: "₹6,000" },
-      { name: { en: "Craft, mid-tier & promotional — half stall", ta: "கைவினை, நடுத்தர & விளம்பர — அரை கடை" }, price: "₹3,500" }
+      { name: { en: "Food & Beverages — full stall", ta: "உணவு & பானங்கள் — முழு கடை" }, price: "₹7,000", icon: "food" },
+      { name: { en: "Food & Beverages — half stall", ta: "உணவு & பானங்கள் — அரை கடை" }, price: "₹4,000", icon: "food" },
+      { name: { en: "Craft, mid-tier & promotional — full stall", ta: "கைவினை, நடுத்தர & விளம்பர — முழு கடை" }, price: "₹6,000", icon: "stall" },
+      { name: { en: "Craft, mid-tier & promotional — half stall", ta: "கைவினை, நடுத்தர & விளம்பர — அரை கடை" }, price: "₹3,500", icon: "stall" }
     ],
     open: [
       // "Snack stall", "Craft table"
@@ -307,15 +307,15 @@ window.VIM_YEARS["2026"] = {
        live "you are here" marker during the fair itself. Times are "HH:MM"
        (24h, local). Adjust once the running order is set. */
     timeline: [
-      { at: "07:30", label: { en: "Doors open", ta: "வாயில் திறப்பு" },
+      { at: "07:30", label: { en: "Doors open", ta: "வாயில் திறப்பு" }, icon: "gate",
         note: { en: "Breakfast, food stalls, games and craft tables", ta: "காலை உணவு, உணவு கடைகள், விளையாட்டுகள் மற்றும் கைவினை மேசைகள்" } },
-      { at: "10:00", label: { en: "Screenings begin", ta: "திரையிடல் தொடங்குகிறது" },
+      { at: "10:00", label: { en: "Screenings begin", ta: "திரையிடல் தொடங்குகிறது" }, icon: "movie",
         note: { en: "Basement and AV room, running through the day", ta: "பேஸ்மென்ட் மற்றும் AV அறை, நாள் முழுவதும் நடைபெறும்" } },
-      { at: "18:00", label: { en: "Evening mass", ta: "மாலை திருப்பலி" },
+      { at: "18:00", label: { en: "Evening mass", ta: "மாலை திருப்பலி" }, icon: "bell",
         note: { en: "In the church", ta: "தேவாலயத்தில்" } },
-      { at: "19:30", label: { en: "Lucky draw", ta: "லக்கி டிரா" },
+      { at: "19:30", label: { en: "Lucky draw", ta: "லக்கி டிரா" }, icon: "star",
         note: { en: "Drawn live on stage, right after mass", ta: "திருப்பலிக்குப் பிறகு மேடையில் நேரடியாக" } },
-      { at: "21:00", label: { en: "Screenings close", ta: "திரையிடல் நிறைவு" },
+      { at: "21:00", label: { en: "Screenings close", ta: "திரையிடல் நிறைவு" }, icon: "moon",
         note: { en: "The last films wrap up", ta: "கடைசி படங்கள் முடிவடைகின்றன" } }
     ],
     screeningsNote: { en: "Nine films across the Basement and the AV room. The full line-up and times are announced closer to the date.",

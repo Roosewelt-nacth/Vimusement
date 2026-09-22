@@ -29,11 +29,14 @@ Vim.register("timeline", function (ctx) {
     return hr + (m ? ":" + (m < 10 ? "0" + m : m) : "") + " " + ap;
   }
 
+  var ICONS = window.VIM_ICONS || {};
+
   host.innerHTML =
     '<ol class="timeline__track" data-tl-track>' +
       stops.map(function (s, i) {
         return '<li class="timeline__stop" style="--i:' + i + '">' +
           '<span class="timeline__dot" aria-hidden="true"></span>' +
+          (ICONS[s.icon] ? '<span class="timeline__icon" aria-hidden="true">' + ICONS[s.icon] + '</span>' : '') +
           '<span class="timeline__at">' + esc(pretty(s.at)) + '</span>' +
           '<span class="timeline__label">' + esc(L(s.label)) + '</span>' +
           (s.note ? '<span class="timeline__note">' + esc(L(s.note)) + '</span>' : '') +

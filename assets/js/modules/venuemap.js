@@ -143,8 +143,10 @@
         scheduleEl.outerHTML = '<p class="venuemap__screenings-note">' +
           esc(ctx.L(P.screeningsNote) || ctx.t("venuemap.lineupSoon")) + '</p>';
       } else {
+        var scrIcons = window.VIM_ICONS || {};
         scheduleEl.innerHTML = scrTitled.map(function (s) {
           return '<li class="vm-scr">' +
+            (scrIcons.movie ? '<span class="vm-scr__icon" aria-hidden="true">' + scrIcons.movie + '</span>' : '') +
             (s.time ? '<span class="vm-scr__time">' + esc(s.time) + '</span>' : '') +
             '<span class="vm-scr__title">' + esc(s.title) +
               (s.rating ? ' <span class="vm-panel__tag">' + esc(s.rating) + '</span>' : '') + '</span>' +
@@ -177,13 +179,15 @@
       var games = P.games || [];
       if (!games.length) { gamesEl.hidden = true; }
       else {
+        var gIcons = window.VIM_ICONS || {};
+        var gameIcon = gIcons.games ? '<span class="vm-games-icon" aria-hidden="true">' + gIcons.games + '</span>' : '';
         var groups = {};
         games.forEach(function (g) { (groups[g.venue] = groups[g.venue] || []).push(ctx.L(g.name)); });
         gamesEl.innerHTML = '<h3 class="venuemap__games-title">' + ctx.t("venuemap.gamesByArea") + '</h3>' +
           Object.keys(groups).map(function (v) {
             return '<div class="vm-games-group">' +
               '<button type="button" class="vm-games-venue" data-zone="' + esc(venueToZone(v)) + '">' + esc(zoneLabel(v)) + '</button>' +
-              '<ul>' + groups[v].map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ul>' +
+              '<ul>' + groups[v].map(function (n) { return '<li>' + gameIcon + esc(n) + '</li>'; }).join("") + '</ul>' +
             '</div>';
           }).join("");
         ctx.$$(".vm-games-venue", gamesEl).forEach(function (b) {

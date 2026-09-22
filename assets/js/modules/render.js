@@ -16,8 +16,14 @@
     heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
     hands: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 12V4.5a1.5 1.5 0 0 1 3 0V12M14 12V6.5a1.5 1.5 0 0 1 3 0V14c0 3.3-2.7 6-6 6s-6-2.7-6-6v-1.5a1.5 1.5 0 0 1 3 0V14"/></svg>',
     star:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.8L6.6 19.6l1-6L3.3 9.4l6-.9L12 3Z"/></svg>',
-    stall: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16v11H4zM3 9l2-5h14l2 5M9 20v-5h6v5"/></svg>'
+    stall: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16v11H4zM3 9l2-5h14l2 5M9 20v-5h6v5"/></svg>',
+    /* small icon set for the Programme page's timeline/screenings/games
+       lists — same inline-SVG style as the set above */
+    gate:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V7l8-4 8 4v14M4 21h16M9 21V11h6v10"/></svg>',
+    bell:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2.5h-15L6 17Z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>',
+    moon:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>'
   };
+  window.VIM_ICONS = ICONS;   // shared with timeline.js / venuemap.js
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
@@ -126,7 +132,8 @@
       if (rates) {
         if (s.rates && s.rates.length) {
           rates.innerHTML = s.rates.map(function (r) {
-            return '<li><span>' + esc(ctx.L(r.name)) + '</span><b>' + esc(r.price) + '</b></li>';
+            var icon = ICONS[r.icon] ? '<span class="stalls-list__icon" aria-hidden="true">' + ICONS[r.icon] + '</span>' : '';
+            return '<li>' + icon + '<span>' + esc(ctx.L(r.name)) + '</span><b>' + esc(r.price) + '</b></li>';
           }).join("");
         } else {
           rates.innerHTML = '<li class="stalls__tbc">' + ctx.t("stalls.ratesTbc") + '</li>';
