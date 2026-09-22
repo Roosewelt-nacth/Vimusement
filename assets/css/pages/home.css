@@ -58,6 +58,13 @@
 [data-year-theme="doomsday"] .hero .eyebrow,
 [data-year-theme="doomsday"] .hero__tag,
 [data-year-theme="doomsday"] .hero__org{color:var(--c-on-dark-soft)}
+/* --c-primary-ink is the light-theme (dark emerald) value by default —
+   fine on a light surface, but this hero is always dark, and anything
+   built on that token (the ghost "Lucky Draw tickets" button's text +
+   border, via .btn--pill-ghost) went dark-on-dark and nearly vanished.
+   Bumping it to the brighter dark-mode value inside .hero fixes every
+   such component at once, not just this one button. */
+[data-year-theme="doomsday"] .hero{--c-primary-ink:#4FD98C}
 /* scoped to .hero specifically (not .hero__org alone) — that class is
    reused for every subpage's pagehead lockup too (see chrome.js), and
    those follow the normal light/dark toggle same as everywhere else;
