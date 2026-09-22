@@ -61,8 +61,10 @@ window.VIM_YEARS["2026"] = {
     // Volunteer → WhatsApp Austin directly (India +91). NOTE: this number
     // is published on the public site.
     volunteer: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20volunteer%20for%20Vimusement%202026.",
-    // Sponsor → the donate page.
-    sponsor: "donate.html",
+    // Sponsor → WhatsApp Fredrica directly, Victorians Youth Joint
+    // Secretary — she's the point of contact for sponsor enquiries.
+    // NOTE: this number is published on the public site.
+    sponsor: "https://wa.me/919025943235?text=Hi%20Fredrica%2C%20I%27d%20like%20to%20know%20more%20about%20sponsoring%20Vimusement%202026.",
     // Run a stall → the stalls page (list + prices, still being finalised).
     stall: "stalls.html"
   },
