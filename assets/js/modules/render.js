@@ -70,7 +70,7 @@
         }
         el.textContent = a || v.name || "";
       });
-      ctx.$$("[data-venue-quote]").forEach(function (el) { if (v.quote) el.textContent = v.quote; });
+      ctx.$$("[data-venue-quote]").forEach(function (el) { if (v.quote) el.textContent = ctx.L(v.quote); });
 
       var dir = ctx.$("[data-venue-directions]");
       if (dir && q) dir.setAttribute("href", v.mapUrl || "https://www.google.com/maps/search/?api=1&query=" + q);
@@ -89,7 +89,7 @@
 
     /* ---- crew caption (the carousel itself is built by modules/crew.js) ---- */
     ctx.$$("[data-crew-caption]").forEach(function (el) {
-      if (Y.crew && Y.crew.caption) el.textContent = Y.crew.caption;
+      if (Y.crew && Y.crew.caption) el.textContent = ctx.L(Y.crew.caption);
     });
 
     /* ---- lucky draw: price / blurb / prize list ---- */
@@ -97,14 +97,14 @@
       var L = Y.luckyDraw || {};
       var money = function (n) { return "₹" + Number(n).toLocaleString("en-IN"); };
       ctx.$$("[data-draw-price]").forEach(function (el) { if (L.price) el.textContent = money(L.price); });
-      ctx.$$("[data-draw-blurb]").forEach(function (el) { if (L.blurb) el.textContent = L.blurb; });
+      ctx.$$("[data-draw-blurb]").forEach(function (el) { if (L.blurb) el.textContent = ctx.L(L.blurb); });
       var accents = ["var(--c-gold)", "var(--c-rose)", "var(--c-teal)", "var(--c-primary-ink)"];
       ctx.$$('[data-list="prizes"]').forEach(function (box) {
         if (!L.prizes) return;
         box.innerHTML = L.prizes.map(function (p, i) {
           return '<li class="prize" style="--dc:' + accents[i % 4] + '">' +
-            '<span class="prize__place">' + esc(p.place) + "</span>" +
-            '<span class="prize__detail">' + esc(p.detail) + "</span></li>";
+            '<span class="prize__place">' + esc(ctx.L(p.place)) + "</span>" +
+            '<span class="prize__detail">' + esc(ctx.L(p.detail)) + "</span></li>";
         }).join("");
       });
     })();
@@ -117,8 +117,8 @@
     /* ---- stalls page (stalls.html) ---- */
     (function stalls() {
       var s = Y.stalls || {};
-      ctx.$$("[data-stalls-intro]").forEach(function (el) { if (s.intro) el.textContent = s.intro; });
-      ctx.$$("[data-stalls-note]").forEach(function (el) { if (s.ratesNote) el.textContent = s.ratesNote; });
+      ctx.$$("[data-stalls-intro]").forEach(function (el) { if (s.intro) el.textContent = ctx.L(s.intro); });
+      ctx.$$("[data-stalls-note]").forEach(function (el) { if (s.ratesNote) el.textContent = ctx.L(s.ratesNote); });
       ctx.$$("[data-stalls-wa]").forEach(function (el) { if (s.contactWhatsApp) { el.setAttribute("href", s.contactWhatsApp); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener"); } });
       ctx.$$("[data-stalls-ig]").forEach(function (el) { if (s.contactInstagram) { el.setAttribute("href", s.contactInstagram); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener"); } });
 
@@ -126,7 +126,7 @@
       if (rates) {
         if (s.rates && s.rates.length) {
           rates.innerHTML = s.rates.map(function (r) {
-            return '<li><span>' + esc(r.name) + '</span><b>' + esc(r.price) + '</b></li>';
+            return '<li><span>' + esc(ctx.L(r.name)) + '</span><b>' + esc(r.price) + '</b></li>';
           }).join("");
         } else {
           rates.innerHTML = '<li class="stalls__tbc">' + ctx.t("stalls.ratesTbc") + '</li>';
@@ -160,14 +160,14 @@
       var icon = ICONS[item.icon] || "";
       var cta = "";
       if (kind === "involve") {
-        var href = item.form && Y.forms[item.form] ? Y.forms[item.form] : mailFallback(item.title);
+        var href = item.form && Y.forms[item.form] ? Y.forms[item.form] : mailFallback(ctx.L(item.title));
         var ext = /^https?:\/\//.test(href) ? ' target="_blank" rel="noopener"' : "";
-        cta = '<a class="btn btn--gold" href="' + esc(href) + '"' + ext + '>' + esc(item.cta || ctx.t("card.learnMore")) + "</a>";
+        cta = '<a class="btn btn--gold" href="' + esc(href) + '"' + ext + '>' + esc(ctx.L(item.cta) || ctx.t("card.learnMore")) + "</a>";
       }
       return '<article class="card' + accent + '" data-animate="fade-up">'
            +   '<div class="card__icon">' + icon + "</div>"
-           +   "<h3>" + esc(item.title) + "</h3>"
-           +   "<p>" + esc(item.text) + "</p>"
+           +   "<h3>" + esc(ctx.L(item.title)) + "</h3>"
+           +   "<p>" + esc(ctx.L(item.text)) + "</p>"
            +   cta
            + "</article>";
     }
@@ -175,9 +175,9 @@
     function pillarHTML(item) {
       return '<div class="pillar" data-animate="fade-up">'
            +   '<div class="pillar__icon">' + (ICONS[item.icon] || "") + "</div>"
-           +   "<h3>" + esc(item.title) + "</h3>"
-           +   "<p>" + esc(item.text) + "</p>"
-           +   (item.stat ? '<p class="pillar__stat">' + esc(item.stat) + "</p>" : "")
+           +   "<h3>" + esc(ctx.L(item.title)) + "</h3>"
+           +   "<p>" + esc(ctx.L(item.text)) + "</p>"
+           +   (item.stat ? '<p class="pillar__stat">' + esc(ctx.L(item.stat)) + "</p>" : "")
            + "</div>";
     }
 
@@ -218,7 +218,7 @@
           (s.prefix ? esc(s.prefix) : '') + '0' + (s.suffix ? esc(s.suffix) : '') + '</span>';
       return '<div class="stat" data-animate="fade-up">' +
         '<span class="stat__num">' + num + '</span>' +
-        '<span class="stat__label">' + esc(s.label) + '</span></div>';
+        '<span class="stat__label">' + esc(ctx.L(s.label)) + '</span></div>';
     }
 
     var lists = {

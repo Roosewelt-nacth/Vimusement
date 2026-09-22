@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Donate · Vimusement {year}</title>
-<meta name="description" content="Give any amount to Vimusement. 100% of what's raised after costs goes to scholarships, medical emergencies and hardship support.">
+<title data-i18n-title="donate.title">Donate · Vimusement {year}</title>
+<meta name="description" data-i18n-content="donate.meta.description" content="Give any amount to Vimusement. 100% of what's raised after costs goes to scholarships, medical emergencies and hardship support.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 
 <script>
@@ -30,9 +30,9 @@ document.documentElement.className+=" js";
 <main id="main">
 <header class="donate-hero">
   <div class="wrap wrap--narrow">
-    <p class="eyebrow" data-animate="fade-up">Give any amount · from anywhere</p>
-    <h1 data-animate="fade-up" data-animate-delay="0.07">Your gift keeps working long after the lights go out</h1>
-    <p data-animate="fade-up" data-animate-delay="0.14">The fair lasts one day. What you give pays a child’s school fees next term, meets a hospital bill a family can’t, and keeps a roof over someone this month.</p>
+    <p class="eyebrow" data-animate="fade-up" data-i18n="donate.hero.eyebrow">Give any amount · from anywhere</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.07" data-i18n="donate.hero.title">Your gift keeps working long after the lights go out</h1>
+    <p data-animate="fade-up" data-animate-delay="0.14" data-i18n="donate.hero.sub">The fair lasts one day. What you give pays a child’s school fees next term, meets a hospital bill a family can’t, and keeps a roof over someone this month.</p>
   </div>
 </header>
 
@@ -41,52 +41,52 @@ document.documentElement.className+=" js";
 
     <div class="grid grid--auto impact-grid" data-animate="fade-up">
       <div class="impact-card impact-card--edu">
-        <h3>A student who stays in school</h3>
-        <p>Fees, books and exam costs for a child who would otherwise have to drop out.</p>
+        <h3 data-i18n="donate.impact.edu.title">A student who stays in school</h3>
+        <p data-i18n="donate.impact.edu.text">Fees, books and exam costs for a child who would otherwise have to drop out.</p>
       </div>
       <div class="impact-card impact-card--med">
-        <h3>A family not broken by one bill</h3>
-        <p>Fast help the day a sudden hospital bill lands. No forms, no waiting.</p>
+        <h3 data-i18n="donate.impact.med.title">A family not broken by one bill</h3>
+        <p data-i18n="donate.impact.med.text">Fast help the day a sudden hospital bill lands. No forms, no waiting.</p>
       </div>
       <div class="impact-card impact-card--help">
-        <h3>A neighbour who gets through the month</h3>
-        <p>Rent, groceries and essentials for someone in a hard stretch.</p>
+        <h3 data-i18n="donate.impact.help.title">A neighbour who gets through the month</h3>
+        <p data-i18n="donate.impact.help.text">Rent, groceries and essentials for someone in a hard stretch.</p>
       </div>
     </div>
 
     <div class="donate-panel" data-animate="fade-up">
-      <h2>Make a donation</h2>
-      <p class="lead" style="color:var(--c-ink-soft);opacity:1">Give what feels right. Every gift counts the same on the wall.</p>
+      <h2 data-i18n="donate.panel.title">Make a donation</h2>
+      <p class="lead" style="color:var(--c-ink-soft);opacity:1" data-i18n="donate.panel.lead">Give what feels right. Every gift counts the same on the wall.</p>
 
       <div class="chip-group" data-donate-chips></div>
 
       <label class="field" for="customAmt">
         <span class="field__prefix">₹</span>
-        <input id="customAmt" data-donate-custom type="number" inputmode="numeric" min="1" placeholder="Other amount">
+        <input id="customAmt" data-donate-custom type="number" inputmode="numeric" min="1" placeholder="Other amount" data-i18n-placeholder="donate.field.otherAmount">
       </label>
 
       <p class="donate-funds" data-donate-funds aria-live="polite"></p>
 
       <label class="field field--text" for="donorName">
-        <input id="donorName" data-donate-name type="text" autocomplete="name" placeholder="Your name (shown on the supporters wall)">
+        <input id="donorName" data-donate-name type="text" autocomplete="name" placeholder="Your name (shown on the supporters wall)" data-i18n-placeholder="donate.field.name">
       </label>
 
       <label class="field field--text" for="donorEmail">
-        <input id="donorEmail" data-donate-email type="email" autocomplete="email" inputmode="email" placeholder="Email for your confirmation">
+        <input id="donorEmail" data-donate-email type="email" autocomplete="email" inputmode="email" placeholder="Email for your confirmation" data-i18n-placeholder="donate.field.email">
       </label>
 
       <label class="field field--text" for="donorPhone">
-        <input id="donorPhone" data-donate-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number (optional — we'll text your confirmation too)">
+        <input id="donorPhone" data-donate-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number (optional — we'll text your confirmation too)" data-i18n-placeholder="donate.field.phone">
       </label>
 
       <label class="donate-check">
         <input type="checkbox" data-donate-wall checked>
-        <span>Show my name on the supporters wall <em>(your amount is never shown)</em></span>
+        <span data-i18n="donate.field.wall">Show my name on the supporters wall <em>(your amount is never shown)</em></span>
       </label>
 
-      <a class="btn btn--gold btn--block btn--lg" data-donate-go href="#">Continue to pay <span data-donate-amount>₹500</span></a>
+      <a class="btn btn--gold btn--block btn--lg" data-donate-go href="#"><span data-i18n="donate.go">Continue to pay</span> <span data-donate-amount>₹500</span></a>
       <p class="donate-status" data-donate-status hidden></p>
-      <p class="donate-note">Pay straight to the parish by <strong>UPI, with no fees</strong>, so 100% of your gift lands. Donations are non-refundable.</p>
+      <p class="donate-note" data-i18n="donate.panel.note">Pay straight to the parish by <strong>UPI, with no fees</strong>, so 100% of your gift lands. Donations are non-refundable.</p>
 
       <div class="upi-panel" data-upi-panel hidden></div>
 
@@ -97,21 +97,21 @@ document.documentElement.className+=" js";
       </div>
 
       <div class="thermo" data-donor-total-wrap hidden>
-        <div class="thermo__row"><span>Raised so far</span></div>
+        <div class="thermo__row"><span data-i18n="donate.thermo.raised">Raised so far</span></div>
         <div class="progress"><i class="progress__fill" data-donor-bar></i></div>
         <div class="donor-total" data-donor-total hidden></div>
       </div>
     </div>
 
     <blockquote class="donate-quote" data-animate="fade-up">
-      “Every rupee, after event costs, goes to scholarships, our medical-emergency fund, and help for neighbours in need.”
-      <cite>Published in full after every event</cite>
+      <span data-i18n="donate.quote.text">“Every rupee, after event costs, goes to scholarships, our medical-emergency fund, and help for neighbours in need.”</span>
+      <cite data-i18n="donate.quote.cite">Published in full after every event</cite>
     </blockquote>
 
     <div class="donate-panel" data-animate="fade-up">
-      <h2>This year’s supporters</h2>
+      <h2 data-i18n="donate.supporters.title">This year’s supporters</h2>
       <div class="donor-scroller" data-donor-scroller></div>
-      <p class="donate-note" data-donor-hint>Amounts are never shown. Every gift counts the same.</p>
+      <p class="donate-note" data-donor-hint data-i18n="donate.supporters.hint">Amounts are never shown. Every gift counts the same.</p>
     </div>
   </div>
 </section>

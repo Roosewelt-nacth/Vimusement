@@ -21,7 +21,7 @@ Vim.register("donors", function (ctx) {
   var hintEl = ctx.$("[data-donor-hint]");
   var totalEl = ctx.$("[data-donor-total]");
 
-  if (hintEl && d.scrollerHint) hintEl.textContent = d.scrollerHint;
+  if (hintEl && d.scrollerHint) hintEl.textContent = ctx.L(d.scrollerHint);
 
   if (!api) {
     box.classList.add("donor-wall", "glass-panel");

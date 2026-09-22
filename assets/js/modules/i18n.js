@@ -9,8 +9,12 @@
    top of already-translated static chrome.
    ============================================================ */
 Vim.register("i18n", function (ctx) {
+  /* innerHTML, not textContent — a handful of dictionary strings carry
+     light inline markup (<strong>/<em>/<b>), same as everywhere else in
+     the codebase that builds HTML from trusted, developer-authored
+     content (never from user input). */
   ctx.$$("[data-i18n]").forEach(function (el) {
-    el.textContent = ctx.t(el.getAttribute("data-i18n"));
+    el.innerHTML = ctx.t(el.getAttribute("data-i18n"));
   });
   ctx.$$("[data-i18n-placeholder]").forEach(function (el) {
     el.setAttribute("placeholder", ctx.t(el.getAttribute("data-i18n-placeholder")));
