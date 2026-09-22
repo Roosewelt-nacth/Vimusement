@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Programme · Vimusement {year}</title>
-<meta name="description" content="What's on at Vimusement: games, the movie line-up, and a plan of the church grounds so you know where everything is.">
+<title data-i18n-title="programme.title">Programme · Vimusement {year}</title>
+<meta name="description" data-i18n-content="programme.meta.description" content="What's on at Vimusement: games, the movie line-up, and a plan of the church grounds so you know where everything is.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>
 document.documentElement.className+=" js";
@@ -29,17 +29,17 @@ document.documentElement.className+=" js";
 <main id="main">
 <header class="pagehead">
   <div class="wrap">
-    <p class="eyebrow" data-animate="fade-up">The day</p>
-    <h1 data-animate="fade-up" data-animate-delay="0.06">Programme &amp; map</h1>
-    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12">Games for every age, movie screenings in the Basement and the AV room, and a plan of the grounds so nobody gets lost.</p>
+    <p class="eyebrow" data-animate="fade-up" data-i18n="programme.hero.eyebrow">The day</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.06" data-i18n="programme.hero.title">Programme &amp; map</h1>
+    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12" data-i18n="programme.hero.sub">Games for every age, movie screenings in the Basement and the AV room, and a plan of the grounds so nobody gets lost.</p>
   </div>
 </header>
 
 <section class="subsection">
   <div class="wrap">
     <div class="subsection__intro">
-      <h2 class="section__title" data-animate="fade-up">How the day runs</h2>
-      <p class="lead" data-animate="fade-up">The shape of the day. On the day itself, this shows where we're up to.</p>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="programme.day.title">How the day runs</h2>
+      <p class="lead" data-animate="fade-up" data-i18n="programme.day.lead">The shape of the day. On the day itself, this shows where we're up to.</p>
     </div>
     <div class="timeline" data-timeline data-animate="fade-up"></div>
   </div>
@@ -48,8 +48,8 @@ document.documentElement.className+=" js";
 <section class="subsection">
   <div class="wrap">
     <div class="subsection__intro">
-      <h2 class="section__title" data-animate="fade-up">Something for every age</h2>
-      <p class="lead" data-animate="fade-up">Come for an hour or stay till the credits roll.</p>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="programme.age.title">Something for every age</h2>
+      <p class="lead" data-animate="fade-up" data-i18n="programme.age.lead">Come for an hour or stay till the credits roll.</p>
     </div>
     <div class="grid grid--auto card-grid" data-list="whatsOn"></div>
   </div>
@@ -58,7 +58,7 @@ document.documentElement.className+=" js";
 <section class="subsection venuemap">
   <div class="wrap">
     <div class="subsection__intro">
-      <h2 class="section__title" data-animate="fade-up">What’s on, and where</h2>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="programme.map.title">What’s on, and where</h2>
       <p class="lead" data-animate="fade-up" data-venuemap-caption>Tap a spot on the plan to see what’s there.</p>
     </div>
     <div class="venuemap__layout" data-venuemap data-animate="fade-up">
@@ -72,7 +72,7 @@ document.documentElement.className+=" js";
 <section class="subsection">
   <div class="wrap">
     <div class="subsection__intro">
-      <h2 class="section__title" data-animate="fade-up">Screenings &amp; games</h2>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="programme.schedule.title">Screenings &amp; games</h2>
     </div>
     <ol class="venuemap__screenings" data-venuemap-schedule data-animate="fade-up"></ol>
     <div class="venuemap__games" data-venuemap-games data-animate="fade-up"></div>
@@ -80,8 +80,8 @@ document.documentElement.className+=" js";
 </section>
 
 <div class="wrap pageflow">
-  <a href="draw.html">← Lucky Draw</a>
-  <a href="involve.html">Get involved →</a>
+  <a href="draw.html" data-i18n="programme.prevLink">← Lucky Draw</a>
+  <a href="involve.html" data-i18n="programme.nextLink">Get involved →</a>
 </div>
 </main>
 

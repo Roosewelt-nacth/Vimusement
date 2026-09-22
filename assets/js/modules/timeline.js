@@ -15,6 +15,7 @@ Vim.register("timeline", function (ctx) {
 
   var P = (ctx.year && ctx.year.program) || {};
   var stops = (P.timeline || []).filter(function (s) { return s && s.at && s.label; });
+  var L = ctx.L;
   if (stops.length < 2) { var sec = host.closest("section"); if (sec) sec.hidden = true; return; }
 
   function esc(s) {
@@ -34,13 +35,13 @@ Vim.register("timeline", function (ctx) {
         return '<li class="timeline__stop" style="--i:' + i + '">' +
           '<span class="timeline__dot" aria-hidden="true"></span>' +
           '<span class="timeline__at">' + esc(pretty(s.at)) + '</span>' +
-          '<span class="timeline__label">' + esc(s.label) + '</span>' +
-          (s.note ? '<span class="timeline__note">' + esc(s.note) + '</span>' : '') +
+          '<span class="timeline__label">' + esc(L(s.label)) + '</span>' +
+          (s.note ? '<span class="timeline__note">' + esc(L(s.note)) + '</span>' : '') +
         '</li>';
       }).join("") +
     '</ol>' +
     '<div class="timeline__now" data-tl-now hidden><span class="timeline__now-dot"></span>' +
-      '<span class="timeline__now-label">Happening now</span></div>' +
+      '<span class="timeline__now-label">' + ctx.t("timeline.happeningNow") + '</span></div>' +
     '<p class="timeline__foot" data-tl-foot></p>';
 
   var track = host.querySelector("[data-tl-track]");
@@ -56,7 +57,7 @@ Vim.register("timeline", function (ctx) {
   }
   function placeNow() {
     var ev = ctx.year && ctx.year.eventDate ? new Date(ctx.year.eventDate) : null;
-    if (!ev || isNaN(ev)) { footEl.textContent = "Times are announced closer to the date."; return; }
+    if (!ev || isNaN(ev)) { footEl.textContent = ctx.t("timeline.announced"); return; }
 
     var now = new Date();
     var first = stopDate(ev, stops[0].at);
@@ -65,11 +66,12 @@ Vim.register("timeline", function (ctx) {
                   now.getMonth() === ev.getMonth() && now.getDate() === ev.getDate();
 
     if (!sameDay || now < first) {
-      var when = ev.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" });
-      footEl.textContent = "The fair runs " + pretty(stops[0].at) + " to " + pretty(stops[stops.length - 1].at) + " on " + when + ".";
+      var when = ev.toLocaleDateString(ctx.lang === "ta" ? "ta-IN" : "en-IN", { weekday: "long", day: "numeric", month: "long" });
+      footEl.textContent = ctx.t("timeline.runsFrom")
+        .replace("{from}", pretty(stops[0].at)).replace("{to}", pretty(stops[stops.length - 1].at)).replace("{when}", when);
       return;
     }
-    if (now > last) { footEl.textContent = "That's a wrap. Thank you for coming."; return; }
+    if (now > last) { footEl.textContent = ctx.t("timeline.wrap"); return; }
 
     // between two stops — position the marker across equal-width segments
     var seg = 1 / (stops.length - 1), frac = 0, active = 0;
@@ -84,7 +86,7 @@ Vim.register("timeline", function (ctx) {
     nowEl.hidden = false;
     track.classList.add("is-live");
     var cur = stops[Math.min(active, stops.length - 1)];
-    footEl.textContent = cur ? "On now: " + cur.label + (cur.note ? ". " + cur.note : "") : "";
+    footEl.textContent = cur ? ctx.t("timeline.onNow").replace("{label}", L(cur.label)) + (cur.note ? ". " + L(cur.note) : "") : "";
   }
   placeNow();
   setInterval(placeNow, 60000);

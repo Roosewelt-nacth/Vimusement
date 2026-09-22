@@ -11,7 +11,12 @@ Vim.register("marquee", function (ctx) {
   var words = (ctx.year.marquee || []);
   if (!words.length) return;
 
-  function itemHTML(w) { return '<span class="marquee__item">' + w + "</span>"; }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function itemHTML(w) { return '<span class="marquee__item">' + esc(ctx.L(w)) + "</span>"; }
 
   // two copies -> the -50% keyframe lands exactly on a seam
   track.innerHTML = words.map(itemHTML).join("") + words.map(itemHTML).join("");
