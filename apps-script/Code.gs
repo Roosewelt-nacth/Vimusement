@@ -579,7 +579,7 @@ function drawIssueCash(p) {
   _log(st.user, 'cash tickets', 'x' + qty + ' ' + ref + ' ₹' + (qty * price) + ' → ' + ids.join(','));
 
   if (_validEmail(email)) _mailTickets(email, name, ids);
-  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone) +
+  if (phone) _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 25 Oct, 7:30pm. View: ' + _ticketLink(phone) +
     ' | விமுஸ்மென்ட்: உங்கள் லக்கி டிரா சீட்டு(கள்): ' + ids.join(', ') + '.');
   return { ref: ref, qty: qty, amount: qty * price, ids: ids };
 }
@@ -828,7 +828,7 @@ function processLuckyDraw() {
         var did = [];
         if (needEmail) { _mailTickets(email, name, ids); did.push('emailed'); }
         if (needSms) {
-          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 22 Nov, 7:30pm. View: ' + _ticketLink(phone) +
+          _sendSms(phone, 'Vimusement: your Lucky Draw ticket(s): ' + ids.join(', ') + '. Drawn live on stage 25 Oct, 7:30pm. View: ' + _ticketLink(phone) +
             ' | விமுஸ்மென்ட்: உங்கள் லக்கி டிரா சீட்டு(கள்): ' + ids.join(', ') + '.');
           did.push('texted');
         }

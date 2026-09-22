@@ -28,7 +28,7 @@ window.VIM_YEARS["2026"] = {
 
   /* Full ISO 8601 with timezone. +05:30 = India Standard Time.
      Doors open 7:30am; the fair runs all day. */
-  eventDate: "2026-11-22T07:30:00+05:30",
+  eventDate: "2026-10-25T07:30:00+05:30",
 
   venue: {
     name: "Ascension Church, Aminjikkarai",
@@ -50,7 +50,7 @@ window.VIM_YEARS["2026"] = {
      Preview it any time with  ?reveal=preview  on the URL. */
   reveal: {
     live: false,
-    opensOn: "2026-11-01T00:00:00+05:30",   // first Sunday of November
+    opensOn: "2026-10-04T00:00:00+05:30",   // three Sundays before the fair (event date moved to Oct 25)
     goalTaps: 500
   },
 
@@ -171,16 +171,16 @@ window.VIM_YEARS["2026"] = {
       title: { en: "Medical Emergency Fund", ta: "மருத்துவ அவசர நிதி" },
       text: { en: "Fast, no-questions help when a family is hit with a sudden hospital bill.",
               ta: "திடீர் மருத்துவமனை கட்டணம் வரும்போது, கேள்விகள் இன்றி உடனடி உதவி." },
-      stat: { en: "₹10,000 given last year", ta: "கடந்த ஆண்டு ₹10,000 வழங்கப்பட்டது" } },
+      stat: { en: "₹60,000 given last year", ta: "கடந்த ஆண்டு ₹60,000 வழங்கப்பட்டது" } },
     { icon: "hands",
       title: { en: "Hardship Support", ta: "கஷ்ட கால உதவி" },
       text: { en: "Rent, groceries and essentials for neighbours going through a hard stretch.",
               ta: "கடினமான காலகட்டத்தில் இருக்கும் அண்டை வீட்டாருக்கு வாடகை, மளிகை மற்றும் அத்தியாவசியப் பொருட்கள்." } }
   ],
 
-  causeImpactTotal: "₹44,300",
-  causeNote: { en: "That's ₹34,300 towards school and exam costs, and ₹10,000 towards a heart operation. No names, no fuss: just money that reached people who needed it, put to use last year.",
-               ta: "அதாவது ₹34,300 பள்ளி மற்றும் தேர்வு செலவுகளுக்கும், ₹10,000 இதய அறுவை சிகிச்சைக்கும். பெயர்கள் இல்லை, பகட்டு இல்லை: தேவைப்பட்டவர்களை சென்றடைந்த பணம், கடந்த ஆண்டு பயன்படுத்தப்பட்டது." },
+  causeImpactTotal: "₹94,300",
+  causeNote: { en: "That's ₹34,300 towards school and exam costs, and ₹60,000 towards medical emergencies, including a heart operation. No names, no fuss: just money that reached people who needed it, put to use last year.",
+               ta: "அதாவது ₹34,300 பள்ளி மற்றும் தேர்வு செலவுகளுக்கும், ₹60,000 மருத்துவ அவசரநிலைகளுக்கும் (இதய அறுவை சிகிச்சை உட்பட). பெயர்கள் இல்லை, பகட்டு இல்லை: தேவைப்பட்டவர்களை சென்றடைந்த பணம், கடந்த ஆண்டு பயன்படுத்தப்பட்டது." },
 
   /* This is a standing yearly commitment, not a one-off — keep the
      wording in the present tense / "every year", not "last year". */
@@ -194,7 +194,7 @@ window.VIM_YEARS["2026"] = {
      stay plain (they're numerals, not language-specific). */
   impact: {
     stats: [
-      { n: 44300, prefix: "₹", label: { en: "given to education and medical support last year", ta: "கடந்த ஆண்டு கல்வி மற்றும் மருத்துவ உதவிக்காக வழங்கப்பட்டது" } },
+      { n: 94300, prefix: "₹", label: { en: "given to education and medical support last year", ta: "கடந்த ஆண்டு கல்வி மற்றும் மருத்துவ உதவிக்காக வழங்கப்பட்டது" } },
       { n: 100, suffix: "%", label: { en: "of what’s raised, after event costs, goes to the cause", ta: "நிகழ்வு செலவுகளுக்குப் பிறகு திரட்டப்பட்டதில், நோக்கத்திற்கு செல்கிறது" } },
       { n: 3, label: { en: "funds it feeds: scholarships, medical emergencies, hardship", ta: "இது ஆதரிக்கும் நிதிகள்: உதவித்தொகை, மருத்துவ அவசரநிலைகள், கஷ்ட உதவி" } },
       { text: "₹0", label: { en: "in payment fees. You pay the parish directly by UPI", ta: "கட்டண கட்டணங்களில். நீங்கள் UPI மூலம் நேரடியாக பங்குக்கு செலுத்துகிறீர்கள்" } }

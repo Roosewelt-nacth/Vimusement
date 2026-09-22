@@ -16,7 +16,24 @@ Vim.register("dock", function (ctx) {
   var IDLE_MS = 900;
   var idleTimer;
 
+  /* freeze size/layout changes while a finger/pointer is actually down on
+     the dock — otherwise a tap that so much as brushes a scroll event (a
+     few px of touch-move before release, or the idle-timer re-expanding
+     mid-gesture) shifts every link/button under the finger right as the
+     tap lands, so the tap just "wakes" the dock instead of activating
+     whatever was under it, and the user has to tap a second time */
+  var frozen = false;
+  dock.addEventListener("pointerdown", function () { frozen = true; clearTimeout(idleTimer); }, { passive: true });
+  ["pointerup", "pointercancel"].forEach(function (ev) {
+    dock.addEventListener(ev, function () {
+      frozen = false;
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(function () { dock.removeAttribute("data-min"); }, IDLE_MS);
+    }, { passive: true });
+  });
+
   function update() {
+    if (frozen) return;
     var y = Math.max(0, window.scrollY);
     var delta = y - lastY;
     var nearTop = y < 120;
