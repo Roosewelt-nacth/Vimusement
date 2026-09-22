@@ -20,7 +20,8 @@
     gift:   '<path d="M20 8H4v4h16V8ZM12 8v13M4 12v9h16v-9M12 8S9.5 4 7.5 4 5 6.5 7 8m5 0s2.5-4 4.5-4S19 6.5 17 8"/>',
     code:   '<path d="m9 8-4 4 4 4M15 8l4 4-4 4M13 6l-2 12"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
-    more:   '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>'
+    more:   '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+    lang:   '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 4 6 4 9s-1.5 6.3-4 9c-2.5-2.7-4-6-4-9s1.5-6.3 4-9Z"/>'
   };
 
   function svg(name) {
@@ -79,6 +80,13 @@
               return '<a class="dock__more-link" role="menuitem" href="' + p.file + '"' + active + '>' +
                 svg(p.icon) + '<span>' + ctx.L(p.label) + '</span></a>';
             }).join("") +
+            /* the standalone lang-toggle circle (next to the theme toggle)
+               is hidden below the dock's mobile breakpoint — this is its
+               replacement there, so switching language is never lost, just
+               relocated. Always in the DOM; CSS shows it only when the
+               bar version is hidden (see .dock__more-lang in components.css). */
+            '<button type="button" role="menuitem" class="dock__more-link dock__more-lang" data-lang-toggle>' +
+              svg("lang") + '<span data-lang-toggle-text></span></button>' +
           '</div>' +
         '</div>'
       ) : '';
@@ -95,7 +103,7 @@
           '<button class="theme-toggle" data-theme-toggle aria-label="Switch colour theme">' +
             '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 3.6 3.6M20.4 20.4 19 19M19 5l1.4-1.4M3.6 20.4 5 19"/></svg>' +
           '</button>' +
-          '<button class="theme-toggle lang-toggle" data-lang-toggle aria-label="Switch language"></button>' +
+          '<button class="theme-toggle lang-toggle lang-toggle--bar" data-lang-toggle aria-label="Switch language"></button>' +
         '</div>';
     }
 

@@ -218,6 +218,11 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .dock__more-link svg{width:18px;height:18px;flex:none}
 .dock__more-link:hover,.dock__more-link:focus-visible{color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 9%,transparent)}
 .dock__more-link[aria-current]{color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 14%,transparent)}
+/* the dropdown row is the narrow-phone home for the language toggle —
+   hidden everywhere else, since the bar circle (.lang-toggle--bar)
+   already covers it there; must come BEFORE the 430px media query
+   below so that query's display:flex can actually win at that width */
+.dock__more-lang{display:none;width:100%;background:none;border:0;cursor:pointer;font:inherit;text-align:left}
 
 /* ---- minimised state (scrolling down) — scale from the centre ---- */
 .dock{transform-origin:bottom center}
@@ -254,10 +259,16 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
    pill + the theme toggle don't quite fit an ~350px-wide dock with
    room to spare — tighten the spacing first, then ease every icon
    control down together, by the same amount, so nothing in the row
-   reads as bigger or smaller than its neighbours. */
+   reads as bigger or smaller than its neighbours. The language
+   circle is the one dropped from the bar entirely at this width (not
+   shrunk in step with the rest) — it relocates into the "More"
+   dropdown instead (.dock__more-lang below), so switching language
+   is still one tap away, just not competing for bar space. */
 @media (max-width:430px){
   .dock__inner{padding:.32rem .3rem;gap:0}
   .dock__links{gap:0}
+  .lang-toggle--bar{display:none}
+  .dock__more-lang{display:flex}
 }
 @media (max-width:400px){
   .dock__link,.dock__cta,.dock__more,.theme-toggle{width:40px;height:40px;min-width:40px;min-height:40px}
@@ -568,3 +579,31 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 @keyframes vt-slide-in-right{ from{ transform:translateX(28%); opacity:0 } }
 @keyframes vt-slide-out-right{ to{ transform:translateX(28%); opacity:0 } }
 @keyframes vt-slide-in-left{ from{ transform:translateX(-28%); opacity:0 } }
+
+/* ---------- LANG PROMPT — one-time first-visit language pick ---------- */
+.lang-prompt{
+  position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));
+  z-index:301;                              /* above the dock (300) */
+  width:min(320px, calc(100vw - 32px));
+  padding:1rem 1.1rem 1.1rem;
+  text-align:center;
+  transform:translate(-50%, 10px) scale(.96);
+  opacity:0;pointer-events:none;
+  transition:transform var(--dur-3) var(--ease-spring), opacity var(--dur-2) var(--ease-out);
+}
+.lang-prompt.is-shown{ transform:translate(-50%, 0) scale(1); opacity:1; pointer-events:auto; }
+.lang-prompt__x{
+  position:absolute;top:.5rem;right:.5rem;
+  width:26px;height:26px;border:0;border-radius:50%;background:none;
+  color:var(--c-ink-mute);font-size:1.1rem;line-height:1;cursor:pointer;
+}
+.lang-prompt__x:hover{color:var(--c-ink-soft);background:color-mix(in srgb, var(--c-ink) 8%, transparent)}
+.lang-prompt__q{
+  margin:0 0 .8rem;font-family:var(--font-display);font-weight:600;
+  font-size:1rem;color:var(--c-ink);
+}
+.lang-prompt__row{display:flex;gap:.55rem;justify-content:center}
+.lang-prompt__opt{flex:1;padding:.6rem .9rem;font-size:.9rem;min-height:40px}
+@media (prefers-reduced-motion:reduce){
+  .lang-prompt{transition:opacity var(--dur-2) var(--ease-out)}
+}
