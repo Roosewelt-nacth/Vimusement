@@ -229,11 +229,16 @@ window.VIM_YEARS["2026"] = {
   stalls: {
     intro: { en: "Bring a stall to Vimusement: food or a craft table. You keep it running on the night and share the takings with the cause.",
              ta: "விமுஸ்மென்ட்டிற்கு ஒரு கடையை கொண்டு வாருங்கள்: உணவு அல்லது கைவினைப் பொருட்கள் மேசை. இரவு முழுவதும் நீங்களே நடத்தி, வருமானத்தை நோக்கத்துடன் பகிரலாம்." },
-    ratesNote: { en: "Extra tables/chairs beyond what's included: ₹50 each. Lights & electricity are included free with every stall.",
-                 ta: "சேர்க்கப்பட்டதைத் தாண்டி கூடுதல் மேசைகள்/நாற்காலிகள்: ஒன்றுக்கு ₹50. விளக்குகள் & மின்சாரம் ஒவ்வொரு கடையிலும் இலவசமாக சேர்க்கப்பட்டுள்ளது." },
+    ratesNote: { en: "Prices include the stall rent and bench seating. Lights & electricity are included free with every stall.",
+                 ta: "விலையில் கடை வாடகை மற்றும் இருக்கை பெஞ்ச் ஆகியவை அடங்கும். விளக்குகள் & மின்சாரம் ஒவ்வொரு கடையிலும் இலவசமாக சேர்க்கப்பட்டுள்ளது." },
+    /* Two tiers by category (locked, per the 2026 Stall Committee's
+       working notes) — Promotional stalls fall under the Craft/mid-tier
+       rate, not a separate price. */
     rates: [
-      { name: { en: "Full stall (own gas/electric)", ta: "முழு கடை (சொந்த எரிவாயு/மின்சாரம்)" }, price: "₹5,000" },
-      { name: { en: "Half stall (incl. craft / non-food table)", ta: "அரை கடை (கைவினை / உணவு அல்லாத மேசை உட்பட)" }, price: "₹3,000" }
+      { name: { en: "Food & Beverages — full stall", ta: "உணவு & பானங்கள் — முழு கடை" }, price: "₹7,000" },
+      { name: { en: "Food & Beverages — half stall", ta: "உணவு & பானங்கள் — அரை கடை" }, price: "₹4,000" },
+      { name: { en: "Craft, mid-tier & promotional — full stall", ta: "கைவினை, நடுத்தர & விளம்பர — முழு கடை" }, price: "₹6,000" },
+      { name: { en: "Craft, mid-tier & promotional — half stall", ta: "கைவினை, நடுத்தர & விளம்பர — அரை கடை" }, price: "₹3,500" }
     ],
     open: [
       // "Snack stall", "Craft table"
