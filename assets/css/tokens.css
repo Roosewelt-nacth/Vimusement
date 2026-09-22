@@ -353,9 +353,25 @@
 /* ---- Tamil — Playfair Display / Hanken Grotesk have zero Tamil glyph
    coverage, so the toggle (modules/lang.js) swaps to a Tamil-capable
    pairing instead. --font-mono is untouched: ticket IDs, amounts and
-   timers stay Latin/numeral regardless of language. ---- */
+   timers stay Latin/numeral regardless of language.
+
+   Noto Serif/Sans Tamil draw noticeably larger than the Latin faces at
+   the same nominal size (taller x-height, heavier default weight), so
+   left alone every heading/label reads oversized and the two languages
+   feel like different type scales. Scaling the root font-size down for
+   Tamil brings it back in visual balance with the English pass — a
+   standard technique for scripts that run bigger than Latin at parity
+   (same idea as `:lang(ja){font-size:92%}`) — and since every spacing
+   token in this file is also rem-based, padding/gaps shrink by the same
+   proportion, so rhythm stays consistent rather than text shrinking
+   while the boxes around it stay full-size. A touch more line-height
+   keeps Tamil's taller glyphs and vowel marks from feeling cramped. ---- */
 :root[data-lang="ta"]{
   --font-display: "Noto Serif Tamil", "Noto Sans Tamil", serif;
   --font-display-italic: "Noto Serif Tamil", "Noto Sans Tamil", serif;   /* Tamil has no italic style — reuse upright */
   --font-body: "Noto Sans Tamil", system-ui, -apple-system, sans-serif;
+  font-size: 91%;
+  --lh-body:  1.56;
+  --lh-tight: 1.22;
+  --lh-snug:  1.32;
 }
