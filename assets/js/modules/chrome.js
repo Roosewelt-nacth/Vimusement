@@ -69,7 +69,20 @@
          directly on the bar, at any screen size — they only ever
          live in this "More" popover instead */
       var moreLabel = ctx.t("nav.more");
-      var moreHTML = secondary.length ? (
+      /* the credits link isn't a real site.config page — it's the
+         same "who built this" destination as the footer crack, just
+         placed somewhere that doesn't need scrolling to reach. The
+         pulsing dot on its icon mirrors that footer badge so the two
+         read as the same signal in two spots. Always present, which
+         is also why moreHTML itself is no longer conditional on
+         secondary.length — there's now always at least one item. */
+      var creditsLinkHTML =
+        '<a class="dock__more-link dock__more-credit" role="menuitem" href="credits.html"' +
+          (here === "credits.html" ? ' aria-current="page"' : '') + '>' +
+          '<span class="dock__more-credit-icon">' + svg("code") + '<span class="dock__more-credit-dot" aria-hidden="true"></span></span>' +
+          '<span>' + ctx.t("footer.creditsNav") + '</span>' +
+        '</a>';
+      var moreHTML =
         '<div class="dock__more-wrap">' +
           '<button class="dock__more" type="button" data-dock-more aria-haspopup="true" aria-expanded="false" aria-label="' + moreLabel + '">' +
             svg("more") +
@@ -87,9 +100,9 @@
                bar version is hidden (see .dock__more-lang in components.css). */
             '<button type="button" role="menuitem" class="dock__more-link dock__more-lang" data-lang-toggle>' +
               svg("lang") + '<span data-lang-toggle-text></span></button>' +
+            creditsLinkHTML +
           '</div>' +
-        '</div>'
-      ) : '';
+        '</div>';
 
       dock.innerHTML =
         '<div class="dock__inner">' +

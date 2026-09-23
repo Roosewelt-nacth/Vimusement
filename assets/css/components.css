@@ -222,6 +222,15 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
    screen size — no separate circle out on the bar itself (see
    .lang-toggle--bar below, permanently hidden) */
 .dock__more-lang{display:flex;width:100%;background:none;border:0;cursor:pointer;font:inherit;text-align:left}
+.dock__more-credit-icon{position:relative;display:inline-flex;flex:none}
+.dock__more-credit-dot{
+  position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;
+  background:var(--c-primary-ink);border:2px solid var(--c-surface);
+  animation:footer-dot-pulse 2.4s ease-out infinite;
+}
+@media (prefers-reduced-motion:reduce){
+  .dock__more-credit-dot{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c-primary) 30%,transparent)}
+}
 .lang-toggle--bar{display:none}
 
 /* ---- minimised state (scrolling down) — scale from the centre ---- */
@@ -716,4 +725,41 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 .lang-prompt__opt{flex:1;padding:.6rem .9rem;font-size:.9rem;min-height:40px}
 @media (prefers-reduced-motion:reduce){
   .lang-prompt{transition:opacity var(--dur-2) var(--ease-out)}
+}
+
+/* ---------- CREDIT BADGE — corner nudge toward the credits page ---------- */
+.credit-badge{
+  position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));
+  z-index:301;                              /* same layer as the lang prompt, above the dock */
+  display:flex;align-items:center;gap:.15rem;
+  max-width:min(230px, calc(100vw - 32px));
+  padding:.3rem .3rem .3rem .95rem;
+  border-radius:var(--r-pill);
+  transform:translateY(12px) scale(.94);
+  opacity:0;pointer-events:none;
+  transition:transform var(--dur-3) var(--ease-spring), opacity var(--dur-2) var(--ease-out);
+}
+.credit-badge.is-shown{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+.credit-badge__link{
+  display:inline-flex;align-items:center;gap:.55rem;text-decoration:none;
+  padding:.3rem 0;
+}
+.credit-badge__dot{
+  width:7px;height:7px;border-radius:50%;flex:none;
+  background:var(--c-primary-ink);
+  animation:footer-dot-pulse 2.4s ease-out infinite;
+}
+.credit-badge__text{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.03em;
+  color:var(--c-ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.credit-badge__x{
+  width:26px;height:26px;flex:none;border:0;border-radius:50%;background:none;
+  color:var(--c-ink-mute);font-size:1.1rem;line-height:1;cursor:pointer;
+}
+.credit-badge__x:hover{color:var(--c-ink-soft);background:color-mix(in srgb, var(--c-ink) 8%, transparent)}
+@media (max-width:480px){ .credit-badge{right:10px} }
+@media (prefers-reduced-motion:reduce){
+  .credit-badge{transition:opacity var(--dur-2) var(--ease-out)}
+  .credit-badge__dot{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c-primary) 30%,transparent)}
 }
