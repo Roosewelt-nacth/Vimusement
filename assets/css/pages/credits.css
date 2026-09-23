@@ -64,10 +64,7 @@
   .dossier{transition:none}
 }
 
-/* photo slot — replace with a real photo by swapping this block's
-   background-image for an <img class="dossier-photo__img" src="...">
-   inside .dossier-photo; the monogram + ring are just the placeholder.
-   Clickable either way — it opens the bigger reveal in .avatar-view. */
+/* the photo, clickable either way — it opens the bigger reveal in .avatar-view */
 .dossier-photo{
   position:relative;width:148px;height:148px;border-radius:50%;flex:none;
   display:grid;place-items:center;cursor:pointer;
@@ -95,11 +92,6 @@
 .dossier-photo img{
   position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;
 }
-.dossier-photo__mono{
-  font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--c-on-dark);
-  letter-spacing:.02em;text-shadow:0 0 30px color-mix(in srgb,var(--c-primary) 60%,transparent);
-}
-
 .dossier-body h2{color:var(--c-ink);font-size:var(--fs-lg);margin-bottom:.2rem}
 .dossier-body .lead{margin-top:0;max-width:52ch}
 
@@ -124,6 +116,38 @@
 .credits-sign{
   margin-top:2.4rem;text-align:center;font-family:var(--font-display);font-style:italic;
   font-weight:500;font-size:1.15rem;color:var(--c-ink-mute);
+}
+
+/* ---- polaroid strip — a few more candid shots, taped down at
+   slightly different angles like photos pinned into a case file.
+   Each one opens the same big reveal as the main avatar. ---- */
+.polaroid-strip{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:1.4rem 1.1rem;
+  margin-top:2.6rem;padding-top:.4rem;
+}
+.polaroid{
+  appearance:none;border:0;cursor:pointer;padding:0;
+  width:112px;flex:none;
+  background:var(--c-surface);border-radius:2px;
+  padding:.5rem .5rem 1.1rem;
+  box-shadow:0 10px 24px -12px rgba(20,12,30,.35),0 1px 0 rgba(255,255,255,.4) inset;
+  transition:transform var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out);
+}
+.polaroid:nth-child(1){transform:rotate(-5deg)}
+.polaroid:nth-child(2){transform:rotate(4deg)}
+.polaroid:nth-child(3){transform:rotate(-3deg)}
+.polaroid:nth-child(4){transform:rotate(6deg)}
+.polaroid:hover,.polaroid:focus-visible{
+  transform:rotate(0deg) translateY(-4px) scale(1.05);
+  box-shadow:0 16px 34px -14px rgba(20,12,30,.4),0 1px 0 rgba(255,255,255,.4) inset;
+  z-index:1;
+}
+.polaroid:focus-visible{outline:2px solid var(--c-primary-ink);outline-offset:3px}
+.polaroid img{
+  display:block;width:100%;aspect-ratio:1/1.05;object-fit:cover;border-radius:1px;
+}
+@media (max-width:560px){
+  .polaroid{width:94px}
 }
 
 /* ---------- AVATAR VIEW — the click-to-reveal photo overlay ----------
@@ -153,10 +177,6 @@
              0 0 90px -10px color-mix(in srgb,var(--c-primary) 65%,transparent);
 }
 .avatar-view__photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
-.avatar-view__mono{
-  font-family:var(--font-display);font-weight:700;font-size:5.2rem;color:#fff;
-  letter-spacing:.02em;text-shadow:0 0 50px color-mix(in srgb,var(--c-primary) 70%,transparent);
-}
 .avatar-view__name{margin:.4rem 0 0;font-family:var(--font-display);font-weight:600;font-size:1.25rem;color:#fff}
 .avatar-view__role{
   margin:0;font-family:var(--font-mono);font-size:.78rem;letter-spacing:.05em;color:rgba(255,255,255,.68);

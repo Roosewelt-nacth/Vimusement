@@ -40,12 +40,8 @@ document.documentElement.className+=" js";
   <div class="wrap wrap--narrow">
     <div class="dossier" data-animate="fade-up" data-tilt>
       <span class="dossier-stamp" aria-hidden="true" data-i18n="credits.stamp">Field&nbsp;Dossier · Approved</span>
-      <!-- photo slot: swap the monogram div below for
-           <img class="dossier-photo__img" src="assets/img/shared/austin.jpg" alt="Austin Prince Roosewelt">
-           once a real photo is added — everything else stays the same,
-           including the click-to-enlarge behaviour (data-avatar-open) -->
-      <div class="dossier-photo" data-avatar-open tabindex="0" role="button" aria-label="View Austin's photo, larger">
-        <span class="dossier-photo__mono" aria-hidden="true">APR</span>
+      <div class="dossier-photo" data-avatar-open data-photo="assets/img/shared/austin.jpg" data-pos="62% 22%" tabindex="0" role="button" aria-label="View Austin's photo, larger">
+        <img class="dossier-photo__img" src="assets/img/shared/austin.jpg" alt="Austin Prince Roosewelt" style="object-position:62% 22%">
       </div>
       <div class="dossier-body">
         <h2 data-i18n="credits.dossier.title">Known for</h2>
@@ -64,6 +60,21 @@ document.documentElement.className+=" js";
       </div>
     </div>
     <p class="credits-sign" data-animate="fade" data-i18n="credits.sign">— built, broken, and rebuilt, right up to doomsday.</p>
+
+    <div class="polaroid-strip" data-animate-stagger>
+      <button type="button" class="polaroid" data-avatar-open data-photo="assets/img/shared/austin-5.jpg" data-animate="fade-up" aria-label="View a larger photo">
+        <img src="assets/img/shared/austin-5.jpg" alt="" loading="lazy">
+      </button>
+      <button type="button" class="polaroid" data-avatar-open data-photo="assets/img/shared/austin-4.jpg" data-animate="fade-up" aria-label="View a larger photo">
+        <img src="assets/img/shared/austin-4.jpg" alt="" loading="lazy">
+      </button>
+      <button type="button" class="polaroid" data-avatar-open data-photo="assets/img/shared/austin-2.jpg" data-pos="38% 30%" data-animate="fade-up" aria-label="View a larger photo">
+        <img src="assets/img/shared/austin-2.jpg" alt="" loading="lazy" style="object-position:38% 30%">
+      </button>
+      <button type="button" class="polaroid" data-avatar-open data-photo="assets/img/shared/austin-3.jpg" data-animate="fade-up" aria-label="View a larger photo">
+        <img src="assets/img/shared/austin-3.jpg" alt="" loading="lazy">
+      </button>
+    </div>
   </div>
 </section>
 
@@ -84,7 +95,7 @@ document.documentElement.className+=" js";
   <div class="avatar-view__dialog" role="dialog" aria-modal="true" aria-label="Austin Prince Roosewelt, larger photo">
     <button type="button" class="avatar-view__close" data-avatar-close aria-label="Close">&times;</button>
     <div class="avatar-view__photo">
-      <span class="avatar-view__mono" aria-hidden="true">APR</span>
+      <img data-avatar-view-img src="assets/img/shared/austin.jpg" alt="Austin Prince Roosewelt">
     </div>
     <p class="avatar-view__name">Austin Prince Roosewelt</p>
     <p class="avatar-view__role" data-i18n="credits.hero.role">Victorians Youth · Vice Treasurer</p>
@@ -242,11 +253,19 @@ document.documentElement.className+=" js";
    up. Escape, the backdrop, and the × button all close it. */
 (function(){
   "use strict";
-  var trigger = document.querySelector("[data-avatar-open]");
+  var triggers = document.querySelectorAll("[data-avatar-open]");
   var view = document.querySelector("[data-avatar-view]");
-  if (!trigger || !view) return;
+  var viewImg = document.querySelector("[data-avatar-view-img]");
+  if (!triggers.length || !view) return;
+  var lastTrigger = null;
 
   function openFrom(el){
+    lastTrigger = el;
+    var photo = el.getAttribute("data-photo");
+    if (photo && viewImg) {
+      viewImg.src = photo;
+      viewImg.style.objectPosition = el.getAttribute("data-pos") || "center";
+    }
     var r = el.getBoundingClientRect();
     var ox = r.left + r.width/2, oy = r.top + r.height/2;
     view.style.setProperty("--ox", (ox/window.innerWidth*100) + "%");
@@ -261,13 +280,15 @@ document.documentElement.className+=" js";
     view.classList.remove("is-open");
     document.removeEventListener("keydown", onKey);
     setTimeout(function(){ view.hidden = true; }, 380);
-    trigger.focus();
+    if (lastTrigger) lastTrigger.focus();
   }
   function onKey(e){ if (e.key === "Escape") close(); }
 
-  trigger.addEventListener("click", function(){ openFrom(trigger); });
-  trigger.addEventListener("keydown", function(e){
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFrom(trigger); }
+  triggers.forEach(function(trigger){
+    trigger.addEventListener("click", function(){ openFrom(trigger); });
+    trigger.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFrom(trigger); }
+    });
   });
   view.querySelectorAll("[data-avatar-close]").forEach(function(btn){
     btn.addEventListener("click", close);
