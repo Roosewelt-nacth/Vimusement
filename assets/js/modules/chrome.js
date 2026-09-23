@@ -141,10 +141,11 @@
           '</div>' +
           '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote ? ctx.L(S.footerNote) : "An annual parish fundraiser.") + '</p>' +
           '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a> · <a href="stage.html">' + ctx.t("footer.liveDraw") + '</a></p>' +
-          '<a class="footer__credit" href="credits.html">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.6 4.9L18 9.5l-4.4 1.6L12 16l-1.6-4.9L6 9.5l4.4-1.6L12 3Z"/><path d="M19 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>' +
-            '<span>' + ctx.t("footer.credit") + ' <b>Austin</b></span>' +
-            '<span class="footer__credit-arrow" aria-hidden="true">&rarr;</span>' +
+          '<a class="footer__secret" href="credits.html">' +
+            '<span class="footer__secret-text">' +
+              '<span class="footer__secret-peek">' + ctx.t("footer.creditPeek") + '</span>' +
+              '<span class="footer__secret-full">' + ctx.t("footer.credit") + ' <b>Austin</b> &rarr;</span>' +
+            '</span>' +
           '</a>' +
         '</div>';
     }

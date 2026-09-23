@@ -599,25 +599,40 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;
 }
 .footer__staff a:hover,.footer__staff-btn:hover{color:var(--c-primary-ink)}
-.footer__credit{
-  margin-top:1.4rem;display:inline-flex;align-items:center;gap:.55rem;
-  padding:.55rem .95rem;border-radius:999px;
-  border:1px solid color-mix(in srgb,var(--c-primary) 30%,var(--c-line));
-  background:color-mix(in srgb,var(--c-primary) 6%,transparent);
-  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.03em;
-  color:var(--c-ink-soft);text-decoration:none;
-  transition:border-color var(--dur-2),background var(--dur-2),transform var(--dur-2),box-shadow var(--dur-2);
+/* a literal crack in the footer, not another button — rests as a
+   thin glowing fault line with a one-word tease; on hover/focus it
+   widens and brightens like it's splitting open, and the message
+   underneath swaps to the full invite. Reuses the same crack motif
+   as the hero bunting, just as an interaction instead of decoration. */
+.footer__secret{
+  position:relative;display:block;margin-top:1.6rem;
+  padding:1.35rem 1rem;border-radius:var(--r-md);
+  text-decoration:none;overflow:hidden;isolation:isolate;
+  text-align:center;
 }
-.footer__credit svg{width:14px;height:14px;color:var(--c-primary-ink);flex:none}
-.footer__credit b{color:var(--c-primary-ink);font-weight:600}
-.footer__credit-arrow{color:var(--c-primary-ink);transition:transform var(--dur-2) var(--ease-spring)}
-.footer__credit:hover{
-  border-color:var(--c-primary-ink);background:color-mix(in srgb,var(--c-primary) 13%,transparent);
-  transform:translateY(-2px);
-  box-shadow:0 10px 24px -10px color-mix(in srgb,var(--c-primary) 55%,transparent);
+.footer__secret::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='40'%3E%3Cdefs%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='1.8'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M0 20 L20 18 L35 24 L55 15 L75 22 L95 13 L115 20 L135 11 L155 22 L175 15 L195 24 L215 13 L235 20 L255 15 L275 22 L300 18' fill='none' stroke='%232fa872' stroke-width='3' stroke-opacity='0.5' filter='url(%23b)'/%3E%3Cpath d='M0 20 L20 18 L35 24 L55 15 L75 22 L95 13 L115 20 L135 11 L155 22 L175 15 L195 24 L215 13 L235 20 L255 15 L275 22 L300 18' fill='none' stroke='%23ddae4c' stroke-width='1.2' stroke-opacity='0.85'/%3E%3C/svg%3E") repeat-x;
+  background-size:300px 40px;background-position:center;
+  opacity:.5;transform:scaleY(1);
+  transition:opacity var(--dur-3) var(--ease-out),transform var(--dur-3) var(--ease-spring);
 }
-.footer__credit:hover .footer__credit-arrow{transform:translateX(3px)}
-@media (prefers-reduced-motion:reduce){.footer__credit:hover{transform:none}}
+.footer__secret:hover::before,.footer__secret:focus-visible::before{
+  opacity:1;transform:scaleY(2.2);
+}
+.footer__secret-text{position:relative;display:grid}
+.footer__secret-text > span{
+  grid-area:1/1;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.05em;
+  color:var(--c-ink-mute);transition:opacity var(--dur-2) var(--ease-out);
+}
+.footer__secret-peek{opacity:1}
+.footer__secret-full{opacity:0}
+.footer__secret:hover .footer__secret-peek,.footer__secret:focus-visible .footer__secret-peek{opacity:0}
+.footer__secret:hover .footer__secret-full,.footer__secret:focus-visible .footer__secret-full{opacity:1}
+.footer__secret-full b{color:var(--c-primary-ink);font-weight:600}
+@media (prefers-reduced-motion:reduce){
+  .footer__secret::before{transition:none}
+}
 @media (max-width:760px){.footer__grid{grid-template-columns:1fr 1fr}}
 @media (max-width:440px){.footer__grid{grid-template-columns:1fr}}
 
