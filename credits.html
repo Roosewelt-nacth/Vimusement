@@ -41,8 +41,9 @@ document.documentElement.className+=" js";
     <div class="dossier" data-animate="fade-up">
       <!-- photo slot: swap the monogram div below for
            <img class="dossier-photo__img" src="assets/img/shared/austin.jpg" alt="Austin Prince Roosewelt">
-           once a real photo is added — everything else stays the same -->
-      <div class="dossier-photo">
+           once a real photo is added — everything else stays the same,
+           including the click-to-enlarge behaviour (data-avatar-open) -->
+      <div class="dossier-photo" data-avatar-open tabindex="0" role="button" aria-label="View Austin's photo, larger">
         <span class="dossier-photo__mono" aria-hidden="true">APR</span>
       </div>
       <div class="dossier-body">
@@ -73,6 +74,18 @@ document.documentElement.className+=" js";
 </section>
 </main>
 
+<div class="avatar-view" data-avatar-view hidden>
+  <div class="avatar-view__backdrop" data-avatar-close></div>
+  <div class="avatar-view__dialog" role="dialog" aria-modal="true" aria-label="Austin Prince Roosewelt, larger photo">
+    <button type="button" class="avatar-view__close" data-avatar-close aria-label="Close">&times;</button>
+    <div class="avatar-view__photo">
+      <span class="avatar-view__mono" aria-hidden="true">APR</span>
+    </div>
+    <p class="avatar-view__name">Austin Prince Roosewelt</p>
+    <p class="avatar-view__role" data-i18n="credits.hero.role">Victorians Youth · Vice Treasurer</p>
+  </div>
+</div>
+
 <footer class="footer" data-site-footer></footer>
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
@@ -93,8 +106,11 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/polish.js"></script>
 <script>
 /* the same lightweight ember recipe used on the homepage hero and
-   the promo reel — a self-contained pass since this page is its
-   own thing, not driven by VIM_YEAR content */
+   the promo reel, plus two extras only this page needs: the embers
+   scatter away from the cursor (a light touch, not a full repel —
+   just enough to feel alive under the pointer), and clicking the
+   canvas throws a small burst of sparks from that spot. Reduced-
+   motion visitors get neither — same frozen single frame as before. */
 (function(){
   "use strict";
   var cv = document.querySelector("[data-credits-fx]");
@@ -103,7 +119,9 @@ document.documentElement.className+=" js";
   var g = cv.getContext("2d");
   var COLS = [[47,190,125],[221,174,76],[160,69,90]];
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var w=0,h=0,parts=[],raf=0,running=false;
+  var w=0,h=0,parts=[],bursts=[],raf=0,running=false;
+  var pointerX=-9999, pointerY=-9999, pointerActive=false;
+  var REPEL_R = 90, REPEL_F = 340;
 
   function size(){
     var host = cv.parentElement;
@@ -128,6 +146,19 @@ document.documentElement.className+=" js";
       });
     }
   }
+  function burstAt(x,y){
+    var n = 14;
+    for (var i=0;i<n;i++){
+      var ang = Math.random()*6.2832, spd = 0.6 + Math.random()*2.2;
+      bursts.push({
+        x: x, y: y,
+        vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd,
+        r: 2 + Math.random()*3.5,
+        c: COLS[(Math.random()*3)|0],
+        life: 1
+      });
+    }
+  }
   function paint(t){
     g.clearRect(0,0,w,h);
     g.globalCompositeOperation = "lighter";
@@ -141,14 +172,37 @@ document.documentElement.className+=" js";
       g.fillStyle = grd;
       g.beginPath(); g.arc(p.x,p.y,p.r,0,6.2832); g.fill();
     }
+    for (var j=0;j<bursts.length;j++){
+      var b = bursts[j];
+      var grd2 = g.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+      grd2.addColorStop(0, "rgba("+b.c[0]+","+b.c[1]+","+b.c[2]+","+(b.life*0.9)+")");
+      grd2.addColorStop(1, "rgba("+b.c[0]+","+b.c[1]+","+b.c[2]+",0)");
+      g.fillStyle = grd2;
+      g.beginPath(); g.arc(b.x,b.y,b.r,0,6.2832); g.fill();
+    }
     g.globalCompositeOperation = "source-over";
   }
   function step(now){
     for (var i=0;i<parts.length;i++){
       var p = parts[i];
+      if (pointerActive){
+        var dx = p.x-pointerX, dy = p.y-pointerY;
+        var d2 = dx*dx+dy*dy;
+        if (d2 < REPEL_R*REPEL_R && d2 > 0.01){
+          var d = Math.sqrt(d2), f = (1 - d/REPEL_R) * (REPEL_F/(d*60));
+          p.x += dx/d * f; p.y += dy/d * f;
+        }
+      }
       p.x += p.vx; p.y += p.vy;
       if (p.x < -20) p.x = w+20; else if (p.x > w+20) p.x = -20;
       if (p.y < -20) p.y = h+20; else if (p.y > h+20) p.y = -20;
+    }
+    if (bursts.length){
+      for (var k=bursts.length-1;k>=0;k--){
+        var b = bursts[k];
+        b.x += b.vx; b.y += b.vy; b.vx *= 0.96; b.vy *= 0.96; b.life -= 0.02;
+        if (b.life <= 0) bursts.splice(k,1);
+      }
     }
     paint(now);
     if (running) raf = requestAnimationFrame(step);
@@ -157,9 +211,62 @@ document.documentElement.className+=" js";
   function stop(){ running = false; cancelAnimationFrame(raf); }
 
   size(); build();
-  if (reduce) paint(0); else start();
+  if (reduce) {
+    paint(0);
+  } else {
+    start();
+    cv.addEventListener("pointermove", function(e){
+      var r = cv.getBoundingClientRect();
+      pointerX = e.clientX - r.left; pointerY = e.clientY - r.top;
+      pointerActive = true;
+    });
+    cv.addEventListener("pointerleave", function(){ pointerActive = false; });
+    cv.addEventListener("pointerdown", function(e){
+      var r = cv.getBoundingClientRect();
+      burstAt(e.clientX - r.left, e.clientY - r.top);
+    });
+  }
   window.addEventListener("resize", function(){ size(); build(); if (reduce) paint(0); });
   document.addEventListener("visibilitychange", function(){ document.hidden ? stop() : start(); });
+})();
+
+/* click-to-enlarge avatar — the small photo/monogram opens a bigger
+   version in an overlay that visibly grows out of the spot clicked
+   (transform-origin set from the avatar's on-screen position), so
+   it reads as "this zoomed in" rather than a generic modal popping
+   up. Escape, the backdrop, and the × button all close it. */
+(function(){
+  "use strict";
+  var trigger = document.querySelector("[data-avatar-open]");
+  var view = document.querySelector("[data-avatar-view]");
+  if (!trigger || !view) return;
+
+  function openFrom(el){
+    var r = el.getBoundingClientRect();
+    var ox = r.left + r.width/2, oy = r.top + r.height/2;
+    view.style.setProperty("--ox", (ox/window.innerWidth*100) + "%");
+    view.style.setProperty("--oy", (oy/window.innerHeight*100) + "%");
+    view.hidden = false;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ view.classList.add("is-open"); });
+    });
+    document.addEventListener("keydown", onKey);
+  }
+  function close(){
+    view.classList.remove("is-open");
+    document.removeEventListener("keydown", onKey);
+    setTimeout(function(){ view.hidden = true; }, 380);
+    trigger.focus();
+  }
+  function onKey(e){ if (e.key === "Escape") close(); }
+
+  trigger.addEventListener("click", function(){ openFrom(trigger); });
+  trigger.addEventListener("keydown", function(e){
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFrom(trigger); }
+  });
+  view.querySelectorAll("[data-avatar-close]").forEach(function(btn){
+    btn.addEventListener("click", close);
+  });
 })();
 </script>
 <script defer src="assets/js/main.js"></script>
