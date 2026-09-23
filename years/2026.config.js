@@ -245,6 +245,28 @@ window.VIM_YEARS["2026"] = {
     open: [
       // "Snack stall", "Craft table"
     ],
+    /* inspiration for people who want to run a stall but don't know
+       what to set up yet — grouped by the two real pricing tiers
+       above so the suggestion always maps to a real rate. Purely
+       illustrative; edit freely as ideas come in from the committee. */
+    ideas: {
+      food: [
+        { en: "Chaat corner — pani puri, bhel, sundal", ta: "சாட் கார்னர் — பானி பூரி, பேல், சுண்டல்" },
+        { en: "Filter coffee & masala chai", ta: "ஃபில்டர் காபி & மசாலா தேநீர்" },
+        { en: "Ice cream, slush or cold drinks", ta: "ஐஸ்கிரீம், ஸ்லஷ் அல்லது குளிர்பானங்கள்" },
+        { en: "Home-style biryani or fried rice", ta: "வீட்டு பிரியாணி அல்லது ஃபிரைடு ரைஸ்" },
+        { en: "Bakes, cupcakes & desserts", ta: "பேக்குகள், கப்கேக்குகள் & இனிப்புகள்" },
+        { en: "Momos or other street snacks", ta: "மோமோஸ் அல்லது தெரு தின்பண்டங்கள்" }
+      ],
+      craft: [
+        { en: "Handmade jewellery or accessories", ta: "கைவினைப் பொருட்கள் அல்லது அணிகலன்கள்" },
+        { en: "Henna & face painting", ta: "மருதாணி & முக ஓவியம்" },
+        { en: "Photography prints or portraits", ta: "புகைப்பட பிரிண்ட்கள் அல்லது உருவப்படங்கள்" },
+        { en: "Upcycled home décor", ta: "மறுசுழற்சி வீட்டு அலங்காரப் பொருட்கள்" },
+        { en: "Tarot or fortune-telling corner", ta: "டாரோ அல்லது ஜோதிட மூலை" },
+        { en: "A local business or youth-group promo table", ta: "உள்ளூர் வணிகம் அல்லது இளையோர் குழு விளம்பர மேசை" }
+      ]
+    },
     // Stall enquiries go to Janet, the 2026 Stall Committee Head (not Austin — that's the general volunteer contact above).
     contactWhatsApp: "https://wa.me/917550217454?text=Hi%20Janet%2C%20I%27d%20like%20to%20run%20a%20stall%20at%20Vimusement%202026.",
     contactInstagram: "https://ig.me/m/victorians.youth"

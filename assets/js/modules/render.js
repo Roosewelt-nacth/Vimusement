@@ -147,6 +147,27 @@
           open.innerHTML = '<li class="stalls__tbc">' + ctx.t("stalls.openTbc") + '</li>';
         }
       }
+
+      var ideasEl = ctx.$("[data-stalls-ideas]");
+      if (ideasEl && s.ideas) {
+        var groups = [
+          { key: "food",  icon: "food",  title: ctx.t("stalls.ideas.food") },
+          { key: "craft", icon: "stall", title: ctx.t("stalls.ideas.craft") }
+        ];
+        ideasEl.innerHTML = groups.map(function (g) {
+          var items = s.ideas[g.key] || [];
+          if (!items.length) return "";
+          return '<div class="idea-group">' +
+            '<div class="idea-group__head">' +
+              '<span class="idea-group__icon">' + (ICONS[g.icon] || "") + '</span>' +
+              '<h3>' + esc(g.title) + '</h3>' +
+            '</div>' +
+            '<ul class="idea-group__list">' +
+              items.map(function (it) { return '<li>' + esc(ctx.L(it)) + '</li>'; }).join("") +
+            '</ul>' +
+          '</div>';
+        }).join("");
+      }
     })();
 
     /* ---- contact links ---- */
