@@ -96,6 +96,25 @@
 }
 
 .donate-note{margin-top:1rem;font-size:var(--fs-sm);color:var(--c-ink-mute)}
+
+/* FAQ — native <details>, no JS needed for the expand/collapse */
+.faq-list{margin-top:1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.faq-item{border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden}
+.faq-item summary{
+  list-style:none;cursor:pointer;padding:.95rem 1.1rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  font-weight:var(--weight-semi);color:var(--c-ink);
+  transition:background var(--dur-2);
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:hover{background:color-mix(in srgb,var(--c-primary) 5%,transparent)}
+.faq-item summary::after{
+  content:"";flex:none;width:9px;height:9px;border-right:2px solid var(--c-ink-mute);border-bottom:2px solid var(--c-ink-mute);
+  transform:rotate(45deg);transition:transform var(--dur-2) var(--ease-out);
+}
+.faq-item[open] summary::after{transform:rotate(-135deg)}
+.faq-item p{margin:0 1.1rem 1rem;color:var(--c-ink-soft);font-size:var(--fs-sm);line-height:1.55}
+
 .donate-setup{
   margin-top:1.3rem;border:1px solid var(--c-line);border-left:3px solid var(--c-gold);
   border-radius:var(--r-md);background:var(--c-parchment);
