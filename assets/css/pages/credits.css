@@ -81,6 +81,8 @@
 
 .dossier-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
 
+.credits-cta-row{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.4rem}
+
 .credits-sign{
   margin-top:2.4rem;text-align:center;font-family:var(--font-display);font-style:italic;
   font-weight:500;font-size:1.15rem;color:var(--c-ink-mute);
