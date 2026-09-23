@@ -1,0 +1,69 @@
+/* ============================================================
+   PAGE — credits (credits.html)
+   A dossier-style page for whoever built this thing. Reuses the
+   doomsday pagehead treatment (dark gradient, grain) as its base,
+   then layers a persistent ember canvas + a "dossier" card on top.
+   ============================================================ */
+
+.credits-hero{position:relative;overflow:hidden}
+.credits-hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.9}
+.credits-hero .wrap{position:relative;z-index:2}
+
+.credits-role{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.06em;
+  color:var(--c-primary-ink);
+}
+.credits-role::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+
+/* ---- the dossier card ---- */
+.dossier{
+  display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,2.6rem);align-items:start;
+  background:var(--c-surface);border:1px solid var(--c-line);border-radius:var(--r-lg);
+  padding:clamp(1.6rem,4vw,2.6rem);
+}
+@media (max-width:560px){
+  .dossier{grid-template-columns:1fr;justify-items:center;text-align:center}
+}
+
+/* photo slot — replace with a real photo by swapping this block's
+   background-image for an <img class="dossier-photo__img" src="...">
+   inside .dossier-photo; the monogram + ring are just the placeholder */
+.dossier-photo{
+  position:relative;width:148px;height:148px;border-radius:50%;flex:none;
+  display:grid;place-items:center;
+  background:linear-gradient(155deg,#2A8A5C,#164E33 70%);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c-primary) 30%,transparent),
+             0 0 40px -8px color-mix(in srgb,var(--c-primary) 55%,transparent);
+}
+.dossier-photo img{
+  position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;
+}
+.dossier-photo__mono{
+  font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--c-on-dark);
+  letter-spacing:.02em;text-shadow:0 0 30px color-mix(in srgb,var(--c-primary) 60%,transparent);
+}
+
+.dossier-body h2{color:var(--c-ink);font-size:var(--fs-lg);margin-bottom:.2rem}
+.dossier-body .lead{margin-top:0;max-width:52ch}
+
+.known-for{list-style:none;margin:1.4rem 0 0;padding:0;display:flex;flex-direction:column;gap:.7rem}
+.known-for li{
+  position:relative;padding-left:1.7rem;color:var(--c-ink-soft);font-size:var(--fs-sm);line-height:1.5;
+}
+.known-for li::before{
+  content:"";position:absolute;left:0;top:.15em;width:19px;height:19px;border-radius:50%;
+  background:color-mix(in srgb,var(--c-primary) 16%,transparent);
+}
+.known-for li::after{
+  content:"";position:absolute;left:6px;top:.42em;width:7px;height:4px;
+  border-left:2px solid var(--c-primary-ink);border-bottom:2px solid var(--c-primary-ink);
+  transform:rotate(-45deg);
+}
+
+.dossier-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+
+.credits-sign{
+  margin-top:2.4rem;text-align:center;font-family:var(--font-display);font-style:italic;
+  font-weight:500;font-size:1.15rem;color:var(--c-ink-mute);
+}

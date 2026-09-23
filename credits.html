@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en" data-year-theme="doomsday">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n-title="credits.title">Credits · Vimusement {year}</title>
+<meta name="description" data-i18n-content="credits.meta.description" content="Whoever built this thing. A dossier.">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<script>
+document.documentElement.className+=" js";
+(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{if(localStorage.getItem("vim-lang")==="ta")document.documentElement.setAttribute("data-lang","ta");}catch(e){}})();
+(function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/home.css">
+<link rel="stylesheet" href="assets/css/pages/subpage.css">
+<link rel="stylesheet" href="assets/css/pages/credits.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<main id="main">
+<header class="pagehead credits-hero">
+  <canvas data-credits-fx aria-hidden="true"></canvas>
+  <div class="wrap">
+    <p class="eyebrow" data-animate="fade-up" data-i18n="credits.hero.eyebrow">Behind the doomsday</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.06">Austin Prince Roosewelt</h1>
+    <p class="credits-role" data-animate="fade-up" data-animate-delay="0.1" data-i18n="credits.hero.role">Victorians Youth · Vice Treasurer</p>
+    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.16" data-i18n="credits.hero.lead">Built this site so the parish fair finally had a real one.</p>
+  </div>
+</header>
+
+<section class="subsection">
+  <div class="wrap wrap--narrow">
+    <div class="dossier" data-animate="fade-up">
+      <!-- photo slot: swap the monogram div below for
+           <img class="dossier-photo__img" src="assets/img/shared/austin.jpg" alt="Austin Prince Roosewelt">
+           once a real photo is added — everything else stays the same -->
+      <div class="dossier-photo">
+        <span class="dossier-photo__mono" aria-hidden="true">APR</span>
+      </div>
+      <div class="dossier-body">
+        <h2 data-i18n="credits.dossier.title">Known for</h2>
+        <ul class="known-for">
+          <li data-i18n="credits.dossier.l1">Rebuilt the entire site's identity around a "Doomsday" theme — palette, fonts, hero animation, all of it — in one sitting.</li>
+          <li data-i18n="credits.dossier.l2">Talked a countdown timer into saying "Doomsday is here" with a straight face.</li>
+          <li data-i18n="credits.dossier.l3">Chased the same dark-text-on-dark-background bug three separate times, and forgave the code every time.</li>
+          <li data-i18n="credits.dossier.l4">Built an entire animated promo video as a web page, because why not.</li>
+          <li data-i18n="credits.dossier.l5">Still the person you message on WhatsApp when the gates need volunteers.</li>
+        </ul>
+        <div class="dossier-links">
+          <a class="btn btn--gold" href="https://www.instagram.com/___roosxwxlt___/?hl=en" target="_blank" rel="noopener" data-i18n="credits.dossier.ig">Instagram</a>
+          <a class="btn btn--pill-ghost" href="index.html" data-i18n="credits.dossier.back">Back to Vimusement</a>
+        </div>
+      </div>
+    </div>
+    <p class="credits-sign" data-animate="fade" data-i18n="credits.sign">— built, broken, and rebuilt, right up to doomsday.</p>
+  </div>
+</section>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/strings.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/i18n.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/lang.js"></script>
+<script defer src="assets/js/modules/langprompt.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/dockswipe.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
+<script>
+/* the same lightweight ember recipe used on the homepage hero and
+   the promo reel — a self-contained pass since this page is its
+   own thing, not driven by VIM_YEAR content */
+(function(){
+  "use strict";
+  var cv = document.querySelector("[data-credits-fx]");
+  if (!cv) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var g = cv.getContext("2d");
+  var COLS = [[47,190,125],[221,174,76],[160,69,90]];
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var w=0,h=0,parts=[],raf=0,running=false;
+
+  function size(){
+    var host = cv.parentElement;
+    w = host.clientWidth; h = host.clientHeight;
+    cv.width = w*dpr; cv.height = h*dpr;
+    cv.style.width = w+"px"; cv.style.height = h+"px";
+    g.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function build(){
+    var n = Math.round(Math.min(40, Math.max(16, w*h/26000)));
+    parts = [];
+    for (var i=0;i<n;i++){
+      var flare = Math.random() < 0.18;
+      parts.push({
+        x: Math.random()*w, y: Math.random()*h,
+        r: (flare?8:3) + Math.random()*(flare?10:5),
+        c: COLS[(Math.random()*3)|0],
+        a: 0.3 + Math.random()*0.32,
+        vx: (Math.random()-0.5)*0.1,
+        vy: -(0.04 + Math.random()*0.16),
+        ph: Math.random()*6.28, ps: 0.015 + Math.random()*0.04
+      });
+    }
+  }
+  function paint(t){
+    g.clearRect(0,0,w,h);
+    g.globalCompositeOperation = "lighter";
+    for (var i=0;i<parts.length;i++){
+      var p = parts[i];
+      var pulse = 0.6 + Math.sin(p.ph + t*p.ps)*0.4;
+      var grd = g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+      var al = p.a*pulse;
+      grd.addColorStop(0, "rgba("+p.c[0]+","+p.c[1]+","+p.c[2]+","+al+")");
+      grd.addColorStop(1, "rgba("+p.c[0]+","+p.c[1]+","+p.c[2]+",0)");
+      g.fillStyle = grd;
+      g.beginPath(); g.arc(p.x,p.y,p.r,0,6.2832); g.fill();
+    }
+    g.globalCompositeOperation = "source-over";
+  }
+  function step(now){
+    for (var i=0;i<parts.length;i++){
+      var p = parts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20) p.x = w+20; else if (p.x > w+20) p.x = -20;
+      if (p.y < -20) p.y = h+20; else if (p.y > h+20) p.y = -20;
+    }
+    paint(now);
+    if (running) raf = requestAnimationFrame(step);
+  }
+  function start(){ if (running || reduce) return; running = true; raf = requestAnimationFrame(step); }
+  function stop(){ running = false; cancelAnimationFrame(raf); }
+
+  size(); build();
+  if (reduce) paint(0); else start();
+  window.addEventListener("resize", function(){ size(); build(); if (reduce) paint(0); });
+  document.addEventListener("visibilitychange", function(){ document.hidden ? stop() : start(); });
+})();
+</script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>
