@@ -36,9 +36,10 @@ document.documentElement.className+=" js";
   </div>
 </header>
 
-<section class="subsection">
+<section class="subsection credits-file">
   <div class="wrap wrap--narrow">
-    <div class="dossier" data-animate="fade-up">
+    <div class="dossier" data-animate="fade-up" data-tilt>
+      <span class="dossier-stamp" aria-hidden="true" data-i18n="credits.stamp">Field&nbsp;Dossier · Approved</span>
       <!-- photo slot: swap the monogram div below for
            <img class="dossier-photo__img" src="assets/img/shared/austin.jpg" alt="Austin Prince Roosewelt">
            once a real photo is added — everything else stays the same,
@@ -271,6 +272,32 @@ document.documentElement.className+=" js";
   view.querySelectorAll("[data-avatar-close]").forEach(function(btn){
     btn.addEventListener("click", close);
   });
+})();
+
+/* a light mouse-follow tilt on the dossier card — skipped for
+   reduced-motion and for touch devices, where there's no hover to
+   drive it and a stray transform would just get stuck mid-tilt */
+(function(){
+  "use strict";
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (matchMedia("(hover: none)").matches) return;
+  var card = document.querySelector("[data-tilt]");
+  if (!card) return;
+  var raf = 0;
+
+  card.addEventListener("mousemove", function(e){
+    var r = card.getBoundingClientRect();
+    var px = (e.clientX - r.left) / r.width;
+    var py = (e.clientY - r.top) / r.height;
+    var rx = (0.5 - py) * 5;
+    var ry = (px - 0.5) * 7;
+    if (raf) return;
+    raf = requestAnimationFrame(function(){
+      card.style.transform = "perspective(1000px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg)";
+      raf = 0;
+    });
+  });
+  card.addEventListener("mouseleave", function(){ card.style.transform = ""; });
 })();
 </script>
 <script defer src="assets/js/main.js"></script>

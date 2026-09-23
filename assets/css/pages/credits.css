@@ -16,14 +16,52 @@
 }
 .credits-role::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 
+/* ---- texture + rhythm behind the whole section, so the card
+   doesn't sit on a flat, empty stretch of background ---- */
+.credits-file{position:relative}
+.credits-file::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(circle, color-mix(in srgb, var(--c-ink) 12%, transparent) 1px, transparent 1px);
+  background-size:24px 24px;
+  -webkit-mask-image:radial-gradient(ellipse 65% 55% at 50% 15%, black, transparent);
+  mask-image:radial-gradient(ellipse 65% 55% at 50% 15%, black, transparent);
+}
+
 /* ---- the dossier card ---- */
 .dossier{
+  position:relative;
   display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,2.6rem);align-items:start;
   background:var(--c-surface);border:1px solid var(--c-line);border-radius:var(--r-lg);
   padding:clamp(1.6rem,4vw,2.6rem);
+  box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 20px 46px -26px rgba(20,12,30,.28);
+  transition:transform .12s linear;
+  will-change:transform;
 }
 @media (max-width:560px){
   .dossier{grid-template-columns:1fr;justify-items:center;text-align:center}
+}
+
+/* a rubber-stamp badge that thuds into place once the card scrolls
+   into view (piggybacks on the .is-in class the motion module
+   already adds to [data-animate] elements) */
+.dossier-stamp{
+  position:absolute;top:-14px;right:26px;z-index:2;
+  font-family:var(--font-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  color:color-mix(in srgb, var(--c-primary-ink) 85%, black 8%);
+  padding:.35rem .7rem;border-radius:var(--r-sm);
+  border:1.5px dashed color-mix(in srgb, var(--c-primary-ink) 55%, transparent);
+  background:var(--c-surface);
+  transform:rotate(-7deg) scale(0);opacity:0;
+  transition:transform .5s var(--ease-spring) .35s, opacity .3s ease .35s;
+}
+.dossier.is-in .dossier-stamp{transform:rotate(-7deg) scale(1);opacity:1}
+@media (max-width:560px){
+  .dossier-stamp{left:50%;right:auto;transform:translateX(-50%) rotate(-7deg) scale(0)}
+  .dossier.is-in .dossier-stamp{transform:translateX(-50%) rotate(-7deg) scale(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .dossier-stamp{transition:opacity .3s ease}
+  .dossier{transition:none}
 }
 
 /* photo slot — replace with a real photo by swapping this block's
