@@ -41,20 +41,14 @@ document.documentElement.className+=" js";
     <div class="dossier" data-animate="fade-up" data-tilt>
       <span class="dossier-stamp" aria-hidden="true" data-i18n="credits.stamp">Field&nbsp;Dossier · Approved</span>
       <div class="dossier-photo-wrap" data-deck>
-      <div class="dossier-photo">
+      <div class="dossier-photo" data-deck-photo tabindex="0" role="button" aria-label="View Austin's photos, larger">
         <div class="dossier-photo__track" data-deck-track>
-          <button type="button" class="dossier-photo__slide" data-avatar-open data-photo="assets/img/shared/austin.jpg" data-pos="62% 22%" aria-label="View this photo larger">
-            <img src="assets/img/shared/austin-thumb-1.jpg" alt="Austin Prince Roosewelt"></button>
-          <button type="button" class="dossier-photo__slide" data-avatar-open data-photo="assets/img/shared/austin-5.jpg" aria-label="View this photo larger">
-            <img src="assets/img/shared/austin-thumb-2.jpg" alt="Austin Prince Roosewelt" loading="lazy"></button>
-          <button type="button" class="dossier-photo__slide" data-avatar-open data-photo="assets/img/shared/austin-4.jpg" aria-label="View this photo larger">
-            <img src="assets/img/shared/austin-thumb-3.jpg" alt="Austin Prince Roosewelt" loading="lazy"></button>
-          <button type="button" class="dossier-photo__slide" data-avatar-open data-photo="assets/img/shared/austin-2.jpg" aria-label="View this photo larger">
-            <img src="assets/img/shared/austin-thumb-4.jpg" alt="Austin Prince Roosewelt" loading="lazy"></button>
-          <button type="button" class="dossier-photo__slide" data-avatar-open data-photo="assets/img/shared/austin-3.jpg" aria-label="View this photo larger">
-            <img src="assets/img/shared/austin-thumb-5.jpg" alt="Austin Prince Roosewelt" loading="lazy"></button>
-          <button type="button" class="dossier-photo__slide" data-avatar-open data-photo="assets/img/shared/austin-6.jpg" aria-label="View this photo larger">
-            <img src="assets/img/shared/austin-thumb-6.jpg" alt="Austin Prince Roosewelt" loading="lazy"></button>
+          <div class="dossier-photo__slide"><img src="assets/img/shared/austin-thumb-1.jpg" alt="Austin Prince Roosewelt" data-photo="assets/img/shared/austin.jpg" data-pos="62% 22%"></div>
+          <div class="dossier-photo__slide"><img src="assets/img/shared/austin-thumb-2.jpg" alt="Austin Prince Roosewelt" data-photo="assets/img/shared/austin-5.jpg" loading="lazy"></div>
+          <div class="dossier-photo__slide"><img src="assets/img/shared/austin-thumb-3.jpg" alt="Austin Prince Roosewelt" data-photo="assets/img/shared/austin-4.jpg" loading="lazy"></div>
+          <div class="dossier-photo__slide"><img src="assets/img/shared/austin-thumb-4.jpg" alt="Austin Prince Roosewelt" data-photo="assets/img/shared/austin-2.jpg" loading="lazy"></div>
+          <div class="dossier-photo__slide"><img src="assets/img/shared/austin-thumb-5.jpg" alt="Austin Prince Roosewelt" data-photo="assets/img/shared/austin-3.jpg" loading="lazy"></div>
+          <div class="dossier-photo__slide"><img src="assets/img/shared/austin-thumb-6.jpg" alt="Austin Prince Roosewelt" data-photo="assets/img/shared/austin-6.jpg" loading="lazy"></div>
         </div>
         <button type="button" class="dossier-photo__nav dossier-photo__nav--prev" data-deck-prev aria-label="Previous photo">&lsaquo;</button>
         <button type="button" class="dossier-photo__nav dossier-photo__nav--next" data-deck-next aria-label="Next photo">&rsaquo;</button>
@@ -256,18 +250,16 @@ document.documentElement.className+=" js";
    up. Escape, the backdrop, and the × button all close it. */
 (function(){
   "use strict";
-  var triggers = document.querySelectorAll("[data-avatar-open]");
   var view = document.querySelector("[data-avatar-view]");
   var viewImg = document.querySelector("[data-avatar-view-img]");
-  if (!triggers.length || !view) return;
+  if (!view) return;
   var lastTrigger = null;
 
-  function openFrom(el){
+  function openFrom(el, photo, pos){
     lastTrigger = el;
-    var photo = el.getAttribute("data-photo");
     if (photo && viewImg) {
       viewImg.src = photo;
-      viewImg.style.objectPosition = el.getAttribute("data-pos") || "center";
+      viewImg.style.objectPosition = pos || "center";
     }
     var r = el.getBoundingClientRect();
     var ox = r.left + r.width/2, oy = r.top + r.height/2;
@@ -286,36 +278,42 @@ document.documentElement.className+=" js";
     if (lastTrigger) lastTrigger.focus();
   }
   function onKey(e){ if (e.key === "Escape") close(); }
-
-  triggers.forEach(function(trigger){
-    trigger.addEventListener("click", function(){ openFrom(trigger); });
-    trigger.addEventListener("keydown", function(e){
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFrom(trigger); }
-    });
-  });
   view.querySelectorAll("[data-avatar-close]").forEach(function(btn){
     btn.addEventListener("click", close);
   });
-})();
 
-/* the photo deck — all of Austin's photos live in the one avatar
-   slot, swipeable (drag/touch) or steppable via the arrow buttons.
-   Tapping without dragging still opens the big zoom-reveal above,
-   via that same [data-avatar-open] handling — this script just has
-   to make sure a drag never gets mistaken for a tap. */
-(function(){
-  "use strict";
+  /* any plain [data-avatar-open] trigger elsewhere on the page (not
+     the deck below, which drives openFrom itself) */
+  document.querySelectorAll("[data-avatar-open]").forEach(function(trigger){
+    trigger.addEventListener("click", function(){
+      openFrom(trigger, trigger.getAttribute("data-photo"), trigger.getAttribute("data-pos"));
+    });
+    trigger.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openFrom(trigger, trigger.getAttribute("data-photo"), trigger.getAttribute("data-pos"));
+      }
+    });
+  });
+
+  /* the photo deck — all of Austin's photos live in the one avatar
+     slot, swipeable (drag/touch) or steppable via the arrow buttons.
+     A single click handler lives on the whole circle (not one per
+     slide) and always reads whichever photo is CURRENTLY showing —
+     avoids any ambiguity about which stacked slide a click actually
+     landed on. Nav-button clicks stop here and never reach it. */
   var deck = document.querySelector("[data-deck]");
   if (!deck) return;
+  var photoEl = deck.querySelector("[data-deck-photo]");
   var track = deck.querySelector("[data-deck-track]");
-  var slides = Array.prototype.slice.call(deck.querySelectorAll(".dossier-photo__slide"));
+  var slideImgs = Array.prototype.slice.call(deck.querySelectorAll(".dossier-photo__slide img"));
   var dotsWrap = deck.querySelector("[data-deck-dots]");
   var prevBtn = deck.querySelector("[data-deck-prev]");
   var nextBtn = deck.querySelector("[data-deck-next]");
-  var n = slides.length;
-  if (!track || n < 2) return;
+  var n = slideImgs.length;
+  if (!track || !photoEl || n < 2) return;
 
-  slides.forEach(function(){
+  slideImgs.forEach(function(){
     var dot = document.createElement("span");
     dot.className = "dossier-photo__dot";
     dotsWrap.appendChild(dot);
@@ -334,11 +332,12 @@ document.documentElement.className+=" js";
   }
   render(false);
 
-  prevBtn.addEventListener("click", function(){ go(-1); });
-  nextBtn.addEventListener("click", function(){ go(1); });
-  deck.addEventListener("keydown", function(e){
+  prevBtn.addEventListener("click", function(e){ e.stopPropagation(); go(-1); });
+  nextBtn.addEventListener("click", function(e){ e.stopPropagation(); go(1); });
+  photoEl.addEventListener("keydown", function(e){
     if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
     else if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tapOpen(); }
   });
 
   var dragging = false, wasDrag = false, startX = 0, startY = 0, dx = 0, pid = null;
@@ -372,11 +371,14 @@ document.documentElement.className+=" js";
   track.addEventListener("pointerup", onUp);
   track.addEventListener("pointercancel", onUp);
 
-  /* a drag that just ended shouldn't also fire the tap-to-zoom click
-     on whichever slide the pointer happened to release over */
-  deck.addEventListener("click", function(e){
-    if (wasDrag) { e.stopImmediatePropagation(); e.preventDefault(); wasDrag = false; }
-  }, true);
+  function tapOpen(){
+    var img = slideImgs[i];
+    openFrom(photoEl, img.getAttribute("data-photo") || img.src, img.getAttribute("data-pos"));
+  }
+  photoEl.addEventListener("click", function(){
+    if (wasDrag) { wasDrag = false; return; }
+    tapOpen();
+  });
 
   window.addEventListener("resize", function(){ render(false); });
 })();
