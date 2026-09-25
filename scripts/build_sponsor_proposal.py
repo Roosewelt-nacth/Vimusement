@@ -1,110 +1,174 @@
-# One-off script: builds the 2-page sponsorship proposal PDF.
+# One-off script: builds the 2-page sponsorship proposal as a Word doc.
 # Run: python scripts/build_sponsor_proposal.py
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import mm
-from reportlab.lib import colors
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.enums import TA_LEFT, TA_CENTER
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image,
-    HRFlowable, KeepTogether
-)
-from reportlab.pdfbase.pdfmetrics import registerFont
-from reportlab.pdfbase.ttfonts import TTFont
-import os
+# Kept in the repo so it can be regenerated whenever the tiers, contact
+# info, or site link change — edit the CONTENT section below and rerun.
+from docx import Document
+from docx.shared import Pt, Cm, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
+from docx.opc.constants import RELATIONSHIP_TYPE
 
 # ---- brand palette (matches the site's tokens.css, light theme) ----
-CRIMSON = colors.HexColor("#C2213A")
-GOLD    = colors.HexColor("#D9703C")
-INK     = colors.HexColor("#23161A")
-INK_SOFT = colors.HexColor("#5C4148")
-CREAM   = colors.HexColor("#FBF6F1")
-LINE    = colors.HexColor("#E7D8D2")
+CRIMSON = RGBColor(0xC2, 0x21, 0x3A)
+GOLD    = RGBColor(0xD9, 0x70, 0x3C)
+INK     = RGBColor(0x23, 0x16, 0x1A)
+INK_SOFT = RGBColor(0x5C, 0x41, 0x48)
+CREAM   = "FBF6F1"
+LINE    = "E7D8D2"
 
-PAGE_W, PAGE_H = A4
-MARGIN = 20 * mm
+SITE_URL = "https://roosewelt-nacth.github.io/Vimusement/sponsors.html"
+SITE_NOTE = "the site is on a temporary/testing link right now — swap this before final print"
 
-styles = {
-    "eyebrow": ParagraphStyle("eyebrow", fontName="Helvetica-Bold", fontSize=9.5,
-        textColor=GOLD, tracking=1.2, spaceAfter=4, leading=12),
-    "h1": ParagraphStyle("h1", fontName="Times-Bold", fontSize=30, textColor=INK,
-        leading=34, spaceAfter=2),
-    "h2": ParagraphStyle("h2", fontName="Times-Bold", fontSize=17, textColor=INK,
-        leading=21, spaceBefore=14, spaceAfter=8),
-    "sub": ParagraphStyle("sub", fontName="Helvetica", fontSize=12.5, textColor=INK_SOFT,
-        leading=17, spaceAfter=10),
-    "body": ParagraphStyle("body", fontName="Helvetica", fontSize=10.2, textColor=INK,
-        leading=14.5),
-    "bodySoft": ParagraphStyle("bodySoft", fontName="Helvetica", fontSize=10.2,
-        textColor=INK_SOFT, leading=14.5),
-    "meta": ParagraphStyle("meta", fontName="Helvetica-Bold", fontSize=10.2,
-        textColor=INK, leading=15),
-    "bullet": ParagraphStyle("bullet", fontName="Helvetica", fontSize=10.5,
-        textColor=INK, leading=15, spaceAfter=7, leftIndent=14, bulletIndent=0),
-    "tierName": ParagraphStyle("tierName", fontName="Times-Bold", fontSize=13.5,
-        textColor=INK, leading=16),
-    "tierAmount": ParagraphStyle("tierAmount", fontName="Helvetica-Bold", fontSize=11,
-        textColor=CRIMSON, leading=14),
-    "tierBenefit": ParagraphStyle("tierBenefit", fontName="Helvetica", fontSize=9.7,
-        textColor=INK_SOFT, leading=13.5),
-    "footer": ParagraphStyle("footer", fontName="Helvetica", fontSize=8.3,
-        textColor=INK_SOFT, leading=11, alignment=TA_CENTER),
-    "contactLabel": ParagraphStyle("contactLabel", fontName="Helvetica-Bold", fontSize=9,
-        textColor=GOLD, leading=12),
-    "contactValue": ParagraphStyle("contactValue", fontName="Helvetica-Bold", fontSize=13,
-        textColor=INK, leading=17),
-}
+def add_hyperlink(paragraph, url, text, color=CRIMSON, underline=True):
+    part = paragraph.part
+    r_id = part.relate_to(url, RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("r:id"), r_id)
+    new_run = OxmlElement("w:r")
+    rPr = OxmlElement("w:rPr")
+    if color:
+        c = OxmlElement("w:color")
+        c.set(qn("w:val"), "%02X%02X%02X" % (color[0], color[1], color[2]))
+        rPr.append(c)
+    if underline:
+        u = OxmlElement("w:u")
+        u.set(qn("w:val"), "single")
+        rPr.append(u)
+    new_run.append(rPr)
+    t = OxmlElement("w:t")
+    t.text = text
+    new_run.append(t)
+    hyperlink.append(new_run)
+    paragraph._p.append(hyperlink)
 
-def rule(color=LINE, thickness=1, space_before=10, space_after=10):
-    return HRFlowable(width="100%", thickness=thickness, color=color,
-                       spaceBefore=space_before, spaceAfter=space_after)
+def shade_paragraph(paragraph, fill_hex):
+    pPr = paragraph._p.get_or_add_pPr()
+    shd = OxmlElement("w:shd")
+    shd.set(qn("w:val"), "clear")
+    shd.set(qn("w:color"), "auto")
+    shd.set(qn("w:fill"), fill_hex)
+    pPr.append(shd)
 
-def bullet_item(text):
-    return Paragraph("&bull;&nbsp;&nbsp;" + text, styles["bullet"])
+def left_border(paragraph, color_hex, size=24):
+    pPr = paragraph._p.get_or_add_pPr()
+    pBdr = OxmlElement("w:pBdr")
+    left = OxmlElement("w:left")
+    left.set(qn("w:val"), "single")
+    left.set(qn("w:sz"), str(size))
+    left.set(qn("w:space"), "8")
+    left.set(qn("w:color"), color_hex)
+    pBdr.append(left)
+    pPr.append(pBdr)
 
-story = []
+def bottom_border(paragraph, color_hex, size=8, space=8):
+    pPr = paragraph._p.get_or_add_pPr()
+    pBdr = OxmlElement("w:pBdr")
+    bottom = OxmlElement("w:bottom")
+    bottom.set(qn("w:val"), "single")
+    bottom.set(qn("w:sz"), str(size))
+    bottom.set(qn("w:space"), str(space))
+    bottom.set(qn("w:color"), color_hex)
+    pBdr.append(bottom)
+    pPr.append(pBdr)
 
-# ============== PAGE 1 — THE EVENT ==============
-logo_path = "assets/img/shared/victorians-mark.png"
-if os.path.exists(logo_path):
-    logo = Image(logo_path, width=13*mm, height=13*mm*(515/575))
-else:
-    logo = Spacer(1, 1)
+def set_run(run, size=10.5, color=INK, bold=False, italic=False, font="Calibri", caps=False):
+    run.font.size = Pt(size)
+    run.font.color.rgb = color
+    run.font.bold = bold
+    run.font.italic = italic
+    run.font.name = font
+    run.font.all_caps = caps
 
-head_table = Table(
-    [[logo, Paragraph("AN INITIATIVE OF VICTORIANS YOUTH", styles["eyebrow"])]],
-    colWidths=[16*mm, None]
-)
-head_table.setStyle(TableStyle([
-    ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
-    ("LEFTPADDING", (0,0), (-1,-1), 0),
-    ("TOPPADDING", (0,0), (-1,-1), 0),
-    ("BOTTOMPADDING", (0,0), (-1,-1), 0),
-]))
-story.append(head_table)
-story.append(Spacer(1, 10*mm))
+def para(doc, space_before=0, space_after=8, indent=None):
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(space_before)
+    p.paragraph_format.space_after = Pt(space_after)
+    if indent is not None:
+        p.paragraph_format.left_indent = Cm(indent)
+    return p
 
-story.append(Paragraph("VIMUSEMENT 2026", styles["h1"]))
-story.append(Paragraph("A Community Fundraising Carnival", styles["sub"]))
-story.append(rule(color=CRIMSON, thickness=1.4, space_before=4, space_after=14))
+def eyebrow(doc):
+    p = para(doc, space_after=18)
+    r = p.add_run("AN INITIATIVE OF VICTORIANS YOUTH")
+    set_run(r, size=8.5, color=GOLD, bold=True, caps=True)
 
-detail_rows = [
-    [Paragraph("WHERE", styles["contactLabel"]), Paragraph("Ascension Church, Metha Nagar, Aminjikkarai, Chennai", styles["body"])],
-    [Paragraph("WHO", styles["contactLabel"]), Paragraph("Families and young people from right across the neighbourhood — hundreds through the gates in one day", styles["body"])],
-    [Paragraph("PURPOSE", styles["contactLabel"]), Paragraph("Scholarships, a medical-emergency fund, and hardship support for neighbours in need — 100% of what's raised, after costs, goes to the cause", styles["body"])],
-]
-detail_table = Table(detail_rows, colWidths=[26*mm, None])
-detail_table.setStyle(TableStyle([
-    ("VALIGN", (0,0), (-1,-1), "TOP"),
-    ("TOPPADDING", (0,0), (-1,-1), 4),
-    ("BOTTOMPADDING", (0,0), (-1,-1), 10),
-    ("LEFTPADDING", (0,0), (0,-1), 0),
-]))
-story.append(detail_table)
+def title(doc, text, size=30):
+    p = para(doc, space_after=2)
+    r = p.add_run(text)
+    set_run(r, size=size, color=INK, bold=True, font="Georgia")
 
-story.append(Spacer(1, 4*mm))
-story.append(Paragraph("Why partner with us", styles["h2"]))
-why_points = [
+def subtitle(doc, text):
+    p = para(doc, space_after=14)
+    r = p.add_run(text)
+    set_run(r, size=12.5, color=INK_SOFT)
+
+def rule(doc):
+    p = para(doc, space_after=14)
+    bottom_border(p, "C2213A", size=16, space=6)
+
+def detail_row(doc, label, text):
+    p = para(doc, space_after=10)
+    r1 = p.add_run(label + "\t")
+    set_run(r1, size=9, color=GOLD, bold=True, caps=True)
+    r2 = p.add_run(text)
+    set_run(r2, size=10.3, color=INK)
+    p.paragraph_format.tab_stops.add_tab_stop(Cm(2.7))
+    p.paragraph_format.left_indent = Cm(2.7)
+    p.paragraph_format.first_line_indent = Cm(-2.7)
+
+def bullet(doc, text):
+    p = para(doc, space_after=6)
+    p.paragraph_format.left_indent = Cm(0.6)
+    r = p.add_run("•   " + text)
+    set_run(r, size=10.3, color=INK)
+
+def quote_block(doc, text):
+    p = para(doc, space_before=6, space_after=6, indent=0.4)
+    p.paragraph_format.space_before = Pt(10)
+    p.paragraph_format.space_after = Pt(10)
+    shade_paragraph(p, CREAM)
+    left_border(p, "D9703C", size=24)
+    r = p.add_run("“" + text + "”")
+    set_run(r, size=11, color=INK, italic=True, font="Georgia")
+
+def tier_block(doc, name, amount, benefit, last=False):
+    p = para(doc, space_before=10, space_after=2)
+    r1 = p.add_run(name + "   ")
+    set_run(r1, size=12.5, color=INK, bold=True, font="Georgia")
+    r2 = p.add_run(amount)
+    set_run(r2, size=10.5, color=CRIMSON, bold=True, italic=True)
+    p2 = para(doc, space_after=12 if last else 16)
+    r3 = p2.add_run(benefit)
+    set_run(r3, size=9.8, color=INK_SOFT)
+    if not last:
+        bottom_border(p2, LINE, size=6, space=10)
+
+# ============================================================
+doc = Document()
+section = doc.sections[0]
+section.page_width = Cm(21.0)
+section.page_height = Cm(29.7)
+for m in ("top_margin", "bottom_margin", "left_margin", "right_margin"):
+    setattr(section, m, Cm(2.0))
+doc.styles["Normal"].font.name = "Calibri"
+doc.styles["Normal"].font.size = Pt(10.3)
+
+# ---- PAGE 1 — the event ----
+eyebrow(doc)
+title(doc, "VIMUSEMENT 2026")
+subtitle(doc, "A Community Fundraising Carnival")
+rule(doc)
+
+detail_row(doc, "Where", "Ascension Church, Metha Nagar, Aminjikkarai, Chennai")
+detail_row(doc, "Who", "Families and young people from right across the neighbourhood — hundreds through the gates in one day")
+detail_row(doc, "Purpose", "Scholarships, a medical-emergency fund, and hardship support for neighbours in need — 100% of what's raised, after costs, goes to the cause")
+
+p = para(doc, space_before=10, space_after=8)
+r = p.add_run("Why partner with us")
+set_run(r, size=15, color=INK, bold=True, font="Georgia")
+
+for line in [
     "A local, built-in crowd — no footfall to chase, just show up and be seen",
     "A family + youth audience, right around Aminjikkarai",
     "Real on-ground brand visibility: posters, banners, stalls",
@@ -112,133 +176,80 @@ why_points = [
     "MC and stage announcements naming your brand",
     "Product sampling or distribution to the crowd",
     "Brand activation space, if you want to bring one",
-]
-for p in why_points:
-    story.append(bullet_item(p))
+]:
+    bullet(doc, line)
 
-story.append(Spacer(1, 8*mm))
-quote_box = Table(
-    [[Paragraph(
-        "“We’re not just asking for funding — we can give your brand real visibility "
-        "through our posters, social media, stage announcements and, depending on the "
-        "partnership, product integration.”",
-        ParagraphStyle("quote", fontName="Times-Italic", fontSize=12, textColor=INK,
-                        leading=17, alignment=TA_LEFT)
-    )]],
-    colWidths=[PAGE_W - 2*MARGIN]
-)
-quote_box.setStyle(TableStyle([
-    ("BOX", (0,0), (-1,-1), 0, CREAM),
-    ("BACKGROUND", (0,0), (-1,-1), CREAM),
-    ("LEFTPADDING", (0,0), (-1,-1), 14),
-    ("RIGHTPADDING", (0,0), (-1,-1), 14),
-    ("TOPPADDING", (0,0), (-1,-1), 12),
-    ("BOTTOMPADDING", (0,0), (-1,-1), 12),
-    ("LINEBEFORE", (0,0), (0,-1), 3, GOLD),
-]))
-story.append(quote_box)
+doc.add_paragraph().paragraph_format.space_after = Pt(6)
+quote_block(doc, "We're not just asking for funding — we can give your brand real visibility "
+                  "through our posters, social media, stage announcements and, depending on the "
+                  "partnership, product integration.")
 
-story.append(Spacer(1, 12*mm))
-story.append(Paragraph("Partnership options overleaf &rarr;", styles["bodySoft"]))
+p = para(doc, space_before=16)
+r = p.add_run("Partnership options overleaf →")
+set_run(r, size=10, color=INK_SOFT)
 
-story.append(Table([[""]], colWidths=[1], rowHeights=[1]))  # spacer keepalive
-from reportlab.platypus import PageBreak
-story.append(PageBreak())
+doc.add_page_break()
 
-# ============== PAGE 2 — PARTNERSHIP OPTIONS ==============
-story.append(head_table)
-story.append(Spacer(1, 8*mm))
-story.append(Paragraph("Partnership options", styles["h1"] if False else ParagraphStyle(
-    "h1b", fontName="Times-Bold", fontSize=24, textColor=INK, leading=28, spaceAfter=4)))
-story.append(Paragraph("Pick a level, or tell us what works for your business", styles["sub"]))
-story.append(rule(color=CRIMSON, thickness=1.4, space_before=4, space_after=16))
+# ============================================================
+# ---- PAGE 2 — partnership options ----
+eyebrow(doc)
+title(doc, "Partnership options", size=24)
+subtitle(doc, "Pick what fits, or tell us what works for your business")
+rule(doc)
 
-tiers = [
-    ("Community Partner", "Rs. 10,000+",
-     "Logo on event banners, a mention across our social media, and a shout-out on stage — the bigger the contribution, the bigger the billing."),
-    ("Product Partner", "Products / vouchers",
-     "Give what you make or sell — food, drinks, goods — and we promote your brand in return. Great for restaurants, cafés and shops."),
-    ("Prize Partner", "Gifts / vouchers",
-     "Sponsor a Lucky Draw or game prize — your brand gets named live on stage the moment it's won."),
-]
+tier_block(doc, "Community Partner", "Flexible",
+    "Logo on event banners, a mention in our social media posts, and a shout-out "
+    "on stage — let's talk about what works for you.")
+tier_block(doc, "Product Partner", "Products / vouchers",
+    "Give what you make or sell — food, drinks, goods — and we promote your "
+    "brand in return. Great for restaurants, cafés and shops.")
+tier_block(doc, "Prize Partner", "Gifts / vouchers",
+    "Sponsor a Lucky Draw or game prize — your brand gets named live on stage "
+    "the moment it's won.", last=True)
 
-tier_rows = []
-for name, amount, benefit in tiers:
-    cell = Table(
-        [[Paragraph(name, styles["tierName"]), Paragraph(amount, styles["tierAmount"])],
-         [Paragraph(benefit, styles["tierBenefit"]), ""]],
-        colWidths=[(PAGE_W - 2*MARGIN)*0.62, (PAGE_W - 2*MARGIN)*0.38]
-    )
-    cell.setStyle(TableStyle([
-        ("SPAN", (0,1), (1,1)),
-        ("ALIGN", (1,0), (1,0), "RIGHT"),
-        ("VALIGN", (0,0), (-1,-1), "TOP"),
-        ("TOPPADDING", (0,0), (-1,0), 14),
-        ("TOPPADDING", (0,1), (-1,1), 4),
-        ("BOTTOMPADDING", (0,1), (-1,1), 14),
-        ("LEFTPADDING", (0,0), (-1,-1), 14),
-        ("RIGHTPADDING", (0,0), (-1,-1), 14),
-    ]))
-    box = Table([[cell]], colWidths=[PAGE_W - 2*MARGIN])
-    box.setStyle(TableStyle([
-        ("BOX", (0,0), (-1,-1), 1, LINE),
-        ("LEFTPADDING", (0,0), (-1,-1), 0),
-        ("RIGHTPADDING", (0,0), (-1,-1), 0),
-        ("TOPPADDING", (0,0), (-1,-1), 0),
-        ("BOTTOMPADDING", (0,0), (-1,-1), 0),
-    ]))
-    tier_rows.append(box)
-    tier_rows.append(Spacer(1, 8))
+p = para(doc, space_before=4, space_after=16)
+r = p.add_run("Not sure which fits? Message us and we'll shape a package around what "
+              "works for your business — a mix of the above is always an option.")
+set_run(r, size=10, color=INK_SOFT)
 
-for r in tier_rows:
-    story.append(r)
+# contact box
+p = para(doc, space_before=8, space_after=2)
+shade_paragraph(p, CREAM)
+left_border(p, "C2213A", size=24)
+r = p.add_run("GET IN TOUCH")
+set_run(r, size=8.5, color=GOLD, bold=True, caps=True)
 
-story.append(Spacer(1, 6*mm))
-story.append(Paragraph(
-    "Not sure which fits? Message us and we'll shape a package around what works for your "
-    "business — a mix of the above is always an option.",
-    styles["bodySoft"]))
+p = para(doc, space_after=2)
+shade_paragraph(p, CREAM)
+left_border(p, "C2213A", size=24)
+r = p.add_run("Austin Prince Roosewelt")
+set_run(r, size=13, color=INK, bold=True)
+r = p.add_run("  ·  Victorians Youth")
+set_run(r, size=10.3, color=INK_SOFT)
 
-story.append(Spacer(1, 12*mm))
-contact_table = Table(
-    [[Paragraph("GET IN TOUCH", styles["contactLabel"]), ""],
-     [Paragraph("Austin Prince Roosewelt", styles["contactValue"]),
-      Paragraph("Victorians Youth", styles["bodySoft"])],
-     [Paragraph("WhatsApp: +91 63794 68686", styles["body"]),
-      Paragraph("roosewelt-nacth.github.io/<br/>Vimusement/sponsors.html", styles["body"])]],
-    colWidths=[(PAGE_W - 2*MARGIN)*0.55, (PAGE_W - 2*MARGIN)*0.45]
-)
-contact_table.setStyle(TableStyle([
-    ("VALIGN", (0,0), (-1,-1), "TOP"),
-    ("TOPPADDING", (0,0), (-1,0), 0),
-    ("BOTTOMPADDING", (0,0), (-1,0), 8),
-    ("TOPPADDING", (0,1), (-1,-1), 3),
-    ("LEFTPADDING", (0,0), (-1,-1), 0),
-    ("BACKGROUND", (0,0), (-1,-1), CREAM),
-]))
-contact_wrap = Table([[contact_table]], colWidths=[PAGE_W - 2*MARGIN])
-contact_wrap.setStyle(TableStyle([
-    ("BACKGROUND", (0,0), (-1,-1), CREAM),
-    ("LEFTPADDING", (0,0), (-1,-1), 16),
-    ("RIGHTPADDING", (0,0), (-1,-1), 16),
-    ("TOPPADDING", (0,0), (-1,-1), 14),
-    ("BOTTOMPADDING", (0,0), (-1,-1), 14),
-    ("LINEBEFORE", (0,0), (0,-1), 3, CRIMSON),
-]))
-story.append(contact_wrap)
+p = para(doc, space_after=2)
+shade_paragraph(p, CREAM)
+left_border(p, "C2213A", size=24)
+r = p.add_run("WhatsApp: +91 63794 68686")
+set_run(r, size=10.3, color=INK)
 
-story.append(Spacer(1, 10*mm))
-story.append(rule(space_before=0, space_after=8))
-story.append(Paragraph(
-    "Vimusement 2026 · An annual fundraiser by the parish community, Ascension Church, Aminjikkarai.",
-    styles["footer"]))
+p = para(doc, space_after=10)
+shade_paragraph(p, CREAM)
+left_border(p, "C2213A", size=24)
+r = p.add_run("Web: ")
+set_run(r, size=10.3, color=INK)
+add_hyperlink(p, SITE_URL, SITE_URL, color=CRIMSON)
+p.add_run().add_break()
 
-doc = SimpleDocTemplate(
-    "assets/docs/Vimusement-2026-Sponsorship-Proposal.pdf",
-    pagesize=A4,
-    leftMargin=MARGIN, rightMargin=MARGIN, topMargin=MARGIN, bottomMargin=MARGIN,
-    title="Vimusement 2026 Sponsorship Proposal",
-    author="Victorians Youth",
-)
-doc.build(story)
-print("done")
+rule2 = para(doc, space_before=14, space_after=8)
+bottom_border(rule2, LINE, size=6, space=0)
+
+p = doc.add_paragraph()
+p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+r = p.add_run("Vimusement 2026 · An annual fundraiser by the parish community, "
+              "Ascension Church, Aminjikkarai.")
+set_run(r, size=8, color=INK_SOFT)
+
+out_path = "assets/docs/Vimusement-2026-Sponsorship-Proposal.docx"
+doc.save(out_path)
+print("saved", out_path)
