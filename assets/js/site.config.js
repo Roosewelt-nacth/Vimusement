@@ -19,7 +19,7 @@ window.VIM_SITE = {
     { label: { en: "Home", ta: "முகப்பு" },              file: "index.html",     icon: "home",   primary: true },
     { label: { en: "Programme", ta: "நிகழ்ச்சி நிரல்" },   file: "programme.html", icon: "screen", primary: true },
     { label: { en: "The Cause", ta: "நோக்கம்" },          file: "cause.html",     icon: "heart",  primary: true },
-    // { label: { en: "Lucky Draw", ta: "லக்கி டிரா" },    file: "draw.html",      icon: "ticket", primary: true },   // lucky draw switched off for 2026 — see luckyDraw.enabled
+    { label: { en: "Lucky Draw", ta: "லக்கி டிரா" },       file: "draw.html",      icon: "ticket", primary: true },
     { label: { en: "Gallery", ta: "புகைப்படங்கள்" },       file: "gallery.html",   icon: "photos" },
     { label: { en: "Get Involved", ta: "பங்கேற்க" },       file: "involve.html",   icon: "people" },
     { label: { en: "Sponsorship", ta: "ஸ்பான்சர்ஷிப்" },   file: "sponsors.html",  icon: "star" },

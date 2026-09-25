@@ -196,7 +196,7 @@
 .impact-strip .stat__num{font-family:var(--font-display);font-weight:var(--weight-bold);font-size:clamp(2rem,4vw,2.7rem);line-height:1;color:var(--c-gold);font-variant-numeric:tabular-nums}
 .impact-strip .stat__label{font-size:var(--fs-sm);color:var(--c-on-dark-soft);line-height:1.45}
 
-.explore-grid{--col:250px;margin-top:2.4rem}
+.explore-grid{--col:215px;margin-top:2.4rem}   /* four cards: one row on desktop, 2x2 on tablets */
 .card--link{
   display:flex;flex-direction:column;text-decoration:none;
   border-left:3px solid var(--accent,var(--c-primary));

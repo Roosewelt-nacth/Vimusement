@@ -1,0 +1,283 @@
+/* ============================================================
+   PAGE — lucky draw showcase  (draw.html, modules/luckypage.js)
+   Offline draw: prizes up top, a ticket-stub "where to buy" card.
+   Hero, steps and FAQ reuse pages/donate.css.
+   ============================================================ */
+
+.lucky-hero__cta{display:flex;align-items:center;flex-wrap:wrap;gap:1rem 1.4rem;margin-top:1.6rem}
+
+/* ---------- prizes: one grand card, then the rest ---------- */
+.lucky-prizes{
+  display:grid;gap:14px;margin-top:2.2rem;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+}
+.lucky-prize{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:flex-start;gap:1.1rem;
+  padding:1.4rem 1.3rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--c-surface);border:1px solid var(--c-line);
+}
+.lucky-prize__art{
+  display:grid;place-items:center;width:88px;height:88px;border-radius:50%;
+  color:var(--c-gold);
+  background:radial-gradient(circle at 35% 30%, color-mix(in srgb,var(--c-gold) 16%,transparent), color-mix(in srgb,var(--c-gold) 5%,transparent) 70%);
+}
+.lucky-prize__place{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--c-ink-mute);margin:0 0 .3rem;
+}
+.lucky-prize__name{margin:0;font-size:var(--fs-lg);color:var(--c-ink);letter-spacing:var(--track-display);line-height:1.15}
+
+/* the grand prize spans the row, art on the right, a slow gold glow */
+.lucky-prize--grand{
+  grid-column:1 / -1;flex-direction:row-reverse;align-items:center;justify-content:space-between;
+  padding:clamp(1.6rem,4vw,2.6rem);
+  background:
+    radial-gradient(60% 120% at 85% 50%, color-mix(in srgb,var(--c-gold) 14%,transparent), transparent 70%),
+    var(--c-surface);
+  border-color:color-mix(in srgb,var(--c-gold) 38%,var(--c-line));
+}
+.lucky-prize--grand .lucky-prize__art{width:clamp(150px,24vw,220px);height:clamp(150px,24vw,220px)}
+.lucky-prize--grand .lucky-prize__art svg{width:62%;height:62%;animation:lucky-float 5s ease-in-out infinite}
+.lucky-prize--grand .lucky-prize__place{color:var(--c-gold)}
+.lucky-prize--grand .lucky-prize__name{font-size:clamp(2.2rem,6vw,3.6rem)}
+.lucky-prize--grand::after{                     /* a shine that crosses the grand card now and then */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg, transparent 40%, color-mix(in srgb,var(--c-gold) 12%,transparent) 50%, transparent 60%);
+  transform:translateX(-100%);animation:lucky-shine 6s ease-in-out infinite 1.5s;
+}
+
+.lucky-note{margin:1.1rem 0 0;font-size:var(--fs-sm);color:var(--c-ink-mute);max-width:60ch}
+.lucky-note--center{text-align:center;margin-inline:auto}
+
+/* ---------- the ticket stub ---------- */
+.lucky-stub{
+  position:relative;display:grid;grid-template-columns:1fr auto 200px;overflow:hidden;
+  margin-top:2rem;border-radius:var(--r-lg);
+  background:
+    radial-gradient(60% 140% at 100% 50%, color-mix(in srgb,var(--c-gold) 12%,transparent), transparent 70%),
+    var(--c-surface);
+  border:1px solid color-mix(in srgb,var(--c-gold) 38%,var(--c-line));
+  transition:transform .45s cubic-bezier(.22,1,.36,1), box-shadow .45s ease;
+}
+.lucky-stub:hover{transform:translateY(-3px);box-shadow:0 18px 40px -22px color-mix(in srgb,var(--c-gold) 55%,transparent)}
+.lucky-stub__main{padding:1.6rem 1.6rem 1.5rem}
+.lucky-stub__label{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--c-ink-mute);margin:0 0 .25rem;
+}
+.lucky-stub__label + .lucky-stub__where{margin-top:0}
+.lucky-stub__where{margin:0;font-size:var(--fs-lg);font-weight:600;color:var(--c-ink);line-height:1.2}
+.lucky-stub__when{margin:.25rem 0 1.2rem;color:var(--c-ink-soft)}
+.lucky-stub__main .btn{margin-top:.1rem}
+.lucky-stub__tear{width:0;border-left:2px dashed color-mix(in srgb,var(--c-gold) 45%,var(--c-line));margin-block:18px}
+.lucky-stub__price{
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.35rem;
+  padding:1.6rem 1.5rem;
+}
+.lucky-stub__cap{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c-ink-mute);margin:0;
+}
+.lucky-stub__amt{font-family:var(--font-display);font-size:clamp(2.6rem,6vw,3.4rem);font-weight:600;line-height:.95;color:var(--c-gold)}
+.lucky-stub__per{font-size:var(--fs-sm);color:var(--c-ink-soft)}
+.lucky-stub__price .lucky-badge{margin-top:.35rem}
+
+@keyframes lucky-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes lucky-shine{0%{transform:translateX(-100%)}35%,100%{transform:translateX(100%)}}
+
+@media (max-width:760px){
+  .lucky-prizes{grid-template-columns:1fr 1fr}
+  .lucky-prize--grand{flex-direction:column-reverse;align-items:flex-start}
+  .lucky-prize--grand .lucky-prize__art{align-self:center}
+}
+@media (max-width:520px){
+  .lucky-prizes{grid-template-columns:1fr}
+  .lucky-prize:not(.lucky-prize--grand){flex-direction:row;align-items:center}
+  .lucky-prize:not(.lucky-prize--grand) .lucky-prize__art{width:68px;height:68px;flex:none}
+  .lucky-prize:not(.lucky-prize--grand) .lucky-prize__art svg{width:44px;height:44px}
+  /* stub: price on top, tear line runs across */
+  .lucky-stub{grid-template-columns:1fr}
+  .lucky-stub__price{order:-1;padding:1.4rem 1.4rem 1.1rem}
+  .lucky-stub__main{order:1}
+  .lucky-stub__tear{order:0;width:auto;height:0;border-left:0;border-top:2px dashed color-mix(in srgb,var(--c-gold) 45%,var(--c-line));margin:0 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lucky-prize--grand .lucky-prize__art svg,.lucky-prize--grand::after{animation:none}
+}
+
+/* ============================================================
+   "Wow" layer — hero stats + sparkles, worth, branded badge,
+   rank numerals, hover lift
+   ============================================================ */
+.lucky-hero h1{max-width:16ch}
+.lucky-sparkles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.lucky-sparkles i{
+  position:absolute;width:6px;height:6px;border-radius:50%;
+  background:var(--c-gold);box-shadow:0 0 10px 2px color-mix(in srgb,var(--c-gold) 60%,transparent);
+  opacity:0;animation:lucky-twinkle 4.2s ease-in-out infinite;
+}
+.lucky-sparkles i:nth-child(1){left:62%;top:22%;animation-delay:0s}
+.lucky-sparkles i:nth-child(2){left:74%;top:58%;animation-delay:.6s;width:4px;height:4px}
+.lucky-sparkles i:nth-child(3){left:86%;top:30%;animation-delay:1.3s}
+.lucky-sparkles i:nth-child(4){left:92%;top:70%;animation-delay:2s;width:3px;height:3px}
+.lucky-sparkles i:nth-child(5){left:68%;top:80%;animation-delay:2.7s;width:4px;height:4px}
+.lucky-sparkles i:nth-child(6){left:80%;top:12%;animation-delay:3.3s;width:3px;height:3px}
+.lucky-sparkles i:nth-child(7){left:56%;top:48%;animation-delay:1.8s;width:3px;height:3px}
+.lucky-sparkles i:nth-child(8){left:96%;top:44%;animation-delay:.9s;width:4px;height:4px}
+.lucky-sparkles i:nth-child(9){left:48%;top:14%;animation-delay:2.4s;width:3px;height:3px}
+.lucky-sparkles i:nth-child(10){left:88%;top:88%;animation-delay:3.7s}
+
+.lucky-stats{list-style:none;margin:1.6rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem}
+.lucky-stat{
+  display:flex;flex-direction:column;gap:.1rem;min-width:7.5rem;
+  padding:.7rem 1rem .65rem;border-radius:var(--r-md);
+  background:color-mix(in srgb,var(--c-gold) 7%,var(--c-surface));
+  border:1px solid color-mix(in srgb,var(--c-gold) 30%,var(--c-line));
+}
+.lucky-stat b{font-family:var(--font-display);font-size:1.55rem;font-weight:600;line-height:1.05;color:var(--c-gold)}
+.lucky-stat span{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink-mute)}
+
+/* prize cards: faded rank numeral, worth, badge, lift on hover */
+.lucky-prize{transition:transform .45s cubic-bezier(.22,1,.36,1), border-color .3s ease, box-shadow .45s ease}
+.lucky-prize:hover{
+  transform:translateY(-4px);
+  border-color:color-mix(in srgb,var(--c-gold) 55%,var(--c-line));
+  box-shadow:0 18px 40px -22px color-mix(in srgb,var(--c-gold) 55%,transparent);
+}
+.lucky-prize > *{position:relative;z-index:1}
+.lucky-prize__rank{
+  position:absolute !important;z-index:0 !important;right:.9rem;top:.3rem;
+  font-family:var(--font-display);font-weight:600;font-size:4.2rem;line-height:1;
+  color:color-mix(in srgb,var(--c-gold) 10%,transparent);pointer-events:none;
+}
+.lucky-prize--grand .lucky-prize__rank{display:none}   /* it already says "Grand prize · 1st" */
+.lucky-prize__sub{margin:.2rem 0 0;color:var(--c-ink-soft);font-size:var(--fs-sm)}
+.lucky-prize__meta{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .8rem;margin-top:.8rem}
+.lucky-prize__worth{margin:0;display:flex;align-items:baseline;gap:.35rem}
+.lucky-prize__worth span{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink-mute)}
+.lucky-prize__worth b{font-family:var(--font-display);font-size:1.45rem;font-weight:600;color:var(--c-gold);line-height:1}
+.lucky-prize--grand .lucky-prize__worth b{font-size:clamp(2rem,5vw,2.8rem)}
+.lucky-prize--grand .lucky-prize__sub{font-size:var(--fs-md)}
+.lucky-badge{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.22rem .55rem .22rem .45rem;border-radius:var(--r-pill);
+  font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--c-gold);background:color-mix(in srgb,var(--c-gold) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--c-gold) 35%,transparent);
+}
+.lucky-prize--grand .lucky-prize__art{box-shadow:0 0 0 1px color-mix(in srgb,var(--c-gold) 25%,transparent), 0 0 60px -10px color-mix(in srgb,var(--c-gold) 45%,transparent)}
+
+@keyframes lucky-twinkle{0%,100%{opacity:0;transform:scale(.4)}45%{opacity:.9;transform:scale(1)}60%{opacity:.6}}
+@media (max-width:520px){
+  .lucky-stat{min-width:0;flex:1 1 40%;padding:.6rem .8rem}   /* 2x2 on phones */
+  .lucky-stat b{font-size:1.25rem}
+  .lucky-prize__rank{font-size:3.2rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .lucky-sparkles i{animation:none;opacity:.5}
+  .lucky-prize,.lucky-prize:hover{transition:none;transform:none}
+}
+
+/* ---------- the special surprises: mystery cards ---------- */
+.lucky-surprises{margin-top:2.4rem}
+.lucky-surprises[hidden]{display:none}
+.lucky-surprises__lead{
+  margin:0 0 1rem;font-family:var(--font-display);font-style:italic;
+  font-size:var(--fs-lg);color:var(--c-ink-soft);
+}
+.lucky-surprises__grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:14px}
+.lucky-prize--surprise{
+  flex-direction:row;align-items:center;gap:1.3rem;isolation:isolate;
+  border-color:transparent;
+  background:
+    radial-gradient(80% 140% at 0% 50%, color-mix(in srgb,var(--c-gold) 14%,transparent), transparent 65%),
+    var(--c-surface);
+}
+/* a gold edge that slowly travels round the card */
+.lucky-prize--surprise::before{
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;padding:1px;pointer-events:none;
+  background:conic-gradient(from var(--lk-a,0deg), transparent 0 60%, color-mix(in srgb,var(--c-gold) 85%,transparent) 75%, transparent 90%),
+             color-mix(in srgb,var(--c-gold) 22%,var(--c-line));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:lucky-orbit 5s linear infinite;
+}
+.lucky-prize__art--q{flex:none}
+.lucky-prize__art--q span{
+  font-family:var(--font-display);font-weight:600;font-size:3rem;line-height:1;color:var(--c-gold);
+  text-shadow:0 0 18px color-mix(in srgb,var(--c-gold) 70%,transparent);
+  animation:lucky-q 2.6s ease-in-out infinite;
+}
+.lucky-prize--surprise .lucky-prize__place{color:var(--c-gold)}
+.lucky-badge--glow{animation:lucky-badge 2.6s ease-in-out infinite}
+
+@property --lk-a{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes lucky-orbit{to{--lk-a:360deg}}
+@keyframes lucky-q{0%,100%{transform:scale(1) rotate(-4deg);opacity:.85}50%{transform:scale(1.12) rotate(4deg);opacity:1}}
+@keyframes lucky-badge{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c-gold) 0%,transparent)}50%{box-shadow:0 0 14px 0 color-mix(in srgb,var(--c-gold) 40%,transparent)}}
+@media (max-width:760px){ .lucky-surprises__grid{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){
+  .lucky-prize--surprise::before,.lucky-prize__art--q span,.lucky-badge--glow{animation:none}
+}
+
+/* ---------- "plus more gifts" strip ---------- */
+.lucky-more{
+  display:flex;align-items:center;gap:1.1rem;margin-top:14px;
+  padding:1.1rem 1.3rem;border-radius:var(--r-lg);
+  border:1px dashed color-mix(in srgb,var(--c-gold) 45%,var(--c-line));
+  background:color-mix(in srgb,var(--c-gold) 5%,transparent);
+}
+.lucky-more[hidden]{display:none}
+.lucky-more__icon{
+  flex:none;display:grid;place-items:center;width:54px;height:54px;border-radius:50%;
+  color:var(--c-gold);background:color-mix(in srgb,var(--c-gold) 12%,transparent);
+}
+.lucky-more__title{margin:0;font-size:var(--fs-lg);color:var(--c-ink);line-height:1.2}
+.lucky-more__text{margin:.25rem 0 0;color:var(--c-ink-soft);font-size:var(--fs-sm)}
+
+/* ---------- prize sponsor: credit strip, per-card line, thank-you card ---------- */
+.lucky-credit{
+  display:inline-flex;align-items:center;flex-wrap:wrap;gap:.55rem .7rem;margin-top:1.2rem;
+  padding:.45rem .95rem .45rem .6rem;border-radius:var(--r-pill);
+  background:color-mix(in srgb,var(--c-gold) 8%,var(--c-surface));
+  border:1px solid color-mix(in srgb,var(--c-gold) 35%,var(--c-line));
+}
+.lucky-credit[hidden]{display:none}
+.lucky-credit__cap{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink-mute)}
+.lucky-credit b,.lucky-credit a{font-weight:600;color:var(--c-ink);text-decoration:none}
+.lucky-credit a:hover{text-decoration:underline}
+.lucky-credit__logo{height:26px;width:auto;max-width:90px;object-fit:contain}
+.lucky-mono{
+  display:inline-grid;place-items:center;border-radius:50%;
+  font-family:var(--font-display);font-weight:600;letter-spacing:.02em;color:var(--c-tile-dark,#0E1712);
+  background:linear-gradient(145deg, #E8C46A, var(--c-gold));
+}
+.lucky-credit__logo.lucky-mono{width:28px;height:28px;font-size:.78rem}
+.lucky-prize__by{
+  margin:.7rem 0 0;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c-gold) 80%,var(--c-ink-mute));
+}
+
+.lucky-thanks{
+  position:relative;overflow:hidden;display:flex;align-items:center;gap:clamp(1.2rem,4vw,2.4rem);
+  margin-top:2.4rem;padding:clamp(1.5rem,4vw,2.4rem);border-radius:var(--r-lg);
+  background:
+    radial-gradient(70% 140% at 0% 50%, color-mix(in srgb,var(--c-gold) 16%,transparent), transparent 70%),
+    var(--c-surface);
+  border:1px solid color-mix(in srgb,var(--c-gold) 40%,var(--c-line));
+}
+.lucky-thanks[hidden]{display:none}
+.lucky-thanks__mark{flex:none;display:grid;place-items:center}
+.lucky-thanks__logo{width:clamp(96px,16vw,132px);height:auto;max-height:132px;object-fit:contain}
+.lucky-thanks__logo.lucky-mono{
+  width:clamp(96px,16vw,132px);height:clamp(96px,16vw,132px);font-size:clamp(2rem,5vw,2.8rem);
+  box-shadow:0 0 0 6px color-mix(in srgb,var(--c-gold) 14%,transparent), 0 0 50px -8px color-mix(in srgb,var(--c-gold) 55%,transparent);
+}
+.lucky-thanks__eyebrow{margin:0 0 .3rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--c-gold)}
+.lucky-thanks__title{margin:0;font-size:clamp(1.5rem,3.6vw,2.1rem);color:var(--c-ink);line-height:1.15;letter-spacing:var(--track-display)}
+.lucky-thanks__text{margin:.7rem 0 0;color:var(--c-ink-soft);max-width:58ch;line-height:1.55}
+.lucky-thanks__ask{margin:.6rem 0 0;font-family:var(--font-display);font-style:italic;font-size:var(--fs-md);color:var(--c-ink)}
+.lucky-thanks .btn{margin-top:1rem}
+@media (max-width:560px){
+  .lucky-thanks{flex-direction:column;align-items:flex-start}
+}
