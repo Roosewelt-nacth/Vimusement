@@ -61,6 +61,9 @@ var DON_HEADER = ['Timestamp', 'Reference', 'Name', 'Email', 'Amount (INR)',
 var DC = { TS:1, REF:2, NAME:3, EMAIL:4, AMOUNT:5, CHANNEL:6, BY:7, UTR:8, STATUS:9, WALL:10, CONFIRMED:11, NOTES:12, PHONE:13 };
 
 var T_LD = 'LuckyDraw';
+/* Lucky draw switched off for 2026: every draw* action is refused. Flip to
+   true (and luckyDraw.enabled in years/<year>.config.js) to bring it back. */
+var LD_ENABLED = false;
 var LD_HEADER = ['Timestamp', 'Ticket ID', 'Reference', 'Name', 'Email', 'Phone',
   'Price (INR)', 'Channel', 'By', 'Status', 'Confirmed at', 'Won', 'Notes', 'Donor UPI ref'];
 var LC = { TS:1, TID:2, REF:3, NAME:4, EMAIL:5, PHONE:6, PRICE:7, CHANNEL:8, BY:9, STATUS:10, CONFIRMED:11, WON:12, NOTES:13, UTR:14 };
@@ -80,6 +83,7 @@ function doGet(e) {
   _CB = (e && e.parameter && e.parameter.callback) || '';
   var a = (e && e.parameter && e.parameter.action) || 'donors';
   try {
+    if (!LD_ENABLED && /^draw/.test(a)) return _json({ error: 'Lucky draw is not running this year.' });
     switch (a) {
       case 'ping':            return _json({ ok: true, time: new Date().toISOString() });
 

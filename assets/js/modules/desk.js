@@ -17,6 +17,8 @@ Vim.register("desk", function (ctx) {
   var api = ctx.year.api || "";
   var L = ctx.year.luckyDraw || {};
   var PRICE = Number(L.price || 50);
+  /* luckyDraw.enabled: false hides the ticket tab; the desk opens on Cash Donation */
+  var DRAW_ON = L.enabled !== false;
   var SS = window.sessionStorage;
   var KEYNAME = "vim-desk";
   var s = load() || { token: "", name: "", user: "", sales: 0, amount: 0 };
@@ -104,10 +106,10 @@ Vim.register("desk", function (ctx) {
       '<div class="desk__bar"><div><b>' + esc(s.name) + '</b><span data-shift></span></div>' +
         '<button type="button" class="btn btn--outline" data-end>' + ctx.t("desk.endShift") + '</button></div>' +
       '<div class="desk__tabs" role="tablist">' +
-        '<button type="button" role="tab" data-tab="draw" aria-selected="true">' + ctx.t("draw.ticket.eyebrow") + '</button>' +
-        '<button type="button" role="tab" data-tab="cash" aria-selected="false">' + ctx.t("desk.tab.cash") + '</button>' +
+        (DRAW_ON ? '<button type="button" role="tab" data-tab="draw" aria-selected="true">' + ctx.t("draw.ticket.eyebrow") + '</button>' : '') +
+        '<button type="button" role="tab" data-tab="cash" aria-selected="' + !DRAW_ON + '">' + ctx.t("desk.tab.cash") + '</button>' +
         '<button type="button" role="tab" data-tab="confirm" aria-selected="false">' + ctx.t("desk.tab.confirm") + '</button></div>' +
-      '<div data-panel="draw">' +
+      '<div data-panel="draw"' + (DRAW_ON ? '' : ' hidden') + '>' +
         '<p class="desk__price">' + ctx.t("desk.priceLine").replace("{price}", money(PRICE)) + '</p>' +
         '<div class="qty"><button type="button" class="qty__btn" data-qd>−</button>' +
           '<span class="qty__n" data-qn>1</span>' +
@@ -118,7 +120,7 @@ Vim.register("desk", function (ctx) {
         '<label class="field field--text"><input data-de type="email" inputmode="email" placeholder="' + ctx.t("desk.field.emailOptionalTicket") + '"></label>' +
         '<button type="button" class="btn btn--gold btn--block btn--lg" data-issue>' + ctx.t("desk.issueTickets") + '</button>' +
       '</div>' +
-      '<div data-panel="cash" hidden>' +
+      '<div data-panel="cash"' + (DRAW_ON ? ' hidden' : '') + '>' +
         '<label class="field"><span class="field__prefix">₹</span><input data-ca type="number" inputmode="numeric" min="1" placeholder="' + ctx.t("desk.field.amountReceived") + '"></label>' +
         '<label class="field field--text"><input data-cn type="text" placeholder="' + ctx.t("desk.field.donorNameOptional") + '"></label>' +
         '<label class="field field--text"><input data-ce type="email" inputmode="email" placeholder="' + ctx.t("desk.field.emailOptionalReceipt") + '"></label>' +

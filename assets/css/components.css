@@ -763,3 +763,169 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .credit-badge{transition:opacity var(--dur-2) var(--ease-out)}
   .credit-badge__dot{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c-primary) 30%,transparent)}
 }
+
+/* ---------- SPONSORS DECK — glowing dot, top-right (modules/sponsordeck.js) ----------
+   A wordless dot; hover/tap it and the logos slide down beneath it, one
+   by one, on a transparent ground. One shared stage shows the hovered
+   logo's card: beside the logos on desktop, as a sheet on phones. */
+.sdeck{
+  position:fixed;z-index:302;                 /* above the lang prompt / credit badge */
+  top:calc(14px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right));
+  display:flex;flex-direction:column;align-items:center;
+  --sd-logo:46px; --sd-gap:10px; --sd-glow:#3FCB7E;
+  --sd-ease:cubic-bezier(.22,1,.36,1);
+}
+
+/* the trigger */
+.sdeck__spark{
+  position:relative;z-index:2;overflow:hidden;isolation:isolate;cursor:pointer;
+  width:30px;height:30px;padding:0;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--glass-panel-bg);border:1px solid var(--glass-panel-border);
+  backdrop-filter:var(--glass-panel-blur);-webkit-backdrop-filter:var(--glass-panel-blur);
+  transition:border-color var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-spring);
+}
+.sdeck__spark::after{                        /* a thin shine sweeping across every few seconds */
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(105deg, transparent 35%, color-mix(in srgb,var(--c-primary) 22%,transparent) 50%, transparent 65%);
+  transform:translateX(-120%);
+  animation:sdeck-shine 4.5s ease-in-out infinite 1.2s;
+}
+.sdeck__dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--sd-glow);filter:drop-shadow(0 0 5px rgba(63,203,126,.9));
+  animation:footer-dot-pulse 2.4s ease-out infinite;   /* same live ring as the footer credit */
+}
+.sdeck__spark:hover,.sdeck.is-open .sdeck__spark{border-color:color-mix(in srgb,var(--c-primary) 55%,var(--glass-panel-border))}
+.sdeck.is-open .sdeck__spark{transform:scale(1.08)}
+.sdeck__spark:focus-visible{outline:2px solid var(--c-primary);outline-offset:3px}
+
+/* the column of logos — scrolls quietly once there are lots of them */
+.sdeck__list{
+  position:relative;list-style:none;margin:0;
+  padding:var(--sd-gap) 8px 8px;
+  max-height:calc(100vh - 140px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;
+  display:flex;flex-direction:column;align-items:center;gap:var(--sd-gap);
+  visibility:hidden;pointer-events:none;
+  transition:visibility 0s linear .7s;       /* stay visible while they tuck back up */
+}
+.sdeck__list::-webkit-scrollbar{display:none}
+.sdeck.is-open .sdeck__list,.sdeck.is-teasing .sdeck__list{visibility:visible;transition:none}
+.sdeck.is-open .sdeck__list{pointer-events:auto}
+.sdeck__item{
+  position:relative;flex:none;
+  /* each logo starts tucked up behind the dot, then slides down to its slot */
+  transform:translateY(calc(-1 * (var(--i) + 1) * (var(--sd-logo) + var(--sd-gap))));
+  opacity:0;
+  transition:transform .55s var(--sd-ease), opacity .35s ease;
+  transition-delay:calc((var(--n) - 1 - var(--i)) * 55ms);    /* closing: last one tucks away first */
+}
+.sdeck.is-open .sdeck__item,.sdeck.is-teasing .sdeck__item{
+  transform:none;opacity:1;
+  transition-delay:calc(var(--i) * 110ms + 60ms);             /* opening: one after another */
+}
+.sdeck__logo{
+  width:var(--sd-logo);height:var(--sd-logo);padding:0;border:0;cursor:pointer;
+  background:transparent;display:grid;place-items:center;border-radius:var(--r-md);
+  transition:transform .35s var(--sd-ease), opacity .3s ease;
+}
+.sdeck__logo img{
+  max-width:100%;max-height:100%;object-fit:contain;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));             /* legible over any photo */
+  transition:filter .3s ease;
+}
+/* while one card is out: that logo glows, the rest step back */
+.sdeck.has-active .sdeck__logo{opacity:.45}
+.sdeck.has-active .sdeck__item.is-active .sdeck__logo{opacity:1;transform:scale(1.12)}
+.sdeck__item.is-active .sdeck__logo img{filter:drop-shadow(0 0 8px rgba(63,203,126,.55)) drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+.sdeck__logo:hover{transform:scale(1.08)}
+.sdeck__logo:focus-visible{outline:2px solid var(--c-primary);outline-offset:3px}
+
+/* ---------- the stage (desktop): floats left of the logos, glides between them ---------- */
+.sdeck__stage{
+  position:absolute;right:100%;top:var(--y, 40px);
+  padding-right:14px;                         /* invisible bridge from logo to card */
+  width:min(360px, calc(100vw - 120px));
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateX(12px);
+  perspective:900px;
+  transition:top .45s var(--sd-ease), opacity .25s ease, transform .45s var(--sd-ease), visibility 0s linear .25s;
+}
+.sdeck__stage.is-shown{
+  opacity:1;visibility:visible;pointer-events:auto;transform:none;
+  transition:top .45s var(--sd-ease), opacity .25s ease, transform .45s var(--sd-ease), visibility 0s;
+}
+.sdeck__tilt{
+  position:relative;border-radius:var(--r-md);
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .5s var(--sd-ease);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.6);
+}
+.sdeck__tilt.is-tilting{transition:transform .08s linear}
+.sdeck__face{border-radius:inherit;overflow:hidden;background:#fff}
+.sdeck__face.is-swap{animation:sdeck-swap .38s var(--sd-ease) both}
+.sdeck__face a{display:block}
+.sdeck__media{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain}
+.sdeck__shine{                                /* a soft light that follows the cursor */
+  position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at var(--sx,50%) var(--sy,50%), rgba(255,255,255,.55), transparent 55%);
+  mix-blend-mode:soft-light;transition:opacity .3s ease;
+}
+.sdeck__tilt.is-tilting .sdeck__shine{opacity:1}
+.sdeck__soon{
+  aspect-ratio:7/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;
+}
+.sdeck__soon img{width:56px;height:56px;object-fit:contain}
+.sdeck__soon span{font-family:var(--font-mono);font-size:.7rem;color:#63705F;letter-spacing:.03em}
+
+.sdeck__bar{display:flex;justify-content:flex-end;align-items:center;gap:.5rem;margin-top:.55rem}
+.sdeck__visit{
+  display:inline-flex;align-items:center;gap:.35rem;
+  padding:.38rem .8rem;border-radius:var(--r-pill);
+  background:var(--glass-panel-bg);border:1px solid var(--glass-panel-border);
+  backdrop-filter:var(--glass-panel-blur);-webkit-backdrop-filter:var(--glass-panel-blur);
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.02em;
+  color:var(--c-ink);text-decoration:none;
+  transition:border-color var(--dur-1), transform var(--dur-2) var(--ease-spring);
+}
+.sdeck__visit span{color:var(--sd-glow)}
+.sdeck__visit:hover{border-color:var(--c-primary);transform:translateY(-1px)}
+.sdeck__visit[hidden]{display:none}
+.sdeck__x{display:none}
+
+/* ---------- phones / touch: the card rises as a sheet above the dock ---------- */
+@media (hover:none), (max-width:640px){
+  .sdeck{--sd-logo:42px}
+  .sdeck__stage{
+    position:fixed;right:auto;left:50%;top:auto;
+    bottom:calc(92px + env(safe-area-inset-bottom));
+    width:min(440px, calc(100vw - 32px));padding:0;
+    transform:translate(-50%, 24px);perspective:none;
+    transition:opacity .25s ease, transform .45s var(--sd-ease), visibility 0s linear .25s;
+  }
+  .sdeck__stage.is-shown{
+    transform:translate(-50%, 0);
+    transition:opacity .25s ease, transform .45s var(--sd-ease), visibility 0s;
+  }
+  .sdeck__tilt{transform:none}
+  .sdeck__bar{justify-content:space-between;margin-top:.65rem}
+  .sdeck__visit{padding:.6rem 1rem;font-size:.8rem;flex:1;justify-content:center}
+  .sdeck__x{
+    display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;cursor:pointer;
+    background:var(--glass-panel-bg);border:1px solid var(--glass-panel-border);
+    backdrop-filter:var(--glass-panel-blur);-webkit-backdrop-filter:var(--glass-panel-blur);
+    color:var(--c-ink);font-size:1.3rem;line-height:1;
+  }
+  .sdeck__visit[hidden] + .sdeck__x{margin-left:auto}
+}
+@media (max-width:480px){ .sdeck{top:calc(10px + env(safe-area-inset-top));right:10px} }
+
+@keyframes sdeck-shine{0%{transform:translateX(-120%)}40%,100%{transform:translateX(120%)}}
+@keyframes sdeck-swap{from{opacity:.25;transform:scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .sdeck__spark::after{animation:none;opacity:0}
+  .sdeck__dot{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c-primary) 30%,transparent)}
+  .sdeck__item,.sdeck.is-open .sdeck__item{transform:none;transition:opacity .2s ease;transition-delay:0s}
+  .sdeck__stage,.sdeck__stage.is-shown{transition:opacity .2s ease, visibility 0s}
+  .sdeck__face.is-swap{animation:none}
+}

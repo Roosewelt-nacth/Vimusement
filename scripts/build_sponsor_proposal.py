@@ -204,8 +204,7 @@ tier_block(doc, "Product Partner", "Products / vouchers",
     "Give what you make or sell — food, drinks, goods — and we promote your "
     "brand in return. Great for restaurants, cafés and shops.")
 tier_block(doc, "Prize Partner", "Gifts / vouchers",
-    "Sponsor a Lucky Draw or game prize — your brand gets named live on stage "
-    "the moment it's won.", last=True)
+    "Sponsor a game prize — your brand gets named the moment it's won.", last=True)
 
 p = para(doc, space_before=4, space_after=16)
 r = p.add_run("Not sure which fits? Message us and we'll shape a package around what "

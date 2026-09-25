@@ -154,7 +154,7 @@
             '</div>' +
           '</div>' +
           '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote ? ctx.L(S.footerNote) : "An annual parish fundraiser.") + '</p>' +
-          '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a> · <a href="stage.html">' + ctx.t("footer.liveDraw") + '</a></p>' +
+          '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a></p>' +
           '<a class="footer__secret" href="credits.html">' +
             '<span class="footer__secret-dot" aria-hidden="true"></span>' +
             '<span class="footer__secret-text">' + ctx.t("footer.credit") + ' <b>Austin</b> &rarr;</span>' +
