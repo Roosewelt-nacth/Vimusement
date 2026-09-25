@@ -61,10 +61,9 @@ window.VIM_YEARS["2026"] = {
     // Volunteer → WhatsApp Austin directly (India +91). NOTE: this number
     // is published on the public site.
     volunteer: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20volunteer%20for%20Vimusement%202026.",
-    // Sponsor → WhatsApp Fredrica directly, Victorians Youth Joint
-    // Secretary — she's the point of contact for sponsor enquiries.
+    // Sponsor → WhatsApp Austin directly (same contact as volunteering).
     // NOTE: this number is published on the public site.
-    sponsor: "https://wa.me/919025943235?text=Hi%20Fredrica%2C%20I%27d%20like%20to%20know%20more%20about%20sponsoring%20Vimusement%202026.",
+    sponsor: "https://wa.me/916379468686?text=Hi%20Austin%2C%20I%27d%20like%20to%20know%20more%20about%20sponsoring%20Vimusement%202026.",
     // Run a stall → the stalls page (list + prices, still being finalised).
     stall: "stalls.html"
   },
@@ -282,18 +281,10 @@ window.VIM_YEARS["2026"] = {
     intro: { en: "Back Vimusement as a business or a family — cash, products, or prizes all help, and every tier gets your name in front of the crowd.",
              ta: "ஒரு வணிகமாகவோ அல்லது குடும்பமாகவோ விமுஸ்மென்ட்டை ஆதரிக்கவும் — பணம், பொருட்கள், அல்லது பரிசுகள் அனைத்தும் உதவும், ஒவ்வொரு நிலையும் கூட்டத்தின் முன் உங்கள் பெயரைக் கொண்டு வரும்." },
     tiers: [
-      { key: "title",   amount: "₹50,000+",
-        name: { en: "Title Partner", ta: "முதன்மை பங்குதாரர்" },
-        benefits: { en: "Maximum visibility — top billing on every poster, banner and announcement.",
-                    ta: "அதிகபட்ச தெரிவுநிலை — ஒவ்வொரு சுவரொட்டி, பதாகை மற்றும் அறிவிப்பிலும் முதன்மை இடம்." } },
-      { key: "gold",    amount: "₹25,000",
-        name: { en: "Gold Partner", ta: "தங்க பங்குதாரர்" },
-        benefits: { en: "Major branding on-ground, plus a dedicated shout-out across our social pages.",
-                    ta: "தளத்தில் பெரிய அளவிலான பிராண்டிங், மேலும் எங்கள் சமூக ஊடக பக்கங்களில் ஒரு பிரத்யேக குறிப்பு." } },
-      { key: "silver",  amount: "₹10,000",
-        name: { en: "Silver Partner", ta: "வெள்ளி பங்குதாரர்" },
-        benefits: { en: "Logo on event banners and a mention in our social media posts.",
-                    ta: "நிகழ்வு பதாகைகளில் லோகோ மற்றும் எங்கள் சமூக ஊடக இடுகைகளில் ஒரு குறிப்பு." } },
+      { key: "cash",    amount: "₹10,000+",
+        name: { en: "Cash Partner", ta: "பண பங்குதாரர்" },
+        benefits: { en: "Logo on event banners, a mention in our social media posts, and a shout-out on stage — the bigger the contribution, the bigger the billing.",
+                    ta: "நிகழ்வு பதாகைகளில் லோகோ, எங்கள் சமூக ஊடக இடுகைகளில் ஒரு குறிப்பு, மேலும் மேடையில் ஒரு குறிப்பு — பங்களிப்பு அதிகமாக இருந்தால் இடம் அதிகமாக இருக்கும்." } },
       { key: "product", amount: { en: "Products / vouchers", ta: "பொருட்கள் / வவுச்சர்கள்" },
         name: { en: "Product Partner", ta: "பொருள் பங்குதாரர்" },
         benefits: { en: "Give what you make or sell — food, drinks, goods — and we promote your brand in return.",
