@@ -158,8 +158,8 @@ window.VIM_YEARS["2026"] = {
               ta: "வீட்டு சமையல் முதல் உள்ளூர் விற்பனையாளர்கள் வரை, பிரியாணி முதல் கேண்டி ஃப்ளாஸ் வரை. ஒவ்வொரு கடையிலும் பணமில்லா UPI." } },
     { theme: "movies", icon: "movie",
       title: { en: "Movie Screenings", ta: "திரைப்பட காட்சிகள்" },
-      text: { en: "Screenings in the Basement and the AV room. Book a slot online, show your code at the door.",
-              ta: "பேஸ்மென்ட் மற்றும் AV அறையில் திரையிடல். ஆன்லைனில் நேரம் பதிவு செய்து, வாசலில் உங்கள் குறியீட்டை காட்டவும்." } }
+      text: { en: "Five films on the big screen in the AV room, from Zootopia 2 to Fall 2: Deadpoint. Show times coming soon.",
+              ta: "AV அறையில் பெரிய திரையில் ஐந்து படங்கள், Zootopia 2 முதல் Fall 2: Deadpoint வரை. காட்சி நேரங்கள் விரைவில்." } }
   ],
 
   causes: [
@@ -371,7 +371,7 @@ window.VIM_YEARS["2026"] = {
     prizes: [
       { place: { en: "1st prize", ta: "1வது பரிசு" }, name: { en: "Sofa", ta: "சோஃபா" }, icon: "sofa", worth: 12000,
         sub: { en: "Three-seater", ta: "மூன்று இருக்கை" } },
-      { place: { en: "2nd prize", ta: "2வது பரிசு" }, name: { en: "Air fryer or OTG oven", ta: "ஏர் ஃப்ரையர் அல்லது OTG ஓவன்" }, icon: "airfryer", worth: 7000 },
+      { place: { en: "2nd prize", ta: "2வது பரிசு" }, name: { en: "Air fryer", ta: "ஏர் ஃப்ரையர்" }, icon: "airfryer", worth: 7000 },
       { place: { en: "3rd prize", ta: "3வது பரிசு" }, name: { en: "Mixer", ta: "மிக்ஸி" }, icon: "mixer", worth: 5000 },
       { place: { en: "4th prize", ta: "4வது பரிசு" }, name: { en: "Cooker", ta: "குக்கர்" }, icon: "cooker", worth: 4000 }
     ],
@@ -424,7 +424,7 @@ window.VIM_YEARS["2026"] = {
       { at: "07:30", label: { en: "Doors open", ta: "வாயில் திறப்பு" }, icon: "gate",
         note: { en: "Breakfast, food stalls, games and craft tables", ta: "காலை உணவு, உணவு கடைகள், விளையாட்டுகள் மற்றும் கைவினை மேசைகள்" } },
       { at: "10:00", label: { en: "Screenings begin", ta: "திரையிடல் தொடங்குகிறது" }, icon: "movie",
-        note: { en: "Basement and AV room, running through the day", ta: "பேஸ்மென்ட் மற்றும் AV அறை, நாள் முழுவதும் நடைபெறும்" } },
+        note: { en: "In the AV room, running through the day", ta: "AV அறையில், நாள் முழுவதும் நடைபெறும்" } },
       { at: "18:00", label: { en: "Evening mass", ta: "மாலை திருப்பலி" }, icon: "bell",
         note: { en: "In the church", ta: "தேவாலயத்தில்" } },
       { at: "19:30", label: { en: "Lucky draw", ta: "லக்கி டிரா" }, icon: "star",
@@ -432,18 +432,18 @@ window.VIM_YEARS["2026"] = {
       { at: "21:00", label: { en: "Screenings close", ta: "திரையிடல் நிறைவு" }, icon: "moon",
         note: { en: "The last films wrap up", ta: "கடைசி படங்கள் முடிவடைகின்றன" } }
     ],
-    screeningsNote: { en: "Nine films across the Basement and the AV room. The full line-up and times are announced closer to the date.",
-                       ta: "பேஸ்மென்ட் மற்றும் AV அறையில் ஒன்பது படங்கள். முழு பட்டியல் மற்றும் நேரங்கள் தேதிக்கு நெருக்கமாக அறிவிக்கப்படும்." },
+    screeningsNote: { en: "The planned line-up: five films, all in the AV room. Show times are announced closer to the date.",
+                       ta: "திட்டமிடப்பட்ட பட்டியல்: ஐந்து படங்கள், அனைத்தும் AV அறையில். காட்சி நேரங்கள் தேதிக்கு நெருக்கமாக அறிவிக்கப்படும்." },
+    /* The 2026 line-up — PLANNED (Sep 2026), timings not confirmed.
+       Every film is in the AV Room this year. `time` is "HH:MM" (24h);
+       "" = not announced yet. `venue` must match a venueMap zone ("" shows
+       "Room TBA"). Titles stay plain strings (film names aren't translated). */
     screenings: [
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "Basement", rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" },
-      { title: "", time: "", venue: "AV Room",  rating: "" }
+      { title: "Brand New Day",     time: "", venue: "AV Room", rating: "" },
+      { title: "Obsession",         time: "", venue: "AV Room", rating: "" },
+      { title: "Sheep Detectives",  time: "", venue: "AV Room", rating: "" },
+      { title: "Fall 2: Deadpoint", time: "", venue: "AV Room", rating: "" },
+      { title: "Zootopia 2",        time: "", venue: "AV Room", rating: "" }
     ],
     games: [
       { name: { en: "Housie / Tambola", ta: "ஹவுசி / தம்போலா" },     venue: "Center of Attraction" },
@@ -484,11 +484,11 @@ window.VIM_YEARS["2026"] = {
         blurb: { en: "Breakfast from 7:30, then snacks and meals all day. Cashless UPI.",
                  ta: "7:30 முதல் காலை உணவு, பின்னர் நாள் முழுவதும் சிற்றுண்டி மற்றும் உணவுகள். பணமில்லா UPI." } },
       { id: "basement", label: { en: "Basement", ta: "பேஸ்மென்ட்" }, venue: "Basement",
-        blurb: { en: "Movie screenings from 10am. Stairs by the side door.",
-                 ta: "காலை 10 மணி முதல் திரைப்பட காட்சிகள். பக்கவாட்டு கதவு வழியாக படிக்கட்டுகள்." } },
+        blurb: { en: "No screenings down here this year. Every film is in the AV room, above stalls 17–20.",
+                 ta: "இந்த ஆண்டு இங்கே திரையிடல் இல்லை. எல்லா படங்களும் கடைகள் 17–20க்கு மேலுள்ள AV அறையில்." } },
       { id: "av",       label: { en: "AV Room", ta: "AV அறை" }, venue: "AV Room",
-        blurb: { en: "More screenings, on the third floor above stalls 17–20. Follow the signs.",
-                 ta: "மேலும் திரையிடல்கள், கடைகள் 17–20க்கு மேல் மூன்றாவது மாடியில். அடையாளங்களை பின்பற்றவும்." } },
+        blurb: { en: "Every screening is here, on the third floor above stalls 17–20. Follow the signs.",
+                 ta: "எல்லா திரையிடல்களும் இங்கே, கடைகள் 17–20க்கு மேல் மூன்றாவது மாடியில். அடையாளங்களை பின்பற்றவும்." } },
       { id: "church",   label: { en: "Church", ta: "தேவாலயம்" }, venue: "Church",
         blurb: { en: "Evening mass at 6. Open through the day for a quiet moment.",
                  ta: "மாலை 6 மணிக்கு திருப்பலி. அமைதியான தருணத்திற்கு நாள் முழுவதும் திறந்திருக்கும்." } },

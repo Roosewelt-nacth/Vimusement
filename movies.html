@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-year-theme="doomsday">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n-title="movies.title">Movies · Vimusement {year}</title>
+<meta name="description" data-i18n-content="movies.meta" content="Five films on the big screen at Vimusement, all in the AV room at Ascension Church on 25 October. Show times coming soon.">
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<script>
+document.documentElement.className+=" js";
+(function(){try{var m=localStorage.getItem("vim-theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);}catch(e){}})();
+(function(){try{if(localStorage.getItem("vim-lang")==="ta")document.documentElement.setAttribute("data-lang","ta");}catch(e){}})();
+(function(){try{var d=sessionStorage.getItem("vim-nav-dir");if(d){document.documentElement.setAttribute("data-nav-dir",d);sessionStorage.removeItem("vim-nav-dir");}}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/pages/subpage.css">
+<link rel="stylesheet" href="assets/css/pages/movies.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!--
+  Movies promo page. The line-up is years/<year>.config.js → program.screenings
+  (title, time, venue, rating, optional poster). Tickets aren't decided yet,
+  so there's no booking or payment here — just "coming soon".
+-->
+<main id="main">
+<header class="cine-hero">
+  <div class="cine-hero__beam" aria-hidden="true"></div>
+  <div class="cine-hero__dust" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow" data-animate="fade-up" data-i18n="movies.hero.eyebrow">Movies at Vimusement</p>
+    <h1 data-animate="fade-up" data-animate-delay="0.06" data-i18n="movies.hero.title">Five films. One big screen.</h1>
+    <p class="cine-hero__lead" data-animate="fade-up" data-animate-delay="0.12" data-i18n="movies.hero.sub">The planned line-up for 25 October, all in the AV room. Grab a seat between the games and the food street.</p>
+    <ul class="cine-chips" data-animate="fade-up" data-animate-delay="0.18" data-cine-chips></ul>
+  </div>
+</header>
+
+<!-- ================= THE LINE-UP (poster wall) ================= -->
+<section class="cine-lineup">
+  <div class="wrap">
+    <div class="cine-lineup__head">
+      <div>
+        <p class="eyebrow" data-animate="fade-up" data-i18n="movies.lineup.eyebrow">The line-up</p>
+        <h2 class="section__title" data-animate="fade-up" data-i18n="movies.lineup.title">Now planned for the AV room</h2>
+      </div>
+      <span class="cine-tbc" data-animate="fade-up" data-i18n="movies.lineup.tbc">Show times to be confirmed</span>
+    </div>
+    <ol class="cine-posters" data-cine-posters></ol>
+    <p class="cine-note" data-animate="fade-up" data-i18n="movies.lineup.note">This is the planned line-up. Films and timings may change; the final schedule will be posted here and on our Instagram.</p>
+  </div>
+</section>
+
+<!-- ================= WHERE + TICKETS ================= -->
+<section class="cine-info">
+  <div class="wrap cine-info__grid">
+    <article class="cine-card" data-animate="fade-up">
+      <p class="cine-card__label" data-i18n="movies.where.label">Where</p>
+      <h3 class="cine-card__title" data-i18n="movies.where.title">The AV room</h3>
+      <p class="cine-card__text" data-i18n="movies.where.text">Third floor, above stalls 17–20 on the church grounds. Follow the signs from the Center of Attraction.</p>
+      <a class="btn btn--pill-ghost" href="programme.html#map" data-i18n="movies.where.cta">See it on the map</a>
+    </article>
+    <article class="cine-card" data-animate="fade-up" data-animate-delay="0.06">
+      <p class="cine-card__label" data-i18n="movies.when.label">When</p>
+      <h3 class="cine-card__title" data-i18n="movies.when.title">Sunday 25 October</h3>
+      <p class="cine-card__text" data-i18n="movies.when.text">Screenings run through the day, from around 10am. Exact show times for each film are coming soon.</p>
+    </article>
+    <article class="cine-card cine-card--tickets" data-animate="fade-up" data-animate-delay="0.12">
+      <p class="cine-card__label" data-i18n="movies.tickets.label">Tickets</p>
+      <h3 class="cine-card__title" data-i18n="movies.tickets.title">Coming soon</h3>
+      <p class="cine-card__text" data-i18n="movies.tickets.text">Ticket details are on the way. Follow us to hear first when show times and tickets are out.</p>
+      <a class="btn btn--gold" data-cine-follow href="#" target="_blank" rel="noopener" data-i18n="movies.tickets.cta">Follow @victorians.youth</a>
+    </article>
+  </div>
+</section>
+
+<div class="wrap pageflow">
+  <a href="programme.html" data-i18n="movies.prevLink">← Programme</a>
+  <a href="draw.html" data-i18n="movies.nextLink">Lucky Draw →</a>
+</div>
+</main>
+
+<footer class="footer" data-site-footer></footer>
+<nav class="dock" data-dock aria-label="Primary"></nav>
+
+<script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/strings.js"></script>
+<script defer src="years/2026.config.js"></script>
+<script defer src="years/current.js"></script>
+<script defer src="assets/js/site.config.js"></script>
+<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/i18n.js"></script>
+<script defer src="assets/js/modules/theme.js"></script>
+<script defer src="assets/js/modules/lang.js"></script>
+<script defer src="assets/js/modules/langprompt.js"></script>
+<script defer src="assets/js/modules/creditbadge.js"></script>
+<script defer src="assets/js/modules/sponsordeck.js"></script>
+<script defer src="assets/js/modules/dock.js"></script>
+<script defer src="assets/js/modules/dockswipe.js"></script>
+<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/moviespage.js"></script>
+<script defer src="assets/js/modules/motion.js"></script>
+<script defer src="assets/js/modules/polish.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

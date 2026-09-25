@@ -150,10 +150,15 @@
             (s.time ? '<span class="vm-scr__time">' + esc(s.time) + '</span>' : '') +
             '<span class="vm-scr__title">' + esc(s.title) +
               (s.rating ? ' <span class="vm-panel__tag">' + esc(s.rating) + '</span>' : '') + '</span>' +
-            '<button type="button" class="vm-scr__venue" data-zone="' + esc(venueToZone(s.venue)) + '">' +
-              esc(zoneLabel(s.venue)) + '</button>' +
+            (s.venue
+              ? '<button type="button" class="vm-scr__venue" data-zone="' + esc(venueToZone(s.venue)) + '">' + esc(zoneLabel(s.venue)) + '</button>'
+              : '<span class="vm-scr__venue vm-scr__venue--tba">' + esc(ctx.t("venuemap.roomSoon")) + '</span>') +
           '</li>';
         }).join("");
+        /* some rooms/times still open — say so once, under the list */
+        if (scrTitled.some(function (s) { return !s.time || !s.venue; }) && P.screeningsNote) {
+          scheduleEl.insertAdjacentHTML("afterend", '<p class="venuemap__screenings-note">' + esc(ctx.L(P.screeningsNote)) + '</p>');
+        }
         ctx.$$(".vm-scr__venue", scheduleEl).forEach(function (b) {
           b.addEventListener("click", function () {
             var id = b.getAttribute("data-zone");
