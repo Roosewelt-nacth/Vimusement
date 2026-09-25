@@ -170,6 +170,45 @@
       }
     })();
 
+    /* ---- sponsorship page (sponsors.html) ---- */
+    (function sponsors() {
+      var sp = Y.sponsorship || {};
+      ctx.$$("[data-sponsor-intro]").forEach(function (el) { if (sp.intro) el.textContent = ctx.L(sp.intro); });
+      ctx.$$("[data-sponsor-wa]").forEach(function (el) {
+        var href = (Y.forms || {}).sponsor;
+        if (href) { el.setAttribute("href", href); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener"); }
+      });
+
+      var tiersEl = ctx.$("[data-sponsor-tiers]");
+      if (tiersEl) {
+        if (sp.tiers && sp.tiers.length) {
+          tiersEl.innerHTML = sp.tiers.map(function (t) {
+            return '<div class="sponsor-tier" data-animate="fade-up">' +
+              '<div class="sponsor-tier__head">' +
+                '<h3>' + esc(ctx.L(t.name)) + '</h3>' +
+                '<span class="sponsor-tier__amount">' + esc(ctx.L(t.amount)) + '</span>' +
+              '</div>' +
+              '<p>' + esc(ctx.L(t.benefits)) + '</p>' +
+            '</div>';
+          }).join("");
+        } else {
+          tiersEl.innerHTML = '<p class="stalls__tbc">' + ctx.t("sponsors.tiersTbc") + '</p>';
+        }
+      }
+
+      var whyEl = ctx.$("[data-sponsor-why]");
+      if (whyEl && sp.why && sp.why.length) {
+        whyEl.innerHTML = sp.why.map(function (w, i) {
+          var accent = ["gold", "rose", "teal"][i % 3];
+          return '<div class="card card--' + accent + '" data-animate="fade-up" data-animate-delay="' + (i * 0.06).toFixed(2) + '">' +
+            '<div class="card__icon">' + (ICONS[w.icon] || "") + '</div>' +
+            '<h3>' + esc(ctx.L(w.title)) + '</h3>' +
+            '<p>' + esc(ctx.L(w.text)) + '</p>' +
+          '</div>';
+        }).join("");
+      }
+    })();
+
     /* ---- contact links ---- */
     ctx.$$("[data-bind-contact]").forEach(function (el) {
       if (Y.contactEmail) { el.setAttribute("href", "mailto:" + Y.contactEmail); el.textContent = Y.contactEmail; }

@@ -272,6 +272,50 @@ window.VIM_YEARS["2026"] = {
     contactInstagram: "https://ig.me/m/victorians.youth"
   },
 
+  /* ---------- SPONSORSHIP  (the sponsors.html page) ----------
+     Contact reuses forms.sponsor above (Fredrica, Victorians Youth
+     Joint Secretary) rather than duplicating the number here.
+     Amounts are a starting point, not locked — edit freely as the
+     committee sets real figures. Product/Prize partners give goods
+     or vouchers instead of a cash amount, so `amount` is text there. */
+  sponsorship: {
+    intro: { en: "Back Vimusement as a business or a family — cash, products, or prizes all help, and every tier gets your name in front of the crowd.",
+             ta: "ஒரு வணிகமாகவோ அல்லது குடும்பமாகவோ விமுஸ்மென்ட்டை ஆதரிக்கவும் — பணம், பொருட்கள், அல்லது பரிசுகள் அனைத்தும் உதவும், ஒவ்வொரு நிலையும் கூட்டத்தின் முன் உங்கள் பெயரைக் கொண்டு வரும்." },
+    tiers: [
+      { key: "title",   amount: "₹50,000+",
+        name: { en: "Title Partner", ta: "முதன்மை பங்குதாரர்" },
+        benefits: { en: "Maximum visibility — top billing on every poster, banner and announcement.",
+                    ta: "அதிகபட்ச தெரிவுநிலை — ஒவ்வொரு சுவரொட்டி, பதாகை மற்றும் அறிவிப்பிலும் முதன்மை இடம்." } },
+      { key: "gold",    amount: "₹25,000",
+        name: { en: "Gold Partner", ta: "தங்க பங்குதாரர்" },
+        benefits: { en: "Major branding on-ground, plus a dedicated shout-out across our social pages.",
+                    ta: "தளத்தில் பெரிய அளவிலான பிராண்டிங், மேலும் எங்கள் சமூக ஊடக பக்கங்களில் ஒரு பிரத்யேக குறிப்பு." } },
+      { key: "silver",  amount: "₹10,000",
+        name: { en: "Silver Partner", ta: "வெள்ளி பங்குதாரர்" },
+        benefits: { en: "Logo on event banners and a mention in our social media posts.",
+                    ta: "நிகழ்வு பதாகைகளில் லோகோ மற்றும் எங்கள் சமூக ஊடக இடுகைகளில் ஒரு குறிப்பு." } },
+      { key: "product", amount: { en: "Products / vouchers", ta: "பொருட்கள் / வவுச்சர்கள்" },
+        name: { en: "Product Partner", ta: "பொருள் பங்குதாரர்" },
+        benefits: { en: "Give what you make or sell — food, drinks, goods — and we promote your brand in return.",
+                    ta: "நீங்கள் தயாரிப்பது அல்லது விற்பதை கொடுங்கள் — உணவு, பானங்கள், பொருட்கள் — நாங்கள் பதிலுக்கு உங்கள் பிராண்டை விளம்பரப்படுத்துவோம்." } },
+      { key: "prize",   amount: { en: "Gifts / vouchers", ta: "பரிசுகள் / வவுச்சர்கள்" },
+        name: { en: "Prize Partner", ta: "பரிசு பங்குதாரர்" },
+        benefits: { en: "Sponsor a Lucky Draw or game prize — your brand gets named the moment it's won, live on stage.",
+                    ta: "லக்கி டிரா அல்லது விளையாட்டு பரிசை நிதியளியுங்கள் — அது வெல்லப்படும் தருணத்தில் உங்கள் பிராண்டு மேடையில் நேரடியாக பெயரிடப்படும்." } }
+    ],
+    why: [
+      { icon: "hands", title: { en: "A local, built-in crowd", ta: "உள்ளூர், உள்ளடங்கிய கூட்டம்" },
+        text: { en: "Families and young people from right around Aminjikkarai, all in one place for a day.",
+                ta: "அமின்ஜிக்கரை சுற்றியுள்ள குடும்பங்களும் இளைஞர்களும், ஒரு நாளில் ஒரே இடத்தில்." } },
+      { icon: "star", title: { en: "Real, visible branding", ta: "உண்மையான, தெரியும் பிராண்டிங்" },
+        text: { en: "Posters, banners, stage announcements and screens on the day — not just a logo in fine print.",
+                ta: "நாளின் போது சுவரொட்டிகள், பதாகைகள், மேடை அறிவிப்புகள் மற்றும் திரைகள் — வெறும் சிறிய எழுத்தில் ஒரு லோகோ மட்டுமல்ல." } },
+      { icon: "heart", title: { en: "It's a donation too", ta: "இது ஒரு நன்கொடையும் கூட" },
+        text: { en: "Every rupee (or product) goes toward the same scholarships, medical fund and hardship support Vimusement runs on.",
+                ta: "ஒவ்வொரு ரூபாயும் (அல்லது பொருளும்) விமுஸ்மென்ட் நடத்தும் அதே உதவித்தொகை, மருத்துவ நிதி மற்றும் கஷ்ட உதவிக்கு செல்கிறது." } }
+    ]
+  },
+
   /* ---------- DONATIONS ----------
      Zero-fee UPI. The donor pays straight to the parish UPI id; a
      volunteer confirms it in the Master sheet; the Apps Script then

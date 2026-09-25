@@ -120,6 +120,22 @@
   background:var(--c-primary);
 }
 
+/* sponsorship tiers — one card per partnership level */
+.sponsor-tiers{margin-top:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem}
+.sponsor-tier{
+  border:1px solid var(--c-line);border-radius:var(--r-lg);padding:var(--sp-5);
+  background:var(--c-surface);transition:border-color var(--dur-2),transform var(--dur-2),box-shadow var(--dur-2);
+}
+.sponsor-tier:hover{border-color:color-mix(in srgb,var(--c-primary) 30%,var(--c-line));transform:translateY(-2px);box-shadow:var(--shadow-lift)}
+@media (prefers-reduced-motion:reduce){.sponsor-tier:hover{transform:none}}
+.sponsor-tier__head{display:flex;align-items:baseline;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
+.sponsor-tier__head h3{margin:0;font-size:1.05rem;color:var(--c-ink)}
+.sponsor-tier__amount{
+  font-family:var(--font-mono);font-size:.86rem;font-weight:var(--weight-semi);
+  color:var(--c-primary-ink);white-space:nowrap;
+}
+.sponsor-tier p{margin:.6rem 0 0;font-size:var(--fs-sm);color:var(--c-ink-soft);line-height:1.5}
+
 /* "how it works" — three numbered steps */
 .how-steps{
   margin-top:2rem;list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.4rem;

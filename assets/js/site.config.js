@@ -22,6 +22,7 @@ window.VIM_SITE = {
     { label: { en: "Lucky Draw", ta: "லக்கி டிரா" },       file: "draw.html",      icon: "ticket", primary: true },
     { label: { en: "Gallery", ta: "புகைப்படங்கள்" },       file: "gallery.html",   icon: "photos" },
     { label: { en: "Get Involved", ta: "பங்கேற்க" },       file: "involve.html",   icon: "people" },
+    { label: { en: "Sponsorship", ta: "ஸ்பான்சர்ஷிப்" },   file: "sponsors.html",  icon: "star" },
     { label: { en: "Find My Ticket", ta: "எனது சீட்டு" },  file: "tickets.html",  icon: "search" },
     // { label: { en: "Developers", ta: "டெவலப்பர்கள்" }, file: "developers.html", icon: "code" },   // hidden for now — page still exists, just not linked
     { label: { en: "Donate", ta: "நன்கொடை" },             file: "donate.html",    icon: "gift", cta: true }
