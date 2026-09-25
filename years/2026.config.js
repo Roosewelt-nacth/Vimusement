@@ -278,11 +278,11 @@ window.VIM_YEARS["2026"] = {
      committee sets real figures. Product/Prize partners give goods
      or vouchers instead of a cash amount, so `amount` is text there. */
   sponsorship: {
-    intro: { en: "Back Vimusement as a business or a family — cash, products, or prizes all help, and every tier gets your name in front of the crowd.",
-             ta: "ஒரு வணிகமாகவோ அல்லது குடும்பமாகவோ விமுஸ்மென்ட்டை ஆதரிக்கவும் — பணம், பொருட்கள், அல்லது பரிசுகள் அனைத்தும் உதவும், ஒவ்வொரு நிலையும் கூட்டத்தின் முன் உங்கள் பெயரைக் கொண்டு வரும்." },
+    intro: { en: "Back Vimusement as a business or a family — a contribution, products, or prizes all help, and every tier gets your name in front of the crowd.",
+             ta: "ஒரு வணிகமாகவோ அல்லது குடும்பமாகவோ விமுஸ்மென்ட்டை ஆதரிக்கவும் — ஒரு பங்களிப்பு, பொருட்கள், அல்லது பரிசுகள் அனைத்தும் உதவும், ஒவ்வொரு நிலையும் கூட்டத்தின் முன் உங்கள் பெயரைக் கொண்டு வரும்." },
     tiers: [
-      { key: "cash",    amount: "₹10,000+",
-        name: { en: "Cash Partner", ta: "பண பங்குதாரர்" },
+      { key: "community", amount: "₹10,000+",
+        name: { en: "Community Partner", ta: "சமூக பங்குதாரர்" },
         benefits: { en: "Logo on event banners, a mention in our social media posts, and a shout-out on stage — the bigger the contribution, the bigger the billing.",
                     ta: "நிகழ்வு பதாகைகளில் லோகோ, எங்கள் சமூக ஊடக இடுகைகளில் ஒரு குறிப்பு, மேலும் மேடையில் ஒரு குறிப்பு — பங்களிப்பு அதிகமாக இருந்தால் இடம் அதிகமாக இருக்கும்." } },
       { key: "product", amount: { en: "Products / vouchers", ta: "பொருட்கள் / வவுச்சர்கள்" },
