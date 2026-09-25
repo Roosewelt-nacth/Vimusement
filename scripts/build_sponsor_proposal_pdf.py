@@ -123,7 +123,7 @@ tiers = [
     ("Product Partner", "Products / vouchers",
      "Give what you make or sell — food, drinks, goods — and we promote your brand in return. Great for restaurants, cafés and shops."),
     ("Prize Partner", "Gifts / vouchers",
-     "Sponsor a game prize — your brand gets named the moment it's won."),
+     "Sponsor a game prize, and your brand gets named the moment it's won."),
 ]
 for name, amount, benefit in tiers:
     cell = Table(

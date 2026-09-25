@@ -16,7 +16,9 @@ window.VIM_SITE = {
      screen size. Anything without it never sits on the bar at all —
      it only ever lives in the dock's "More" dropdown instead. */
   pages: [
-    { label: { en: "Home", ta: "முகப்பு" },              file: "index.html",     icon: "home",   primary: true },
+    // dock:false — the Vimusement mark at the start of the bar already goes home, so
+    // Home isn't repeated on the dock; it still appears in the footer's page list.
+    { label: { en: "Home", ta: "முகப்பு" },              file: "index.html",     icon: "home",   primary: true, dock: false },
     { label: { en: "Programme", ta: "நிகழ்ச்சி நிரல்" },   file: "programme.html", icon: "screen", primary: true },
     { label: { en: "The Cause", ta: "நோக்கம்" },          file: "cause.html",     icon: "heart",  primary: true },
     { label: { en: "Movies", ta: "திரைப்படங்கள்" },         file: "movies.html",    icon: "film",   primary: true },

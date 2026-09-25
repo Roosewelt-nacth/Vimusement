@@ -44,7 +44,7 @@
     /* ---------- dock ---------- */
     var dock = ctx.$("[data-dock]");
     if (dock && pages.length) {
-      var navPages = pages.filter(function (p) { return !p.cta; });
+      var navPages = pages.filter(function (p) { return !p.cta && p.dock !== false; });
       var secondary = navPages.filter(function (p) { return !p.primary; });
 
       function linkHTML(p, cls) {
@@ -108,7 +108,7 @@
 
       dock.innerHTML =
         '<div class="dock__inner">' +
-          '<a href="index.html" class="dock__brand" aria-label="Vimusement home">' +
+          '<a href="index.html" class="dock__brand" aria-label="Vimusement home"' + (here === "index.html" ? ' aria-current="page"' : '') + '>' +
             '<svg class="dock__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="1.6"/><path d="M12 3v16M4 11h16M6.3 5.3l11.4 11.4M17.7 5.3 6.3 16.7"/></svg>' +
             '<span>Vimu<b>sement</b></span>' +
           '</a>' +

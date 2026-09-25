@@ -25,6 +25,8 @@ Full walkthrough + 13-step verification: **`docs/donations-setup.md`**.
 | `ipaid&ref=&utr=` | `{ok}` | donor says they've paid → row `Paid?` |
 | `donors` | `{donors:[name…],count}` | supporters wall — **names only** |
 | `stats` | `{total,count}` | aggregate total (only if `donation.showTotal`) |
+| `pollVote&film=&voter=` | `{ok,results}` | movie poll: one vote per anonymous browser id (`MoviePoll` tab) |
+| `pollResults` | `{total,counts,open}` | movie poll tallies (cached 20s). Close with Script property `POLL_OPEN=false`; override the film list with `POLL_FILMS` (JSON array) |
 
 Confirmation + donor email happen in `processConfirmations()`, fired by the on-edit
 trigger, the **Vimusement** sheet menu, and `houseKeeping`.

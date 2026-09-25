@@ -260,10 +260,9 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .dock__cta{gap:0;padding:.6rem .9rem}
   .dock__brand span{display:none}
 }
-@media (max-width:380px){
-  .dock__mark{display:none}
-  .dock__brand{display:none}
-}
+/* (the mark used to be hidden under 380px, with the Home icon as the way
+   back; Home is off the dock now — site.config.js dock:false — so the
+   mark stays at every width, in the space Home used to take) */
 /* narrow phones: even just the primary 4 icons + More + the Donate
    pill + the theme toggle don't quite fit an ~350px-wide dock with
    room to spare — tighten the spacing first, then ease every icon

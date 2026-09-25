@@ -306,8 +306,8 @@ window.VIM_YEARS["2026"] = {
                     ta: "நீங்கள் தயாரிப்பது அல்லது விற்பதை கொடுங்கள் — உணவு, பானங்கள், பொருட்கள் — நாங்கள் பதிலுக்கு உங்கள் பிராண்டை விளம்பரப்படுத்துவோம்." } },
       { key: "prize",   amount: { en: "Gifts / vouchers", ta: "பரிசுகள் / வவுச்சர்கள்" },
         name: { en: "Prize Partner", ta: "பரிசு பங்குதாரர்" },
-        benefits: { en: "Sponsor a game prize — your brand gets named the moment it's won.",
-                    ta: "ஒரு விளையாட்டு பரிசை நிதியளியுங்கள் — அது வெல்லப்படும் தருணத்தில் உங்கள் பிராண்டு பெயரிடப்படும்." } }
+        benefits: { en: "Sponsor a game prize, and your brand gets named the moment it's won.",
+                    ta: "ஒரு விளையாட்டு பரிசை நிதியளியுங்கள், அது வெல்லப்படும் தருணத்தில் உங்கள் பிராண்டு பெயரிடப்படும்." } }
     ],
     why: [
       { icon: "hands", title: { en: "A local, built-in crowd", ta: "உள்ளூர், உள்ளடங்கிய கூட்டம்" },
@@ -437,13 +437,15 @@ window.VIM_YEARS["2026"] = {
     /* The 2026 line-up — PLANNED (Sep 2026), timings not confirmed.
        Every film is in the AV Room this year. `time` is "HH:MM" (24h);
        "" = not announced yet. `venue` must match a venueMap zone ("" shows
-       "Room TBA"). Titles stay plain strings (film names aren't translated). */
+       "Room TBA"). Titles stay plain strings (film names aren't translated).
+       art: the original minimalist poster drawn for the film (moviespage.js —
+       sunrise · eye · sheep · tower · ears). poster: an image path overrides it. */
     screenings: [
-      { title: "Brand New Day",     time: "", venue: "AV Room", rating: "" },
-      { title: "Obsession",         time: "", venue: "AV Room", rating: "" },
-      { title: "Sheep Detectives",  time: "", venue: "AV Room", rating: "" },
-      { title: "Fall 2: Deadpoint", time: "", venue: "AV Room", rating: "" },
-      { title: "Zootopia 2",        time: "", venue: "AV Room", rating: "" }
+      { title: "Brand New Day",     time: "", venue: "AV Room", rating: "", art: "sunrise" },
+      { title: "Obsession",         time: "", venue: "AV Room", rating: "", art: "eye" },
+      { title: "Sheep Detectives",  time: "", venue: "AV Room", rating: "", art: "sheep" },
+      { title: "Fall 2: Deadpoint", time: "", venue: "AV Room", rating: "", art: "tower" },
+      { title: "Zootopia 2",        time: "", venue: "AV Room", rating: "", art: "ears" }
     ],
     games: [
       { name: { en: "Housie / Tambola", ta: "ஹவுசி / தம்போலா" },     venue: "Center of Attraction" },

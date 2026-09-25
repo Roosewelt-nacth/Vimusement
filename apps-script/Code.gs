@@ -60,6 +60,16 @@ var DON_HEADER = ['Timestamp', 'Reference', 'Name', 'Email', 'Amount (INR)',
   'Channel', 'By', 'Donor UPI ref', 'Status', 'Show on wall', 'Confirmed at', 'Notes', 'Phone'];
 var DC = { TS:1, REF:2, NAME:3, EMAIL:4, AMOUNT:5, CHANNEL:6, BY:7, UTR:8, STATUS:9, WALL:10, CONFIRMED:11, NOTES:12, PHONE:13 };
 
+/* Movie poll — just for fun: people vote for the film they're most excited
+   about and see the running results afterwards. One row per vote, keyed by
+   an anonymous random id the browser makes (no names, phones or emails). */
+var T_POLL = 'MoviePoll';
+var POLL_HEADER = ['Timestamp', 'Film', 'Voter'];
+/* The films people can vote for. Keep in step with
+   years/<year>.config.js → program.screenings[].title. Override without a
+   code change via the Script property POLL_FILMS (a JSON array of titles). */
+var POLL_FILMS_DEFAULT = ['Brand New Day', 'Obsession', 'Sheep Detectives', 'Fall 2: Deadpoint', 'Zootopia 2'];
+
 var T_LD = 'LuckyDraw';
 /* Lucky draw switched off for 2026: every draw* action is refused. Flip to
    true (and luckyDraw.enabled in years/<year>.config.js) to bring it back. */
@@ -109,6 +119,10 @@ function doGet(e) {
 
       /* self-serve lookup */
       case 'lookupByPhone':   return _json(lookupByPhone(e.parameter));
+
+      /* movie poll */
+      case 'pollVote':        return _json(pollVote(e.parameter));
+      case 'pollResults':     return _json(pollResults());
 
       default:                return _json({ error: 'unknown action: ' + a });
     }
@@ -1002,4 +1016,67 @@ function _selfTest() {
   Logger.log('Staff rows: ' + (stf.getLastRow() - 1) + ' · UPI_VPA set: ' + !!PROPS.getProperty('UPI_VPA') +
     ' · ADMIN_KEY set: ' + !!PROPS.getProperty('ADMIN_KEY') + ' · SMS_API_URL set: ' + !!PROPS.getProperty('SMS_API_URL'));
   Logger.log('drawInfo: ' + JSON.stringify(drawInfo()));
+}
+
+/* ============================================================
+   MOVIE POLL  (movies.html)
+   pollVote   ?film=&voter=  → { ok, results }   one vote per voter id
+   pollResults               → { total, counts:{film:n}, open }
+   Close it with the Script property POLL_OPEN = false (results stay
+   readable). Soft one-vote-per-person: the voter id lives in the
+   browser, so clearing it or switching browsers can vote again — fine
+   for a fun pulse check, never use it for anything that matters.
+   ============================================================ */
+function _pollFilms() {
+  try { var j = JSON.parse(PROPS.getProperty('POLL_FILMS') || 'null'); if (j && j.length) return j.map(String); } catch (e) {}
+  return POLL_FILMS_DEFAULT;
+}
+function _pollOpen() { return String(PROPS.getProperty('POLL_OPEN') || 'true').toLowerCase() !== 'false'; }
+function _pollSheet() { return _tab(T_POLL, POLL_HEADER); }
+
+function pollResults() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('poll_results');
+  if (hit) return JSON.parse(hit);
+  var films = _pollFilms(), counts = {}, total = 0;
+  films.forEach(function (f) { counts[f] = 0; });
+  var sh = _pollSheet(), last = sh.getLastRow();
+  if (last > 1) {
+    sh.getRange(2, 2, last - 1, 1).getValues().forEach(function (r) {
+      var f = String(r[0]);
+      if (counts.hasOwnProperty(f)) { counts[f]++; total++; }
+    });
+  }
+  var out = { total: total, counts: counts, open: _pollOpen() };
+  cache.put('poll_results', JSON.stringify(out), 20);   // 20s — keeps a busy page cheap
+  return out;
+}
+
+function pollVote(p) {
+  if (!_pollOpen()) return { error: 'pollClosed', results: pollResults() };
+  var film = String(p.film || '');
+  var voter = String(p.voter || '');
+  if (_pollFilms().indexOf(film) === -1) return { error: 'badFilm' };
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(voter)) return { error: 'badVoter' };
+
+  var cache = CacheService.getScriptCache();
+  if (cache.get('poll_v_' + voter)) return { ok: true, already: true, results: pollResults() };
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var sh = _pollSheet(), last = sh.getLastRow();
+    if (last > 1) {
+      var ids = sh.getRange(2, 3, last - 1, 1).getValues();
+      for (var i = 0; i < ids.length; i++) {
+        if (String(ids[i][0]) === voter) { cache.put('poll_v_' + voter, '1', 21600); return { ok: true, already: true, results: pollResults() }; }
+      }
+    }
+    sh.appendRow([new Date(), film, voter]);
+    cache.put('poll_v_' + voter, '1', 21600);
+    cache.remove('poll_results');
+  } finally {
+    lock.releaseLock();
+  }
+  return { ok: true, results: pollResults() };
 }
