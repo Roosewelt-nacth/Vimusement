@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="78%" cy="45%" r="60%"><stop offset="0" stop-color="#1F6B45" stop-opacity=".55"/><stop offset=".6" stop-color="#1F6B45" stop-opacity=".08"/><stop offset="1" stop-color="#1F6B45" stop-opacity="0"/></radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#C9962E" stop-opacity=".16"/><stop offset="1" stop-color="#C9962E" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#070B08"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="26" y="26" width="1148" height="578" rx="22" fill="none" stroke="#C9962E" stroke-opacity=".32" stroke-width="1.5"/>
+  <g transform="translate(80 70) scale(1.6)" fill="none" stroke="#DDAE4C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="1.6"/><path d="M12 3v16M4 11h16M6.3 5.3l11.4 11.4M17.7 5.3 6.3 16.7"/></g>
+  <text x="130" y="98" font-family="IBM Plex Mono, Consolas, monospace" font-size="20" letter-spacing="5" fill="#C7D4C2">VIMUSEMENT 2026</text>
+  <text x="82" y="186" font-family="IBM Plex Mono, Consolas, monospace" font-size="19" letter-spacing="5" fill="#DDAE4C">LUCKY DRAW</text>
+  <text x="80" y="262" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="68" fill="#F4EEE2">A ₹50 ticket.</text><text x="80" y="336" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="68" fill="#F4EEE2">A sofa worth ₹12,000.</text>
+  <text x="82" y="398" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="28" fill="#C7D4C2">Four branded prizes worth ₹28,000,</text><text x="82" y="436" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="28" fill="#C7D4C2">plus two surprises. Tickets at the church.</text>
+  <rect x="80" y="514" width="596" height="52" rx="26" fill="#1F6B45"/>
+  <text x="378" y="547" text-anchor="middle" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="22" fill="#EAF2E6">25 Oct 2026 · Ascension Church, Aminjikkarai</text>
+  <circle cx="925" cy="300" r="190" fill="url(#halo)"/><circle cx="925" cy="300" r="178" fill="none" stroke="#C9962E" stroke-opacity=".28" stroke-width="1.5"/><circle cx="925" cy="300" r="150" fill="none" stroke="#C9962E" stroke-opacity=".12" stroke-width="1"/><g transform="translate(769 144) scale(13)" fill="none" stroke="#DDAE4C" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11V8.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3V11"/><path d="M2.5 13.2a2 2 0 0 1 4 0V15h11v-1.8a2 2 0 0 1 4 0V17a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2z"/><path d="M5.5 19v1.8M18.5 19v1.8M12 5.5V15"/></g>
+</svg>

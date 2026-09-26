@@ -236,10 +236,10 @@ window.VIM_YEARS["2026"] = {
        working notes) — Promotional stalls fall under the Craft/mid-tier
        rate, not a separate price. */
     rates: [
-      { name: { en: "Food & Beverages — full stall", ta: "உணவு & பானங்கள் — முழு கடை" }, price: "₹7,000", icon: "food" },
-      { name: { en: "Food & Beverages — half stall", ta: "உணவு & பானங்கள் — அரை கடை" }, price: "₹4,000", icon: "food" },
-      { name: { en: "Craft, mid-tier & promotional — full stall", ta: "கைவினை, நடுத்தர & விளம்பர — முழு கடை" }, price: "₹6,000", icon: "stall" },
-      { name: { en: "Craft, mid-tier & promotional — half stall", ta: "கைவினை, நடுத்தர & விளம்பர — அரை கடை" }, price: "₹3,500", icon: "stall" }
+      { name: { en: "Food & Beverages · full stall", ta: "உணவு & பானங்கள் · முழு கடை" }, price: "₹6,000", icon: "food" },
+      { name: { en: "Food & Beverages · half stall", ta: "உணவு & பானங்கள் · அரை கடை" }, price: "₹4,000", icon: "food" },
+      { name: { en: "Craft, mid-tier & promotional · full stall", ta: "கைவினை, நடுத்தர & விளம்பர · முழு கடை" }, price: "₹5,500", icon: "stall" },
+      { name: { en: "Craft, mid-tier & promotional · half stall", ta: "கைவினை, நடுத்தர & விளம்பர · அரை கடை" }, price: "₹3,500", icon: "stall" }
     ],
     open: [
       // "Snack stall", "Craft table"

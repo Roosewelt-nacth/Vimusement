@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Export link-preview cards</title>
+<!--
+  Dev tool, not part of the site. Turns assets/img/og/*.svg into the JPGs
+  the share tags point at, using the site's real web fonts.
+    1. python scripts/build_og_cards.py      (writes the SVGs + share tags)
+    2. python scripts/og_save_server.py      (serves the repo + saves images)
+    3. open http://localhost:4700/scripts/og-export.html and press Export
+-->
+<style>
+  body{margin:24px;font:14px/1.5 system-ui,sans-serif;background:#0E1310;color:#EAF2E6}
+  button{font:inherit;padding:8px 16px;border-radius:8px;border:0;background:#1F6B45;color:#EAF2E6;cursor:pointer}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:18px}
+  figure{margin:0}img{width:100%;border-radius:8px;display:block}figcaption{font-size:12px;color:#8FA089;margin-top:4px}
+</style>
+</head>
+<body>
+<p><button id="go">Export all cards</button> <span id="msg"></span></p>
+<div class="grid" id="grid"></div>
+<script>
+var PAGES = ["index","programme","movies","draw","donate","cause","gallery","involve","sponsors","stalls","tickets","credits","reel","counter","stage","developers","banner-reveal"];
+var FONTS = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Hanken+Grotesk:wght@400&family=IBM+Plex+Mono:wght@400&display=swap";
+
+function toDataURL(blob) { return new Promise(function (r) { var f = new FileReader(); f.onload = function () { r(f.result); }; f.readAsDataURL(blob); }); }
+
+/* an SVG drawn through <img> can't fetch web fonts, so inline them as data: URLs */
+async function fontCSS() {
+  var css = await (await fetch(FONTS)).text();
+  var out = [];
+  var parts = css.split(/(?=\/\* [a-z-]+ \*\/)/);
+  for (var i = 0; i < parts.length; i++) {
+    var m = parts[i].match(/^\/\* ([a-z-]+) \*\//);
+    if (!m || (m[1] !== "latin" && m[1] !== "latin-ext")) continue;
+    var face = parts[i].replace(/^\/\* [a-z-]+ \*\/\s*/, "");
+    var url = (face.match(/url\((https:[^)]+)\)/) || [])[1];
+    if (!url) continue;
+    var data = await toDataURL(await (await fetch(url)).blob());
+    out.push(face.replace(url, data));
+  }
+  return out.join("\n");
+}
+
+async function render(page, css) {
+  var svg = await (await fetch("../assets/img/og/" + page + ".svg", { cache: "reload" })).text();
+  svg = svg.replace("<defs>", "<defs><style>" + css + "</style>");
+  var img = new Image();
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  await img.decode();
+  var c = document.createElement("canvas"); c.width = 1200; c.height = 630;
+  var g = c.getContext("2d"); g.fillStyle = "#070B08"; g.fillRect(0, 0, 1200, 630); g.drawImage(img, 0, 0);
+  return await new Promise(function (r) { c.toBlob(r, "image/jpeg", 0.9); });
+}
+
+document.getElementById("go").addEventListener("click", async function () {
+  var msg = document.getElementById("msg"), grid = document.getElementById("grid");
+  msg.textContent = "Loading fonts…"; grid.innerHTML = "";
+  var css = await fontCSS();
+  for (var i = 0; i < PAGES.length; i++) {
+    var p = PAGES[i];
+    msg.textContent = "Rendering " + p + "…";
+    var blob = await render(p, css);
+    var res = await fetch("/save?name=" + p + ".jpg", { method: "POST", body: blob });
+    var fig = document.createElement("figure");
+    fig.innerHTML = '<img alt="' + p + '"><figcaption>' + p + ".jpg · " + Math.round(blob.size / 1024) + " KB · " + (res.ok ? "saved" : "NOT saved") + "</figcaption>";
+    fig.querySelector("img").src = URL.createObjectURL(blob);
+    grid.appendChild(fig);
+  }
+  msg.textContent = "Done: " + PAGES.length + " cards.";
+  window.__ogDone = true;
+});
+</script>
+</body>
+</html>

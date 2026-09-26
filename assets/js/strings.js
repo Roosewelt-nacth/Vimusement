@@ -353,7 +353,7 @@ window.VIM_STRINGS = {
     "involve.nextLink": "Donate →",
 
     "stalls.title": "Run a Stall · Vimusement {year}",
-    "stalls.meta.description": "Bring a stall to Vimusement: food, a game or a craft table. See what's open and the table rates.",
+    "stalls.meta.description": "Bring a food or craft stall to Vimusement. Food and beverages from ₹6,000, craft and promotional from ₹5,500, with benches, lights and power included.",
     "stalls.hero.eyebrow": "Get Involved",
     "stalls.hero.title": "Run a stall",
     "stalls.hero.dm": "DM @victorians.youth",
@@ -386,7 +386,7 @@ window.VIM_STRINGS = {
     "stalls.nextLink": "Donate →",
 
     "sponsors.title": "Sponsorship",
-    "sponsors.meta.description": "Partner with Vimusement: title, gold and silver sponsorships, plus product and prize partnerships.",
+    "sponsors.meta.description": "Partner with Vimusement as a community, product or prize partner, and put your brand in front of families from all around Aminjikkarai.",
     "sponsors.hero.eyebrow": "Get Involved",
     "sponsors.hero.title": "Partner with Vimusement",
     "sponsors.hero.wa": "Message Austin on WhatsApp",
@@ -900,7 +900,7 @@ window.VIM_STRINGS = {
     "involve.nextLink": "நன்கொடை →",
 
     "stalls.title": "கடை நடத்துங்கள் · விமுஸ்மென்ட் {year}",
-    "stalls.meta.description": "விமுஸ்மென்ட்டுக்கு ஒரு கடையை கொண்டு வாருங்கள்: உணவு, ஒரு விளையாட்டு அல்லது கைவினைப் பொருட்கள் மேசை. என்ன திறந்திருக்கிறது மற்றும் மேசை கட்டணங்களை பாருங்கள்.",
+    "stalls.meta.description": "விமுஸ்மென்ட்டுக்கு உணவு அல்லது கைவினைப் பொருட்கள் கடையை கொண்டு வாருங்கள். உணவு & பானங்கள் ₹6,000 முதல், கைவினை & விளம்பரம் ₹5,500 முதல், பெஞ்சுகள், விளக்குகள் மற்றும் மின்சாரம் சேர்த்து.",
     "stalls.hero.eyebrow": "பங்கேற்க",
     "stalls.hero.title": "ஒரு கடை நடத்துங்கள்",
     "stalls.hero.dm": "@victorians.youth க்கு DM செய்யவும்",
@@ -933,7 +933,7 @@ window.VIM_STRINGS = {
     "stalls.nextLink": "நன்கொடை →",
 
     "sponsors.title": "ஸ்பான்சர்ஷிப்",
-    "sponsors.meta.description": "விமுஸ்மென்ட்டுடன் இணையுங்கள்: முதன்மை, தங்க மற்றும் வெள்ளி ஸ்பான்சர்ஷிப்கள், மேலும் பொருள் மற்றும் பரிசு பங்குதாரர்கள்.",
+    "sponsors.meta.description": "சமூக, பொருள் அல்லது பரிசு பங்குதாரராக விமுஸ்மென்ட்டுடன் இணைந்து, அமின்ஜிக்கரை முழுவதுமுள்ள குடும்பங்களின் முன் உங்கள் பிராண்டைக் கொண்டு வாருங்கள்.",
     "sponsors.hero.eyebrow": "பங்கேற்க",
     "sponsors.hero.title": "விமுஸ்மென்ட்டுடன் இணையுங்கள்",
     "sponsors.hero.wa": "WhatsApp-ல் ஆஸ்டினுக்கு செய்தி அனுப்பவும்",
