@@ -17,7 +17,7 @@ INK_SOFT = RGBColor(0x5C, 0x41, 0x48)
 CREAM   = "FBF6F1"
 LINE    = "E7D8D2"
 
-SITE_URL = "https://roosewelt-nacth.github.io/Vimusement/sponsors.html"
+SITE_URL = "https://victoriansyouth.github.io/Vimusement2k26/sponsors.html"
 SITE_NOTE = "the site is on a temporary/testing link right now — swap this before final print"
 
 def add_hyperlink(paragraph, url, text, color=CRIMSON, underline=True):
@@ -162,7 +162,7 @@ rule(doc)
 
 detail_row(doc, "Where", "Ascension Church, Metha Nagar, Aminjikkarai, Chennai")
 detail_row(doc, "Who", "Families and young people from right across the neighbourhood — hundreds through the gates in one day")
-detail_row(doc, "Purpose", "Scholarships, a medical-emergency fund, and hardship support for neighbours in need — 100% of what's raised, after costs, goes to the cause")
+detail_row(doc, "Purpose", "100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger")
 
 p = para(doc, space_before=10, space_after=8)
 r = p.add_run("Why partner with us")

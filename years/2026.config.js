@@ -162,21 +162,31 @@ window.VIM_YEARS["2026"] = {
               ta: "AV அறையில் பெரிய திரையில் ஐந்து படங்கள், Zootopia 2 முதல் Fall 2: Deadpoint வரை. காட்சி நேரங்கள் விரைவில்." } }
   ],
 
+  /* THE 2026 PLEDGE. Everything raised, after event costs, is split
+     between these three funds, announced before a rupee is spent. The
+     shares must add up to 100. `key` matches the Fund column of the
+     Ledger tab in the Master sheet (see docs/ledger-setup.md), so keep
+     the keys as they are. The homepage, the Cause page, the Donate page
+     and the live ledger all read this one list. */
   causes: [
-    { icon: "cap",
-      title: { en: "Education & Scholarships", ta: "கல்வி & உதவித்தொகை" },
+    { key: "education", share: 40, icon: "cap", color: "#DDAE4C",
+      title: { en: "Education for the poor", ta: "ஏழை மாணவர்களின் கல்வி" },
+      short: { en: "Education", ta: "கல்வி" },
       text: { en: "School fees, books and exam costs for students who’d otherwise drop out, including children from single-parent and hardworking families.",
               ta: "படிப்பை நிறுத்திவிடக்கூடிய மாணவர்களுக்கு பள்ளி கட்டணம், புத்தகங்கள் மற்றும் தேர்வுச் செலவுகள், தனிப் பெற்றோர் மற்றும் கடின உழைப்பாளர் குடும்பங்களின் குழந்தைகள் உட்பட." },
       stat: { en: "₹34,300 given last year", ta: "கடந்த ஆண்டு ₹34,300 வழங்கப்பட்டது" } },
-    { icon: "heart",
-      title: { en: "Medical Emergency Fund", ta: "மருத்துவ அவசர நிதி" },
-      text: { en: "Fast, no-questions help when a family is hit with a sudden hospital bill.",
-              ta: "திடீர் மருத்துவமனை கட்டணம் வரும்போது, கேள்விகள் இன்றி உடனடி உதவி." },
+    { key: "medical", share: 30, icon: "heart", color: "#4FD98C",
+      title: { en: "Medical & other needs", ta: "மருத்துவம் & பிற தேவைகள்" },
+      short: { en: "Medical & needs", ta: "மருத்துவம் & தேவைகள்" },
+      text: { en: "Hospital bills, medicines and treatment, plus rent, groceries and essentials for families going through a hard stretch.",
+              ta: "மருத்துவமனை கட்டணம், மருந்துகள் மற்றும் சிகிச்சை, மேலும் கடினமான காலகட்டத்தில் இருக்கும் குடும்பங்களுக்கு வாடகை, மளிகை மற்றும் அத்தியாவசியப் பொருட்கள்." },
       stat: { en: "₹60,000 given last year", ta: "கடந்த ஆண்டு ₹60,000 வழங்கப்பட்டது" } },
-    { icon: "hands",
-      title: { en: "Hardship Support", ta: "கஷ்ட கால உதவி" },
-      text: { en: "Rent, groceries and essentials for neighbours going through a hard stretch.",
-              ta: "கடினமான காலகட்டத்தில் இருக்கும் அண்டை வீட்டாருக்கு வாடகை, மளிகை மற்றும் அத்தியாவசியப் பொருட்கள்." } }
+    { key: "emergency", share: 30, icon: "shield", color: "#E39AA8",
+      title: { en: "Youth Emergency Fund", ta: "இளைஞர் அவசர நிதி" },
+      short: { en: "Emergency fund", ta: "அவசர நிதி" },
+      text: { en: "Held in reserve by Victorians Youth and released only when it’s needed most, for any of the causes: the operation that can’t wait, the fee due tomorrow.",
+              ta: "விக்டோரியன்ஸ் இளைஞர்களால் இருப்பில் வைக்கப்பட்டு, மிகவும் தேவைப்படும்போது மட்டுமே எந்த நோக்கத்திற்கும் வழங்கப்படும்: காத்திருக்க முடியாத அறுவை சிகிச்சை, நாளை கட்ட வேண்டிய கட்டணம்." },
+      stat: { en: "Released only when it’s needed most", ta: "மிகவும் தேவைப்படும்போது மட்டுமே வழங்கப்படும்" } }
   ],
 
   causeImpactTotal: "₹94,300",
@@ -197,7 +207,7 @@ window.VIM_YEARS["2026"] = {
     stats: [
       { n: 94300, prefix: "₹", label: { en: "given to education and medical support last year", ta: "கடந்த ஆண்டு கல்வி மற்றும் மருத்துவ உதவிக்காக வழங்கப்பட்டது" } },
       { n: 100, suffix: "%", label: { en: "of what’s raised, after event costs, goes to the cause", ta: "நிகழ்வு செலவுகளுக்குப் பிறகு திரட்டப்பட்டதில், நோக்கத்திற்கு செல்கிறது" } },
-      { n: 3, label: { en: "funds it feeds: scholarships, medical emergencies, hardship", ta: "இது ஆதரிக்கும் நிதிகள்: உதவித்தொகை, மருத்துவ அவசரநிலைகள், கஷ்ட உதவி" } },
+      { n: 3, label: { en: "funds, split 40 · 30 · 30 before a rupee is spent", ta: "நிதிகள், ஒரு ரூபாய் செலவாவதற்கு முன்பே 40 · 30 · 30 என பிரிக்கப்படுகின்றன" } },
       { text: "₹0", label: { en: "in payment fees. You pay the parish directly by UPI", ta: "கட்டண கட்டணங்களில். நீங்கள் UPI மூலம் நேரடியாக பங்குக்கு செலுத்துகிறீர்கள்" } }
     ]
   },
@@ -289,7 +299,9 @@ window.VIM_YEARS["2026"] = {
               On touch: first tap shows the card, second tap opens the site.
      An empty list hides the spark entirely. */
   sponsors: [
-    { name: "Dr. M.A. Mejalla MDS, Dental Surgeon", logo: "assets/img/2026/sponsors/sponsor-01.png", card: "assets/img/2026/sponsors/sponsor-01-card-dark.webp", url: "https://www.drmdentistry.com/" }
+    { name: "Dr. M.A. Mejalla MDS, Dental Surgeon", logo: "assets/img/2026/sponsors/sponsor-01.png", card: "assets/img/2026/sponsors/sponsor-01-card-dark.webp", url: "https://www.drmdentistry.com/" },
+    { name: "Chellamani LLP · Lucky Draw sofa", logo: "assets/img/2026/sponsors/chellamani-logo.png", card: "assets/img/2026/sponsors/chellamani-card.jpg", url: "" },
+    { name: "George Enterprises · Lucky Draw prizes", logo: "assets/img/2026/sponsors/george-enterprises-logo.png", card: "assets/img/2026/sponsors/george-enterprises-card.jpg", url: "" }
   ],
 
   sponsorship: {
@@ -317,8 +329,8 @@ window.VIM_YEARS["2026"] = {
         text: { en: "Posters, banners, stage announcements and screens on the day — not just a logo in fine print.",
                 ta: "நாளின் போது சுவரொட்டிகள், பதாகைகள், மேடை அறிவிப்புகள் மற்றும் திரைகள் — வெறும் சிறிய எழுத்தில் ஒரு லோகோ மட்டுமல்ல." } },
       { icon: "heart", title: { en: "It's a donation too", ta: "இது ஒரு நன்கொடையும் கூட" },
-        text: { en: "Every rupee (or product) goes toward the same scholarships, medical fund and hardship support Vimusement runs on.",
-                ta: "ஒவ்வொரு ரூபாயும் (அல்லது பொருளும்) விமுஸ்மென்ட் நடத்தும் அதே உதவித்தொகை, மருத்துவ நிதி மற்றும் கஷ்ட உதவிக்கு செல்கிறது." } }
+        text: { en: "Every rupee (or product) goes into the same pledge Vimusement runs on: 40% education, 30% medical and other needs, 30% youth emergency fund.",
+                ta: "ஒவ்வொரு ரூபாயும் (அல்லது பொருளும்) விமுஸ்மென்ட்டின் அதே உறுதிமொழிக்கு செல்கிறது: 40% கல்வி, 30% மருத்துவம் மற்றும் பிற தேவைகள், 30% இளைஞர் அவசர நிதி." } }
     ]
   },
 
@@ -369,19 +381,25 @@ window.VIM_YEARS["2026"] = {
        First entry is the grand prize. */
     branded: true,           // shows the "Branded" badge on every prize
     prizes: [
-      { place: { en: "1st prize", ta: "1வது பரிசு" }, name: { en: "Sofa", ta: "சோஃபா" }, icon: "sofa", worth: 12000,
-        sub: { en: "Three-seater", ta: "மூன்று இருக்கை" } },
-      { place: { en: "2nd prize", ta: "2வது பரிசு" }, name: { en: "Air fryer", ta: "ஏர் ஃப்ரையர்" }, icon: "airfryer", worth: 7000 },
-      { place: { en: "3rd prize", ta: "3வது பரிசு" }, name: { en: "Mixer", ta: "மிக்ஸி" }, icon: "mixer", worth: 5000 },
-      { place: { en: "4th prize", ta: "4வது பரிசு" }, name: { en: "Cooker", ta: "குக்கர்" }, icon: "cooker", worth: 4000 }
+      { place: { en: "1st prize", ta: "1வது பரிசு" }, name: { en: "Sofa", ta: "சோஃபா" }, icon: "sofa", worth: 12000, photo: "assets/img/2026/prizes/sofa.jpg",
+        sub: { en: "Three-seater", ta: "மூன்று இருக்கை" },
+        sponsor: { name: "Chellamani LLP", logo: "assets/img/2026/sponsors/chellamani-logo.png", url: "" } },
+      { place: { en: "2nd prize", ta: "2வது பரிசு" }, name: { en: "Air fryer", ta: "ஏர் ஃப்ரையர்" }, icon: "airfryer", photo: "assets/img/2026/prizes/airfryer.jpg", worth: 6000 },
+      { place: { en: "3rd prize", ta: "3வது பரிசு" }, name: { en: "Mixie", ta: "மிக்ஸி" }, icon: "mixer", photo: "assets/img/2026/prizes/mixer.jpg", worth: 4000 },
+      { place: { en: "4th prize", ta: "4வது பரிசு" }, name: { en: "Cooker", ta: "குக்கர்" }, icon: "cooker", photo: "assets/img/2026/prizes/cooker.jpg", worth: 3000 }
     ],
-    /* Who gave the four branded prizes above — credited on every prize
-       card, in a strip under the prizes heading, and in a thank-you card.
+    /* photo: the prize's picture (assets/img/2026/prizes/). The sofa is the real
+       one, cut out and staged; the other three are stock photos until the real
+       prizes are photographed. Leave it out to show the line icon instead. */
+    /* Prize sponsors. A prize can name its own sponsor (the sofa does);
+       every prize without one is credited to prizeSponsor below. Each
+       sponsor gets a "by …" line on its prize cards, a place in the strip
+       under the prizes heading, and its own thank-you card.
        logo: drop the file in assets/img/2026/sponsors/ and put the path here
        ("" shows a gold monogram of the initials). url: optional website. */
     prizeSponsor: {
       name: "George Enterprises",
-      logo: "",
+      logo: "assets/img/2026/sponsors/george-enterprises-logo.png",
       url: ""
     },
 

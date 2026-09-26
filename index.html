@@ -5,22 +5,22 @@
 <!-- share preview (built by scripts/build_og_cards.py; crawlers read these, not the JS) -->
 <meta property="og:site_name" content="Vimusement">
 <meta property="og:title" content="Vimusement 2026">
-<meta property="og:description" content="A day of games, food stalls, movie screenings and a grand lucky draw at Ascension Church, Aminjikkarai, raising scholarships and medical-emergency help. 25 October 2026.">
+<meta property="og:description" content="A day of games, food stalls and movie screenings on the church grounds. Everything raised after costs is split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://roosewelt-nacth.github.io/Vimusement/">
-<meta property="og:image" content="https://roosewelt-nacth.github.io/Vimusement/assets/img/og/index.jpg">
+<meta property="og:url" content="https://victoriansyouth.github.io/Vimusement2k26/">
+<meta property="og:image" content="https://victoriansyouth.github.io/Vimusement2k26/assets/img/og/index.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Vimusement 2026">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Vimusement 2026">
-<meta name="twitter:description" content="A day of games, food stalls, movie screenings and a grand lucky draw at Ascension Church, Aminjikkarai, raising scholarships and medical-emergency help. 25 October 2026.">
-<meta name="twitter:image" content="https://roosewelt-nacth.github.io/Vimusement/assets/img/og/index.jpg">
+<meta name="twitter:description" content="A day of games, food stalls and movie screenings on the church grounds. Everything raised after costs is split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund.">
+<meta name="twitter:image" content="https://victoriansyouth.github.io/Vimusement2k26/assets/img/og/index.jpg">
 <!-- /share preview -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n-title="index.title">Vimusement 2026</title>
-<meta name="description" data-i18n-content="index.meta.description" content="A day of games, food stalls, movie screenings and a grand lucky draw at Ascension Church, Aminjikkarai, raising scholarships and medical-emergency help. 25 October 2026.">
+<meta name="description" data-i18n-content="index.meta.description" content="A day of games, food stalls and movie screenings on the church grounds. Everything raised after costs is split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 
 <script>
@@ -35,9 +35,10 @@ document.documentElement.className+=" js";
 
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/components.css?v=20260926d">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/pages/home.css">
+<link rel="stylesheet" href="assets/css/pages/pledge.css?v=20260926d">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -81,18 +82,24 @@ document.documentElement.className+=" js";
 <!-- ================= MARQUEE ================= -->
 <div class="marquee" aria-hidden="true"><div class="marquee__track" data-marquee></div></div>
 
-<!-- ================= WHY IT MATTERS (dark) ================= -->
-<section class="tile tile--c cv-auto" id="why">
+<!-- ================= THE 2026 PLEDGE (dark) ================= -->
+<section class="tile tile--c pledge-section" id="why">
   <div class="wrap">
     <div class="tile__intro">
-      <p class="eyebrow" data-animate="fade-up" data-i18n="index.why.eyebrow">Why we do it</p>
-      <h2 class="section__title" data-animate="fade-up" data-i18n="index.why.title">One day of fun. A year of difference.</h2>
-      <p class="lead" data-animate="fade-up" data-i18n="index.why.lead">Every rupee raised after event costs goes straight to scholarships, a medical-emergency fund, and hardship support, decided by the parish committee and published in full.</p>
+      <p class="eyebrow" data-animate="fade-up" data-i18n="index.why.eyebrow">Our 2026 pledge</p>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="index.why.title">Every rupee has a job before it’s raised.</h2>
+      <p class="lead" data-animate="fade-up" data-i18n="index.why.lead">This year we’re announcing the split up front. Everything Vimusement raises, after event costs, is divided between three funds, and every rupee in and out goes on a public ledger for anyone to check.</p>
     </div>
+    <div data-pledge="full"></div>
+    <ul class="pledge-promises" data-animate="fade-up">
+      <li data-i18n="pledge.promise1">Split announced before the fair</li>
+      <li data-i18n="pledge.promise2">Every rupee on a public ledger</li>
+      <li data-i18n="pledge.promise3">Amounts shown, names never</li>
+    </ul>
     <div class="grid grid--auto impact-strip" data-list="impact"></div>
     <div class="home-cta" data-animate="fade-up">
       <a class="btn btn--gold btn--lg" href="donate.html" data-i18n="index.why.donateCta">Donate to the cause</a>
-      <a class="btn btn--ghost btn--lg" href="cause.html" data-i18n="index.why.seeCta">See where it goes</a>
+      <a class="btn btn--ghost btn--lg" href="cause.html#ledger" data-i18n="index.why.seeCta">Open the public ledger</a>
     </div>
   </div>
 </section>
@@ -166,11 +173,11 @@ document.documentElement.className+=" js";
 
 <!-- ================= SCRIPTS (order matters) ================= -->
 <script defer src="assets/js/core.js"></script>
-<script defer src="assets/js/strings.js"></script>
-<script defer src="years/2026.config.js"></script>
+<script defer src="assets/js/strings.js?v=20260926d"></script>
+<script defer src="years/2026.config.js?v=20260926d"></script>
 <script defer src="years/current.js"></script>
 <script defer src="assets/js/site.config.js"></script>
-<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/chrome.js?v=20260926d"></script>
 <script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
 <script defer src="assets/js/modules/lang.js"></script>
@@ -179,7 +186,8 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/sponsordeck.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
-<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/render.js?v=20260926d"></script>
+<script defer src="assets/js/modules/pledge.js?v=20260926d"></script>
 <script defer src="assets/js/modules/motion.js"></script>
 <script defer src="assets/js/modules/counters.js"></script>
 <script defer src="assets/js/modules/countdown.js"></script>

@@ -31,53 +31,94 @@ Vim.register("luckypage", function (ctx) {
   var prizes = L.prizes || [];
   var total = prizes.reduce(function (t, p) { return t + (Number(p.worth) || 0); }, 0);
 
-  /* the prize sponsor — credited on each card, in a strip, and a thank-you */
-  var SP = L.prizeSponsor && L.prizeSponsor.name ? L.prizeSponsor : null;
-  function spMark(cls) {
-    if (SP.logo) return '<img class="' + cls + '" src="' + esc(SP.logo) + '" alt="' + esc(SP.name) + '">';
-    var initials = SP.name.split(/\s+/).map(function (w) { return w.charAt(0); }).join("").slice(0, 2).toUpperCase();
+  /* prize sponsors: a prize can name its own (prizes[i].sponsor); any prize
+     without one falls back to luckyDraw.prizeSponsor. Each sponsor is credited
+     on its prizes' cards, in the strip under the heading, and in a thank-you. */
+  var DEF = L.prizeSponsor && L.prizeSponsor.name ? L.prizeSponsor : null;
+  function sponsorOf(p) { return p.sponsor && p.sponsor.name ? p.sponsor : DEF; }
+  var sponsors = [];                       // in prize order, each once, with the prizes they gave
+  prizes.forEach(function (p) {
+    var s = sponsorOf(p); if (!s) return;
+    var hit = sponsors.filter(function (x) { return x.s.name === s.name; })[0];
+    if (hit) hit.prizes.push(p); else sponsors.push({ s: s, prizes: [p] });
+  });
+  function spMark(sp, cls) {
+    if (sp.logo) return '<img class="' + cls + '" src="' + esc(sp.logo) + '" alt="' + esc(sp.name) + '">';
+    var initials = sp.name.replace(/&/g, " ").split(/\s+/).filter(function (w) { return /^[A-Za-z]/.test(w); })
+      .map(function (w) { return w.charAt(0); }).join("").slice(0, 2).toUpperCase();
     return '<span class="' + cls + ' lucky-mono" aria-hidden="true">' + esc(initials) + '</span>';
   }
-  var fill = function (key) { return ctx.t(key).replace(/\{name\}/g, SP ? SP.name : ""); };
+  function fill(key, sp) { return ctx.t(key).replace(/\{name\}/g, sp ? sp.name : ""); }
+  /* "The sofa" / "The air fryer, mixie and cooker" */
+  function prizeList(list) {
+    var names = list.map(function (p) { return (ctx.L(p.name) || "").toLowerCase(); });
+    var joined = names.length < 2 ? names[0] : names.slice(0, -1).join(", ") + " " + ctx.t("lucky.sponsor.and") + " " + names[names.length - 1];
+    return ctx.t("lucky.sponsor.the") + joined;
+  }
+
+  /* a prize with a photo shows it (like the poster): a gold medal with its
+     place top-left and the "Branded" tag bottom-right; otherwise the line icon */
+  function ordinal(n) {
+    if (ctx.lang === "ta") return n + "";
+    var s = ["TH", "ST", "ND", "RD"], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  function photoHtml(p, i) {
+    return '<figure class="lucky-prize__photo">' +
+      '<img src="' + esc(p.photo) + '" alt="' + esc(ctx.L(p.name)) + '" loading="' + (i ? "lazy" : "eager") + '" decoding="async">' +
+      '<span class="lucky-medal" aria-hidden="true">' + ordinal(i + 1) + '</span>' +
+      (L.branded ? '<span class="lucky-chip">' + CHECK + esc(ctx.t("lucky.prize.branded")) + '</span>' : '') +
+    '</figure>';
+  }
 
   box.innerHTML = prizes.map(function (p, i) {
     var grand = i === 0;
     var sub = ctx.L(p.sub);
-    return '<article class="lucky-prize' + (grand ? ' lucky-prize--grand' : '') + '" data-animate="fade-up" data-animate-delay="' + (i * 0.07).toFixed(2) + '">' +
-      '<span class="lucky-prize__rank" aria-hidden="true">' + String(i + 1).padStart(2, "0") + '</span>' +
-      '<div class="lucky-prize__art">' + art(p.icon, grand ? 132 : 64) + '</div>' +
+    return '<article class="lucky-prize' + (grand ? ' lucky-prize--grand' : '') + (p.photo ? ' lucky-prize--photo' : '') + '" data-animate="fade-up" data-animate-delay="' + (i * 0.07).toFixed(2) + '">' +
+      (p.photo ? photoHtml(p, i) :
+        '<span class="lucky-prize__rank" aria-hidden="true">' + String(i + 1).padStart(2, "0") + '</span>' +
+        '<div class="lucky-prize__art">' + art(p.icon, grand ? 132 : 64) + '</div>') +
       '<div class="lucky-prize__text">' +
         '<p class="lucky-prize__place">' + esc(grand ? ctx.t("lucky.prize.grand") + " · " + ctx.L(p.place) : ctx.L(p.place)) + '</p>' +
         '<h3 class="lucky-prize__name">' + esc(ctx.L(p.name) || ctx.L(p.detail)) + '</h3>' +
         (sub ? '<p class="lucky-prize__sub">' + esc(sub) + '</p>' : '') +
         '<div class="lucky-prize__meta">' +
           (p.worth ? '<p class="lucky-prize__worth"><span>' + esc(ctx.t("lucky.prize.worth")) + '</span> <b>' + money(p.worth) + '</b></p>' : '') +
-          (L.branded ? '<span class="lucky-badge">' + CHECK + esc(ctx.t("lucky.prize.branded")) + '</span>' : '') +
+          (L.branded && !p.photo ? '<span class="lucky-badge">' + CHECK + esc(ctx.t("lucky.prize.branded")) + '</span>' : '') +
         '</div>' +
-        (SP ? '<p class="lucky-prize__by">' + esc(fill("lucky.sponsor.by")) + '</p>' : '') +
+        (sponsorOf(p) ? '<p class="lucky-prize__by">' + esc(fill("lucky.sponsor.by", sponsorOf(p))) + '</p>' : '') +
       '</div>' +
     '</article>';
   }).join("");
 
   var credit = ctx.$("[data-lucky-credit]"), thanks = ctx.$("[data-lucky-thanks]");
-  if (SP && credit) {
-    var nameHtml = SP.url
-      ? '<a href="' + esc(SP.url) + '" target="_blank" rel="noopener">' + esc(SP.name) + '</a>'
-      : '<b>' + esc(SP.name) + '</b>';
+  function nameHtml(sp) {
+    return sp.url ? '<a href="' + esc(sp.url) + '" target="_blank" rel="noopener">' + esc(sp.name) + '</a>' : '<b>' + esc(sp.name) + '</b>';
+  }
+  if (sponsors.length && credit) {
     credit.innerHTML = '<span class="lucky-credit__cap">' + esc(ctx.t("lucky.sponsor.strip")) + '</span>' +
-      spMark("lucky-credit__logo") + nameHtml;
+      sponsors.map(function (x) { return '<span class="lucky-credit__who">' + spMark(x.s, "lucky-credit__logo") + nameHtml(x.s) + '</span>'; })
+        .join('<span class="lucky-credit__sep" aria-hidden="true">·</span>');
     credit.hidden = false;
   }
-  if (SP && thanks) {
-    thanks.innerHTML =
-      '<div class="lucky-thanks__mark">' + spMark("lucky-thanks__logo") + '</div>' +
-      '<div class="lucky-thanks__body">' +
-        '<p class="lucky-thanks__eyebrow">' + esc(ctx.t("lucky.sponsor.eyebrow")) + '</p>' +
-        '<h3 class="lucky-thanks__title">' + esc(fill("lucky.sponsor.title")) + '</h3>' +
-        '<p class="lucky-thanks__text">' + esc(fill("lucky.sponsor.text")) + '</p>' +
-        '<p class="lucky-thanks__ask">' + esc(ctx.t("lucky.sponsor.ask")) + '</p>' +
-        (SP.url ? '<a class="btn btn--pill-ghost" href="' + esc(SP.url) + '" target="_blank" rel="noopener">' + esc(fill("lucky.sponsor.visit")) + ' ↗</a>' : '') +
-      '</div>';
+  if (sponsors.length && thanks) {
+    thanks.innerHTML = sponsors.map(function (x) {
+      var sp = x.s;
+      var text = ctx.t("lucky.sponsor.text")
+        .replace(/\{prizes\}/g, prizeList(x.prizes))
+        .replace(/\{verb\}/g, ctx.t(x.prizes.length === 1 ? "lucky.sponsor.verb1" : "lucky.sponsor.verbN"))
+        .replace(/\{name\}/g, sp.name)
+        .replace(/\.\./g, ".");   // a name ending in "." + "." shouldn't make ".."
+      return '<aside class="lucky-thanks" data-animate="zoom-in">' +
+        '<div class="lucky-thanks__mark">' + spMark(sp, "lucky-thanks__logo") + '</div>' +
+        '<div class="lucky-thanks__body">' +
+          '<p class="lucky-thanks__eyebrow">' + esc(ctx.t("lucky.sponsor.eyebrow")) + '</p>' +
+          '<h3 class="lucky-thanks__title">' + esc(fill("lucky.sponsor.title", sp)) + '</h3>' +
+          '<p class="lucky-thanks__text">' + esc(text) + '</p>' +
+          '<p class="lucky-thanks__ask">' + esc(ctx.t("lucky.sponsor.ask")) + '</p>' +
+          (sp.url ? '<a class="btn btn--pill-ghost" href="' + esc(sp.url) + '" target="_blank" rel="noopener">' + esc(fill("lucky.sponsor.visit", sp)) + ' ↗</a>' : '') +
+        '</div></aside>';
+    }).join("");
     thanks.hidden = false;
   }
 

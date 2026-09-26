@@ -238,7 +238,7 @@
 /* ---------- prize sponsor: credit strip, per-card line, thank-you card ---------- */
 .lucky-credit{
   display:inline-flex;align-items:center;flex-wrap:wrap;gap:.55rem .7rem;margin-top:1.2rem;
-  padding:.45rem .95rem .45rem .6rem;border-radius:var(--r-pill);
+  padding:.5rem .95rem .5rem .7rem;border-radius:var(--r-lg);   /* not a pill: with two sponsors it wraps on phones */
   background:color-mix(in srgb,var(--c-gold) 8%,var(--c-surface));
   border:1px solid color-mix(in srgb,var(--c-gold) 35%,var(--c-line));
 }
@@ -266,7 +266,11 @@
     var(--c-surface);
   border:1px solid color-mix(in srgb,var(--c-gold) 40%,var(--c-line));
 }
-.lucky-thanks[hidden]{display:none}
+.lucky-thanks-list{display:grid;gap:14px;margin-top:2.4rem}
+.lucky-thanks-list[hidden]{display:none}
+.lucky-thanks-list .lucky-thanks{margin-top:0}
+.lucky-credit__who{display:inline-flex;align-items:center;gap:.5rem}
+.lucky-credit__sep{color:var(--c-ink-mute)}
 .lucky-thanks__mark{flex:none;display:grid;place-items:center}
 .lucky-thanks__logo{width:clamp(96px,16vw,132px);height:auto;max-height:132px;object-fit:contain}
 .lucky-thanks__logo.lucky-mono{
@@ -281,3 +285,44 @@
 @media (max-width:560px){
   .lucky-thanks{flex-direction:column;align-items:flex-start}
 }
+
+/* ---------- prize photos (like the poster): medal top-left, "Branded" bottom-right ---------- */
+.lucky-prize--photo{padding:0;gap:0}
+.lucky-prize--photo .lucky-prize__text{padding:1.1rem 1.3rem 1.3rem;width:100%}
+.lucky-prize__photo{
+  position:relative;margin:0;width:100%;aspect-ratio:16/10;overflow:hidden;
+  border-bottom:1px solid color-mix(in srgb,var(--c-gold) 30%,var(--c-line));
+  background:#0B130E;
+}
+.lucky-prize__photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.lucky-prize--photo:hover .lucky-prize__photo img{transform:scale(1.04)}
+.lucky-prize__photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.35))}
+.lucky-medal{
+  position:absolute;z-index:2;top:12px;left:12px;display:grid;place-items:center;
+  width:52px;height:52px;border-radius:50%;
+  font-family:"Cinzel",var(--font-display);font-weight:700;font-size:.8rem;letter-spacing:.02em;color:#0B120D;
+  background:linear-gradient(180deg,#FFF1C1,#F0C868 35%,#C9962E 62%,#E9C46A 78%,#8E6418);
+  box-shadow:0 4px 14px rgba(0,0,0,.45),inset 0 0 0 2px rgba(11,19,14,.45),inset 0 0 0 5px rgba(255,241,193,.35);
+}
+.lucky-chip{
+  position:absolute;z-index:2;right:12px;bottom:12px;display:inline-flex;align-items:center;gap:.35rem;
+  padding:.3rem .7rem;border-radius:var(--r-pill);
+  font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:#F3DDA0;
+  background:rgba(7,11,8,.78);border:1px solid color-mix(in srgb,#C9962E 80%,transparent);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+}
+/* the grand prize: photo on the right, big */
+.lucky-prize--grand.lucky-prize--photo{flex-direction:row-reverse;align-items:stretch;padding:0}
+.lucky-prize--grand .lucky-prize__photo{width:58%;flex:none;aspect-ratio:auto;min-height:340px;border-bottom:0;border-left:1px solid color-mix(in srgb,var(--c-gold) 35%,var(--c-line))}
+.lucky-prize--grand.lucky-prize--photo .lucky-prize__text{align-self:center;padding:clamp(1.6rem,4vw,2.6rem)}
+.lucky-prize--grand .lucky-medal{width:74px;height:74px;font-size:1.05rem;top:16px;left:16px}
+.lucky-prize--grand .lucky-prize__photo::after{background:linear-gradient(90deg,color-mix(in srgb,var(--c-surface) 55%,transparent),transparent 22%),linear-gradient(180deg,transparent 60%,rgba(0,0,0,.35))}
+@media (max-width:760px){
+  .lucky-prize--grand.lucky-prize--photo{flex-direction:column}
+  .lucky-prize--grand .lucky-prize__photo{width:100%;min-height:0;aspect-ratio:16/10;border-left:0;border-bottom:1px solid color-mix(in srgb,var(--c-gold) 35%,var(--c-line))}
+  .lucky-prize--grand .lucky-prize__photo::after{background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.35))}
+}
+@media (max-width:520px){
+  .lucky-prize--photo:not(.lucky-prize--grand){flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){ .lucky-prize__photo img{transition:none} .lucky-prize--photo:hover .lucky-prize__photo img{transform:none} }

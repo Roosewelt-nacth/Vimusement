@@ -13,18 +13,18 @@ server (see its header) and it saves the JPGs next to the SVGs.
 The same PAGES table also rewrites each page's <head> share tags
 (og:* and twitter:*) so the title, text and image match the card.
 """
-import html, os, re
+import base64, html, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "assets", "img", "og")
-BASE = "https://roosewelt-nacth.github.io/Vimusement/"
+BASE = "https://victoriansyouth.github.io/Vimusement2k26/"
 
 # page, eyebrow, title lines, subtitle lines, art, share title, share description
 PAGES = [
     ("index", "Annual parish fundraiser", ["Vimusement 2026"],
-     ["Games, food stalls, five films and a", "grand lucky draw, all for a cause."], "mark",
+     ["Games, food, five films and a lucky draw.", "Every rupee split 40 · 30 · 30, up front."], "mark",
      "Vimusement 2026",
-     "A day of games, food stalls, movie screenings and a grand lucky draw at Ascension Church, Aminjikkarai, raising scholarships and medical-emergency help. 25 October 2026."),
+     "A day of games, food stalls and movie screenings on the church grounds. Everything raised after costs is split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund."),
     ("programme", "The day", ["Programme", "and map"],
      ["What's on, when, and where", "everything is on the grounds."], "pin",
      "Programme and map · Vimusement 2026",
@@ -34,17 +34,17 @@ PAGES = [
      "Movies · Vimusement 2026",
      "Five films on the big screen in the AV room at Ascension Church on 25 October: Zootopia 2, Brand New Day, Obsession, Sheep Detectives and Fall 2: Deadpoint."),
     ("draw", "Lucky draw", ["A ₹50 ticket.", "A sofa worth ₹12,000."],
-     ["Four branded prizes worth ₹28,000,", "plus two surprises. Tickets at the church."], "sofa",
+     ["Four branded prizes worth ₹25,000,", "plus two surprises. Tickets at the church."], "sofa-photo",
      "Lucky Draw · Vimusement 2026",
-     "Win a three-seater sofa worth ₹12,000, an air fryer, a mixer, a cooker, or one of two surprise prizes. All branded. ₹50 tickets at the counter in Ascension Church, drawn live on 25 October."),
+     "Win a three-seater sofa worth ₹12,000, an air fryer, a mixie, a cooker, or one of two surprise prizes. All branded. ₹50 tickets at the counter in Ascension Church, drawn live on 25 October."),
     ("donate", "Donate", ["Give to", "the cause"],
      ["Pay the parish directly by UPI.", "Zero fees, every rupee counts."], "heart",
      "Donate · Vimusement 2026",
-     "Give any amount to Vimusement. 100% of what's raised after costs goes to scholarships, medical emergencies and hardship support."),
-    ("cause", "The cause", ["Where the", "money goes"],
-     ["₹94,300 given last year to school", "fees and medical emergencies."], "cap",
+     "Give any amount to Vimusement. 100% of what's raised after costs is split up front: 40% education, 30% medical and other needs, 30% youth emergency fund."),
+    ("cause", "Our 2026 pledge", ["Every rupee,", "split up front"],
+     ["40% education · 30% medical & needs", "30% youth emergency fund. Public ledger."], "cap",
      "The Cause · Vimusement 2026",
-     "Where Vimusement's money goes: scholarships, a medical-emergency fund, and hardship support for neighbours in need, decided by the parish committee."),
+     "Where Vimusement's money goes, announced up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger."),
     ("gallery", "Gallery", ["Past years"],
      ["Reels and memories from", "Vimusement 2022 to 2025."], "photos",
      "Gallery · Vimusement 2026",
@@ -118,8 +118,24 @@ def esc(s):
     return html.escape(s, quote=True)
 
 
+def sofa_photo():
+    """the real prize sofa (cut out) as a data URI, small enough for a 1200px card"""
+    from io import BytesIO
+    from PIL import Image
+    im = Image.open(os.path.join(ROOT, "design", "lucky-draw-poster", "photos", "sofa-cutout.png"))
+    im.thumbnail((980, 980), Image.LANCZOS)
+    buf = BytesIO(); im.save(buf, "PNG", optimize=True)
+    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode(), im.width / im.height
+
+
 def art(key):
     cx, cy = 925, 300
+    if key == "sofa-photo":   # the actual sofa, sitting in a gold glow
+        href, ratio = sofa_photo()
+        w = 480; h = w / ratio
+        return (f'<ellipse cx="{cx}" cy="{cy}" rx="250" ry="190" fill="url(#halo)"/>'
+                f'<ellipse cx="{cx}" cy="{cy + h / 2 - 6:.0f}" rx="{w * .46:.0f}" ry="16" fill="#000" opacity=".55" filter="url(#ogblur)"/>'
+                f'<image x="{cx - w / 2:.0f}" y="{cy - h / 2:.0f}" width="{w}" height="{h:.0f}" href="{href}"/>')
     if key == "posters":   # five little poster cards, fanned
         out = []
         for i, (bg, ac) in enumerate(POSTERS):
@@ -155,6 +171,7 @@ def card(p):
   <defs>
     <radialGradient id="glow" cx="78%" cy="45%" r="60%"><stop offset="0" stop-color="{EMER}" stop-opacity=".55"/><stop offset=".6" stop-color="{EMER}" stop-opacity=".08"/><stop offset="1" stop-color="{EMER}" stop-opacity="0"/></radialGradient>
     <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="{GOLD}" stop-opacity=".16"/><stop offset="1" stop-color="{GOLD}" stop-opacity="0"/></radialGradient>
+    <filter id="ogblur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="10"/></filter>
   </defs>
   <rect width="1200" height="630" fill="#070B08"/>
   <rect width="1200" height="630" fill="url(#glow)"/>

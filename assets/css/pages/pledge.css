@@ -1,0 +1,87 @@
+/* ============================================================
+   PLEDGE — the 2026 40 · 30 · 30 split and the public ledger
+   (homepage section, Cause page, Donate page)
+   Each fund's colour comes from VIM_YEAR.causes[].color as --fund.
+   ============================================================ */
+
+/* ---------- split bar ---------- */
+.pledge-bar{display:flex;gap:4px;height:74px;border-radius:var(--r-lg);overflow:hidden;margin:2rem 0 1.6rem}
+.pledge-bar__seg{
+  position:relative;display:flex;flex-direction:column;justify-content:center;padding:0 1.1rem;min-width:0;
+  background:var(--fund);color:#0B120D;transform-origin:left;transform:scaleX(0);
+  transition:transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i) * .18s);
+}
+.pledge.is-in .pledge-bar__seg{transform:none}
+.pledge-bar__seg b{font-family:var(--font-display);font-size:1.6rem;line-height:1}
+.pledge-bar__seg i{font-style:normal;font-size:.78rem;font-weight:600;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){ .pledge-bar{height:64px} .pledge-bar__seg{padding:0 .7rem} .pledge-bar__seg b{font-size:1.25rem} .pledge-bar__seg i{font-size:.68rem} }
+
+/* ---------- homepage section ---------- */
+.pledge-section .tile__intro{max-width:62ch}
+.pledge-funds{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.pledge-fund{
+  padding:1.5rem 1.4rem 1.4rem;border-radius:var(--r-lg);
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+  border-top:4px solid var(--fund);
+}
+.pledge-fund__top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.pledge-fund__pct{font-family:var(--font-display);font-weight:var(--weight-bold);font-size:clamp(3rem,6vw,4.2rem);line-height:.9;color:var(--fund);font-variant-numeric:tabular-nums}
+.pledge-fund__pct small{font-size:.5em;margin-left:.05em}
+.pledge-fund__icon{width:40px;height:40px;color:var(--fund);opacity:.9}
+.pledge-fund__icon svg{width:100%;height:100%}
+.pledge-fund h3{margin:.9rem 0 .4rem;font-size:1.2rem;color:var(--c-on-dark)}
+.pledge-fund p{margin:0;color:var(--c-on-dark-soft);font-size:.93rem;line-height:1.5}
+.pledge-fund__stat{margin-top:.9rem !important;font-weight:600;color:var(--fund) !important;font-size:.85rem !important}
+.pledge-promises{list-style:none;padding:0;margin:1.6rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem}
+.pledge-promises li{
+  display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .95rem;border-radius:var(--r-pill);
+  border:1px solid rgba(255,255,255,.18);font-size:.86rem;color:var(--c-on-dark);
+}
+.pledge-promises li::before{content:"";width:.55rem;height:.55rem;border-radius:50%;background:var(--c-gold)}
+
+/* ---------- compact bar (Cause + Donate) ---------- */
+.pledge--bar .pledge-bar{margin:1.2rem 0 .8rem}
+.pledge-mini__link{font-weight:600;font-size:.92rem}
+.donate-pledge{margin-top:2rem;padding:1.4rem 1.5rem;border-radius:var(--r-lg);border:1px solid var(--c-line);background:var(--c-surface)}
+.donate-pledge h2{font-size:1.15rem;margin:0}
+
+/* fund cards on the Cause page */
+.pillar--fund{border-top:4px solid var(--fund)}
+.pillar__share{margin:.1rem 0 .2rem;font-family:var(--font-display);font-weight:var(--weight-bold);font-size:2.6rem;line-height:1;color:var(--fund);font-variant-numeric:tabular-nums}
+.pillar__share small{font-size:.5em;margin-left:.04em}
+
+/* ---------- public ledger (Cause page) ---------- */
+.ledger{margin-top:1.8rem}
+.ledger__loading{color:var(--c-ink-mute)}
+.ledger__empty{padding:1.6rem 1.6rem 1.3rem;border-radius:var(--r-lg);border:1px dashed color-mix(in srgb,var(--c-gold) 60%,transparent);background:color-mix(in srgb,var(--c-gold) 5%,transparent)}
+.ledger__empty-title{font-family:var(--font-display);font-weight:var(--weight-bold);font-size:1.3rem;margin:0 0 .4rem;color:var(--c-ink)}
+.ledger__empty p{margin:0;color:var(--c-ink-soft)}
+.ledger__will{margin:1rem 0 0;padding-left:1.1rem;color:var(--c-ink-soft);display:grid;gap:.3rem}
+.ledger__sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--c-line);background:var(--c-line)}
+.ledger__sum > div{background:var(--c-surface);padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.3rem}
+.ledger__sum span{font-size:.8rem;color:var(--c-ink-mute)}
+.ledger__sum b{font-family:var(--font-display);font-size:clamp(1.3rem,3vw,1.9rem);color:var(--c-ink);font-variant-numeric:tabular-nums}
+.ledger__sum .is-net b{color:var(--c-primary-ink)}
+.ledger__funds{display:grid;gap:.9rem;margin:1.2rem 0 1.4rem}
+.ledger__fund-head,.ledger__fund-foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.ledger__fund-head b{color:var(--c-ink)}
+.ledger__fund-head span,.ledger__fund-foot{font-size:.85rem;color:var(--c-ink-mute);font-variant-numeric:tabular-nums}
+.ledger__meter{height:10px;border-radius:var(--r-pill);background:var(--c-line);margin:.45rem 0 .35rem;overflow:hidden}
+.ledger__meter i{display:block;height:100%;background:var(--fund);border-radius:inherit}
+.ledger__table-wrap{overflow-x:auto;border:1px solid var(--c-line);border-radius:var(--r-lg)}
+.ledger__table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:520px}
+.ledger__table th,.ledger__table td{padding:.7rem .9rem;text-align:left;border-bottom:1px solid var(--c-line)}
+.ledger__table th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--c-ink-mute);font-weight:600}
+.ledger__table tr:last-child td{border-bottom:0}
+.ledger__amt{text-align:right !important;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+.ledger__table .is-raised .ledger__amt{color:var(--c-primary-ink)}
+.ledger__tag{display:inline-block;padding:.15rem .55rem;border-radius:var(--r-pill);font-size:.75rem;font-weight:600;border:1px solid var(--c-line);white-space:nowrap}
+.ledger__table tr[style] .ledger__tag{border-color:var(--fund);color:var(--c-ink)}
+.ledger__more{margin-top:1rem}
+.ledger__foot{margin-top:.9rem;font-size:.82rem;color:var(--c-ink-mute)}
+@media (max-width:560px){ .ledger__sum{grid-template-columns:1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .pledge-bar__seg{transition:none;transform:none}
+}
+.cause-pledge__eyebrow{margin-top:2.4rem}

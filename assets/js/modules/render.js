@@ -12,6 +12,7 @@
     food:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M14 8s0-5 3-5 3 5 3 5-1 3-3 3-3-3-3-3ZM17 11v10"/></svg>',
     movie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5 6 9M13 5l-2 4M18 5l-2 4"/></svg>',
     kids:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M6 21c0-4 3-7 6-7s6 3 6 7M12 10v4"/></svg>',
+    shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5.5c0 4.3 3 8 7 9.5 4-1.5 7-5.2 7-9.5V6l-7-3Z"/><path d="M12 8.5v4M12 15.5h.01"/></svg>',
     cap:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 9-4 9 4-9 4-9-4Z"/><path d="M7 10.5V15c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-4.5M21 8v5"/></svg>',
     heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
     hands: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 12V4.5a1.5 1.5 0 0 1 3 0V12M14 12V6.5a1.5 1.5 0 0 1 3 0V14c0 3.3-2.7 6-6 6s-6-2.7-6-6v-1.5a1.5 1.5 0 0 1 3 0V14"/></svg>',
@@ -240,8 +241,12 @@
     }
 
     function pillarHTML(item) {
-      return '<div class="pillar" data-animate="fade-up">'
+      var share = item.share != null
+        ? '<p class="pillar__share">' + esc(item.share) + '<small>%</small></p>' : "";
+      return '<div class="pillar' + (item.share != null ? " pillar--fund" : "") + '" data-animate="fade-up"' +
+             (item.color ? ' style="--fund:' + esc(item.color) + '"' : "") + ">"
            +   '<div class="pillar__icon">' + (ICONS[item.icon] || "") + "</div>"
+           +   share
            +   "<h3>" + esc(ctx.L(item.title)) + "</h3>"
            +   "<p>" + esc(ctx.L(item.text)) + "</p>"
            +   (item.stat ? '<p class="pillar__stat">' + esc(ctx.L(item.stat)) + "</p>" : "")

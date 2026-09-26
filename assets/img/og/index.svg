@@ -2,6 +2,7 @@
   <defs>
     <radialGradient id="glow" cx="78%" cy="45%" r="60%"><stop offset="0" stop-color="#1F6B45" stop-opacity=".55"/><stop offset=".6" stop-color="#1F6B45" stop-opacity=".08"/><stop offset="1" stop-color="#1F6B45" stop-opacity="0"/></radialGradient>
     <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#C9962E" stop-opacity=".16"/><stop offset="1" stop-color="#C9962E" stop-opacity="0"/></radialGradient>
+    <filter id="ogblur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="10"/></filter>
   </defs>
   <rect width="1200" height="630" fill="#070B08"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
@@ -10,7 +11,7 @@
   <text x="130" y="98" font-family="IBM Plex Mono, Consolas, monospace" font-size="20" letter-spacing="5" fill="#C7D4C2">VIMUSEMENT 2026</text>
   <text x="82" y="212" font-family="IBM Plex Mono, Consolas, monospace" font-size="19" letter-spacing="5" fill="#DDAE4C">ANNUAL PARISH FUNDRAISER</text>
   <text x="80" y="300" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="80" fill="#F4EEE2">Vimusement 2026</text>
-  <text x="82" y="362" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="28" fill="#C7D4C2">Games, food stalls, five films and a</text><text x="82" y="400" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="28" fill="#C7D4C2">grand lucky draw, all for a cause.</text>
+  <text x="82" y="362" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="28" fill="#C7D4C2">Games, food, five films and a lucky draw.</text><text x="82" y="400" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="28" fill="#C7D4C2">Every rupee split 40 · 30 · 30, up front.</text>
   <rect x="80" y="514" width="596" height="52" rx="26" fill="#1F6B45"/>
   <text x="378" y="547" text-anchor="middle" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-size="22" fill="#EAF2E6">25 Oct 2026 · Ascension Church, Aminjikkarai</text>
   <circle cx="925" cy="300" r="190" fill="url(#halo)"/><circle cx="925" cy="300" r="178" fill="none" stroke="#C9962E" stroke-opacity=".28" stroke-width="1.5"/><circle cx="925" cy="300" r="150" fill="none" stroke="#C9962E" stroke-opacity=".12" stroke-width="1"/><g transform="translate(769 144) scale(13)" fill="none" stroke="#DDAE4C" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="1.6"/><path d="M12 3v16M4 11h16M6.3 5.3l11.4 11.4M17.7 5.3 6.3 16.7"/></g>

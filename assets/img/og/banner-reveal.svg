@@ -2,6 +2,7 @@
   <defs>
     <radialGradient id="glow" cx="78%" cy="45%" r="60%"><stop offset="0" stop-color="#1F6B45" stop-opacity=".55"/><stop offset=".6" stop-color="#1F6B45" stop-opacity=".08"/><stop offset="1" stop-color="#1F6B45" stop-opacity="0"/></radialGradient>
     <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#C9962E" stop-opacity=".16"/><stop offset="1" stop-color="#C9962E" stop-opacity="0"/></radialGradient>
+    <filter id="ogblur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="10"/></filter>
   </defs>
   <rect width="1200" height="630" fill="#070B08"/>
   <rect width="1200" height="630" fill="url(#glow)"/>

@@ -5,22 +5,22 @@
 <!-- share preview (built by scripts/build_og_cards.py; crawlers read these, not the JS) -->
 <meta property="og:site_name" content="Vimusement">
 <meta property="og:title" content="The Cause · Vimusement 2026">
-<meta property="og:description" content="Where Vimusement&#x27;s money goes: scholarships, a medical-emergency fund, and hardship support for neighbours in need, decided by the parish committee.">
+<meta property="og:description" content="Where Vimusement&#x27;s money goes, announced up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://roosewelt-nacth.github.io/Vimusement/cause.html">
-<meta property="og:image" content="https://roosewelt-nacth.github.io/Vimusement/assets/img/og/cause.jpg">
+<meta property="og:url" content="https://victoriansyouth.github.io/Vimusement2k26/cause.html">
+<meta property="og:image" content="https://victoriansyouth.github.io/Vimusement2k26/assets/img/og/cause.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Cause · Vimusement 2026">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Cause · Vimusement 2026">
-<meta name="twitter:description" content="Where Vimusement&#x27;s money goes: scholarships, a medical-emergency fund, and hardship support for neighbours in need, decided by the parish committee.">
-<meta name="twitter:image" content="https://roosewelt-nacth.github.io/Vimusement/assets/img/og/cause.jpg">
+<meta name="twitter:description" content="Where Vimusement&#x27;s money goes, announced up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger.">
+<meta name="twitter:image" content="https://victoriansyouth.github.io/Vimusement2k26/assets/img/og/cause.jpg">
 <!-- /share preview -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n-title="cause.title">The Cause · Vimusement 2026</title>
-<meta name="description" data-i18n-content="cause.meta.description" content="Where Vimusement&#x27;s money goes: scholarships, a medical-emergency fund, and hardship support for neighbours in need, decided by the parish committee.">
+<meta name="description" data-i18n-content="cause.meta.description" content="Where Vimusement&#x27;s money goes, announced up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 <script>
 document.documentElement.className+=" js";
@@ -32,10 +32,11 @@ document.documentElement.className+=" js";
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/components.css?v=20260926d">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/pages/home.css">
 <link rel="stylesheet" href="assets/css/pages/subpage.css">
+<link rel="stylesheet" href="assets/css/pages/pledge.css?v=20260926d">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -45,7 +46,7 @@ document.documentElement.className+=" js";
   <div class="wrap">
     <p class="eyebrow" data-animate="fade-up" data-i18n="cause.hero.eyebrow">Why we do it</p>
     <h1 data-animate="fade-up" data-animate-delay="0.06" data-i18n="cause.hero.title">The fair is the fun part. This is the point of it.</h1>
-    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12" data-i18n="cause.hero.sub">Every rupee raised after event costs goes to three things, decided by the parish committee and published in full after the night.</p>
+    <p class="pagehead__lead" data-animate="fade-up" data-animate-delay="0.12" data-i18n="cause.hero.sub">Everything raised after event costs is split three ways, announced before the fair: 40% education, 30% medical and other needs, 30% the Youth Emergency Fund. Every rupee in and out goes on the public ledger below.</p>
     <div class="pagehead__cta" data-animate="fade-up" data-animate-delay="0.18">
       <a class="btn btn--gold btn--lg" href="donate.html" data-i18n="cause.hero.cta">Donate</a>
     </div>
@@ -59,11 +60,24 @@ document.documentElement.className+=" js";
       <p class="impact-callout__figure" data-bind="causeImpactTotal">₹94,300</p>
       <p class="impact-callout__note" data-bind="causeNote">Impact figures will be published after the event.</p>
     </div>
+    <p class="eyebrow cause-pledge__eyebrow" data-animate="fade-up" data-i18n="pledge.eyebrow">Our 2026 pledge</p>
+    <div data-pledge="bar" data-animate="fade-up"></div>
     <div class="grid grid--auto pillars" data-list="causes"></div>
     <div class="cause-activities" data-animate="fade-up">
       <p class="cause-activities__eyebrow" data-bind="causeActivitiesEyebrow">Every year, beyond the fundraiser</p>
       <p class="cause-activities__note" data-bind="causeActivities"></p>
     </div>
+  </div>
+</section>
+
+<section class="subsection" id="ledger">
+  <div class="wrap">
+    <div class="subsection__intro">
+      <p class="eyebrow" data-animate="fade-up" data-i18n="cause.ledger.eyebrow">Public ledger</p>
+      <h2 class="section__title" data-animate="fade-up" data-i18n="cause.ledger.title">Every rupee in, every rupee out</h2>
+      <p class="lead" data-animate="fade-up" data-i18n="cause.ledger.lead">What came in, what the event cost, and every payout from each fund, updated by the committee as money moves.</p>
+    </div>
+    <div class="ledger" data-ledger></div>
   </div>
 </section>
 
@@ -92,7 +106,7 @@ document.documentElement.className+=" js";
 <section class="tile tile--c donate-band">
   <div class="wrap">
     <h2 data-animate="fade-up" data-i18n="cause.band.title">Can’t make it to the fair? You can still change someone’s year.</h2>
-    <p data-animate="fade-up" data-i18n="cause.band.sub">Give any amount, from anywhere. 100% of what’s raised after costs goes to the causes above.</p>
+    <p data-animate="fade-up" data-i18n="cause.band.sub">Give any amount, from anywhere. 100% of what’s raised after costs goes into the 40 · 30 · 30 pledge above.</p>
     <a class="btn btn--lg" href="donate.html" data-animate="fade-up" data-i18n="cause.band.cta">Donate to Vimusement</a>
   </div>
 </section>
@@ -107,11 +121,11 @@ document.documentElement.className+=" js";
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
 <script defer src="assets/js/core.js"></script>
-<script defer src="assets/js/strings.js"></script>
-<script defer src="years/2026.config.js"></script>
+<script defer src="assets/js/strings.js?v=20260926d"></script>
+<script defer src="years/2026.config.js?v=20260926d"></script>
 <script defer src="years/current.js"></script>
 <script defer src="assets/js/site.config.js"></script>
-<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/chrome.js?v=20260926d"></script>
 <script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
 <script defer src="assets/js/modules/lang.js"></script>
@@ -120,7 +134,9 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/sponsordeck.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
-<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/render.js?v=20260926d"></script>
+<script defer src="assets/js/modules/pledge.js?v=20260926d"></script>
+<script defer src="assets/js/modules/ledger.js?v=20260926d"></script>
 <script defer src="assets/js/modules/motion.js"></script>
 <script defer src="assets/js/modules/donors.js"></script>
 <script defer src="assets/js/modules/polish.js"></script>

@@ -5,22 +5,22 @@
 <!-- share preview (built by scripts/build_og_cards.py; crawlers read these, not the JS) -->
 <meta property="og:site_name" content="Vimusement">
 <meta property="og:title" content="Donate · Vimusement 2026">
-<meta property="og:description" content="Give any amount to Vimusement. 100% of what&#x27;s raised after costs goes to scholarships, medical emergencies and hardship support.">
+<meta property="og:description" content="Give any amount to Vimusement. 100% of what&#x27;s raised after costs is split up front: 40% education, 30% medical and other needs, 30% youth emergency fund.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://roosewelt-nacth.github.io/Vimusement/donate.html">
-<meta property="og:image" content="https://roosewelt-nacth.github.io/Vimusement/assets/img/og/donate.jpg">
+<meta property="og:url" content="https://victoriansyouth.github.io/Vimusement2k26/donate.html">
+<meta property="og:image" content="https://victoriansyouth.github.io/Vimusement2k26/assets/img/og/donate.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Donate · Vimusement 2026">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Donate · Vimusement 2026">
-<meta name="twitter:description" content="Give any amount to Vimusement. 100% of what&#x27;s raised after costs goes to scholarships, medical emergencies and hardship support.">
-<meta name="twitter:image" content="https://roosewelt-nacth.github.io/Vimusement/assets/img/og/donate.jpg">
+<meta name="twitter:description" content="Give any amount to Vimusement. 100% of what&#x27;s raised after costs is split up front: 40% education, 30% medical and other needs, 30% youth emergency fund.">
+<meta name="twitter:image" content="https://victoriansyouth.github.io/Vimusement2k26/assets/img/og/donate.jpg">
 <!-- /share preview -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n-title="donate.title">Donate · Vimusement 2026</title>
-<meta name="description" data-i18n-content="donate.meta.description" content="Give any amount to Vimusement. 100% of what&#x27;s raised after costs goes to scholarships, medical emergencies and hardship support.">
+<meta name="description" data-i18n-content="donate.meta.description" content="Give any amount to Vimusement. 100% of what&#x27;s raised after costs is split up front: 40% education, 30% medical and other needs, 30% youth emergency fund.">
 <link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
 
 <script>
@@ -35,9 +35,10 @@ document.documentElement.className+=" js";
 
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/components.css?v=20260926d">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/pages/donate.css">
+<link rel="stylesheet" href="assets/css/pages/pledge.css?v=20260926d">
 <link rel="stylesheet" href="assets/css/desk.css">
 </head>
 <body>
@@ -124,9 +125,14 @@ document.documentElement.className+=" js";
     </div>
 
     <blockquote class="donate-quote" data-animate="fade-up">
-      <span data-i18n="donate.quote.text">“Every rupee, after event costs, goes to scholarships, our medical-emergency fund, and help for neighbours in need.”</span>
-      <cite data-i18n="donate.quote.cite">Published in full after every event</cite>
+      <span data-i18n="donate.quote.text">“Every rupee, after event costs, is split up front: 40% education, 30% medical and other needs, 30% youth emergency fund.”</span>
+      <cite data-i18n="donate.quote.cite">Every rupee in and out, on the public ledger</cite>
     </blockquote>
+
+    <div class="donate-pledge" data-animate="fade-up">
+      <h2 data-i18n="donate.pledge.title">Where your gift goes</h2>
+      <div data-pledge="bar"></div>
+    </div>
 
     <div class="donate-panel" data-animate="fade-up">
       <h2 data-i18n="donate.faq.title">Before you give</h2>
@@ -137,7 +143,7 @@ document.documentElement.className+=" js";
         </details>
         <details class="faq-item">
           <summary data-i18n="donate.faq.q2">Where exactly does it go?</summary>
-          <p data-i18n="donate.faq.a2">Straight to the parish's fund for scholarships, the medical-emergency fund, and hardship support — decided by the committee, published in full after the event. See <a href="cause.html">The Cause</a> for last year's numbers.</p>
+          <p data-i18n="donate.faq.a2">Into the 2026 pledge: 40% education for the poor, 30% medical and other needs, and 30% the Youth Emergency Fund, which Victorians Youth holds in reserve for when it’s needed most. Every rupee in and out goes on the <a href="cause.html#ledger">public ledger</a>.</a> for last year's numbers.</p>
         </details>
         <details class="faq-item">
           <summary data-i18n="donate.faq.q3">Do I get a receipt or confirmation?</summary>
@@ -165,11 +171,11 @@ document.documentElement.className+=" js";
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
 <script defer src="assets/js/core.js"></script>
-<script defer src="assets/js/strings.js"></script>
-<script defer src="years/2026.config.js"></script>
+<script defer src="assets/js/strings.js?v=20260926d"></script>
+<script defer src="years/2026.config.js?v=20260926d"></script>
 <script defer src="years/current.js"></script>
 <script defer src="assets/js/site.config.js"></script>
-<script defer src="assets/js/modules/chrome.js"></script>
+<script defer src="assets/js/modules/chrome.js?v=20260926d"></script>
 <script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
 <script defer src="assets/js/modules/lang.js"></script>
@@ -178,7 +184,8 @@ document.documentElement.className+=" js";
 <script defer src="assets/js/modules/sponsordeck.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
-<script defer src="assets/js/modules/render.js"></script>
+<script defer src="assets/js/modules/render.js?v=20260926d"></script>
+<script defer src="assets/js/modules/pledge.js?v=20260926d"></script>
 <script defer src="assets/js/modules/motion.js"></script>
 <script defer src="assets/vendor/qrcode-generator.js"></script>
 <script defer src="assets/js/modules/counters.js"></script>

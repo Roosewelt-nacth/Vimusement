@@ -6,6 +6,9 @@
  *     Donations   — zero-fee UPI + confirm + notify
  *     LuckyDraw   — ticket sales (UPI + cash counter) + the draw
  *     Staff       — who can use the counter: Username|Name|Role|Active|Notes
+ *     Ledger      — the PUBLIC ledger behind the 40·30·30 pledge (cause.html#ledger):
+ *                   Date|Type|Fund|Amount|Details|Show on site. Everything here
+ *                   is published, so never put a name in Details.
  *     _Counters   — running numbers for unique IDs (hidden; do not edit by hand)
  *     _Log        — audit trail: every login / ticket / cash gift / winner (hidden)
  *
@@ -38,7 +41,7 @@
  *   SMS_API_KEY      SMS gateway auth key
  *   SMS_SENDER_ID    optional 6-char sender ID some Indian gateways require
  *   SITE_URL         the site's live base URL, e.g.
- *                    https://roosewelt-nacth.github.io/Vimusement/
+ *                    https://victoriansyouth.github.io/Vimusement2k26/
  *                    (optional — falls back to a hardcoded default below;
  *                    only needed if the site ever moves)
  *
@@ -123,6 +126,9 @@ function doGet(e) {
       /* movie poll */
       case 'pollVote':        return _json(pollVote(e.parameter));
       case 'pollResults':     return _json(pollResults());
+
+      /* the public ledger (cause.html#ledger) */
+      case 'ledger':          return _json(getLedger());
 
       default:                return _json({ error: 'unknown action: ' + a });
     }
@@ -262,7 +268,7 @@ function _sendSms(phone, message) {
     SMS link opens straight to every ticket/donation on that number — no
     typing required. */
 function _ticketLink(phone) {
-  var base = PROPS.getProperty('SITE_URL') || 'https://roosewelt-nacth.github.io/Vimusement/';
+  var base = PROPS.getProperty('SITE_URL') || 'https://victoriansyouth.github.io/Vimusement2k26/';
   if (base.charAt(base.length - 1) !== '/') base += '/';
   return base + 'tickets.html?phone=' + encodeURIComponent(_normPhone(phone));
 }
@@ -1079,4 +1085,65 @@ function pollVote(p) {
     lock.releaseLock();
   }
   return { ok: true, results: pollResults() };
+}
+
+
+/* ============================================================
+   PUBLIC LEDGER — the 2026 pledge, 40 · 30 · 30
+   Tab "Ledger": one row per money movement, typed in by the committee.
+     Date         the day it happened
+     Type         Raised | Cost | Payout
+     Fund         Education | Medical | Emergency   (Payout rows only)
+     Amount       rupees, a plain number
+     Details      what it was, WITHOUT names ("School fees, Class 9")
+     Show on site Yes (default) | No  — No keeps a row off the website
+   The site adds it all up itself: raised − costs = what the three
+   funds share, 40 / 30 / 30, minus what each has paid out.
+   ============================================================ */
+var T_LEDGER = 'Ledger';
+var LEDGER_HEADER = ['Date', 'Type', 'Fund', 'Amount', 'Details', 'Show on site'];
+
+function _ledger() {
+  var sh = _tab(T_LEDGER, LEDGER_HEADER);
+  if (sh.getLastRow() < 2 && !sh.getRange(1, 7).getValue()) {
+    // first run: drop-downs so the committee can't mistype the type or fund
+    var n = Math.max(sh.getMaxRows() - 1, 1);
+    sh.getRange(2, 2, n).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(['Raised', 'Cost', 'Payout'], true).build());
+    sh.getRange(2, 3, n).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(['Education', 'Medical', 'Emergency'], true).setAllowInvalid(true).build());
+    sh.getRange(2, 6, n).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(['Yes', 'No'], true).build());
+    sh.getRange(2, 1, n).setNumberFormat('dd-mmm-yyyy');
+    sh.getRange(2, 4, n).setNumberFormat('#,##,##0');
+    sh.getRange(1, 7).setValue('Everything in this tab is shown on the website. Never write a name in Details.').setFontStyle('italic').setFontColor('#8a6d1c');
+  }
+  return sh;
+}
+
+function getLedger() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('ledger_v1');
+  if (hit) return JSON.parse(hit);
+
+  var sh = _ledger();
+  var last = sh.getLastRow();
+  var out = { entries: [], updated: null };
+  if (last >= 2) {
+    var rows = sh.getRange(2, 1, last - 1, LEDGER_HEADER.length).getValues();
+    var newest = 0;
+    rows.forEach(function (r) {
+      var type = String(r[1] || '').trim().toLowerCase();
+      var amount = Number(String(r[3]).replace(/[₹,\s]/g, '')) || 0;
+      if (!amount || ['raised', 'cost', 'payout'].indexOf(type) < 0) return;
+      if (String(r[5] || '').trim().toLowerCase() === 'no') return;
+      var fund = String(r[2] || '').trim().toLowerCase();
+      fund = /^edu/.test(fund) ? 'education' : /^med/.test(fund) ? 'medical' : /^emer|^youth/.test(fund) ? 'emergency' : '';
+      if (type === 'payout' && !fund) return;          // a payout must say which fund it came from
+      var d = r[0] instanceof Date ? r[0] : new Date(r[0]);
+      var iso = isNaN(d) ? '' : Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+      if (!isNaN(d)) newest = Math.max(newest, d.getTime());
+      out.entries.push({ date: iso, type: type, fund: fund, amount: amount, detail: String(r[4] || '').trim().slice(0, 120) });
+    });
+    if (newest) out.updated = Utilities.formatDate(new Date(newest), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  }
+  cache.put('ledger_v1', JSON.stringify(out), 120);   // 2 minutes: edits show up quickly
+  return out;
 }
