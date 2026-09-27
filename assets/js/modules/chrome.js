@@ -150,19 +150,21 @@
               '<p class="footer__blurb">' + ctx.t("footer.blurb") + '</p>' +
               orgBlock +
             '</div>' +
-            '<div><h4>' + ctx.t("footer.pages") + '</h4>' + nav + '</div>' +
+            '<div><h4>' + ctx.t("footer.pages") + '</h4><div class="footer__links">' + nav + '</div></div>' +
             '<div><h4>' + ctx.t("footer.reachUs") + '</h4>' +
               (Y.contactEmail ? '<a href="mailto:' + Y.contactEmail + '">' + Y.contactEmail + '</a>' : '') +
               (ig ? '<a href="' + ig + '" target="_blank" rel="noopener">' + ctx.t("footer.instagram") + '</a>' : '') +
               '<a href="programme.html">Ascension Church, Aminjikkarai</a>' +
             '</div>' +
           '</div>' +
+          '<div class="footer__bottom">' +
           '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote ? ctx.L(S.footerNote) : "An annual parish fundraiser.") + '</p>' +
           '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a></p>' +
           '<a class="footer__secret" href="credits.html">' +
             '<span class="footer__secret-dot" aria-hidden="true"></span>' +
             '<span class="footer__secret-text">' + ctx.t("footer.credit") + ' <b>Austin</b> &rarr;</span>' +
           '</a>' +
+          '</div>' +
         '</div>';
     }
 

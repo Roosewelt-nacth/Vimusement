@@ -568,7 +568,10 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 
 /* ---------- FOOTER (parchment, dense links) ---------- */
 .footer{background:var(--c-parchment);color:var(--c-ink-mute);padding-block:64px 40px}
-.footer__grid{display:grid;gap:24px 40px;grid-template-columns:1.6fr 1fr 1fr}
+.footer__grid{display:grid;gap:32px 48px;grid-template-columns:1.3fr 1.5fr 1fr;align-items:start}
+/* the page list flows into two even columns, so the footer doesn't lean on one long list */
+.footer__links{columns:2;column-gap:32px}
+.footer__links a{break-inside:avoid}
 .footer .dock__brand{
   display:inline-flex;align-items:center;gap:.5rem;color:var(--c-ink);
   font-family:var(--font-display);font-weight:var(--weight-bold);text-decoration:none;font-size:1.05rem;
@@ -594,15 +597,17 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
 }
 .footer a{color:var(--c-ink-soft);text-decoration:none;display:block;line-height:var(--lh-dense-link);font-size:var(--fs-base)}
 .footer a:active{color:var(--c-primary-ink)}
-.footer__fine{
-  margin-top:32px;padding-top:20px;border-top:1px solid var(--c-line);
-  font-size:var(--fs-xs);color:var(--c-ink-mute);
+/* one full-width bottom row: small print · credit · staff line */
+.footer__bottom{
+  margin-top:40px;padding-top:20px;border-top:1px solid var(--c-line);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 32px;
 }
+.footer__fine{margin:0;font-size:var(--fs-xs);color:var(--c-ink-mute)}
 .footer__staff{
-  margin-top:.6rem;font-family:var(--font-mono);font-size:.68rem;
+  margin:0;order:3;white-space:nowrap;font-family:var(--font-mono);font-size:.68rem;
   letter-spacing:.08em;color:var(--c-ink-mute);
 }
-.footer__staff a,.footer__staff-btn{
+.footer__staff a,.footer__staff-btn{display:inline;line-height:inherit;
   color:var(--c-ink-mute);text-decoration:underline;text-underline-offset:2px;
   background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;
 }
@@ -615,7 +620,7 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
    for mouse users, but nothing functional depends on it. */
 .footer a.footer__secret{
   position:relative;display:inline-flex;align-items:center;gap:.55rem;
-  margin-top:1.6rem;padding:.8rem 1.1rem;border-radius:var(--r-md);
+  margin:0;order:2;padding:.8rem 1.1rem;border-radius:var(--r-md);
   text-decoration:none;overflow:hidden;isolation:isolate;
 }
 .footer__secret::before{
@@ -650,8 +655,9 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .footer__secret::before{transition:none}
   .footer__secret-dot{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c-primary) 30%,transparent)}
 }
-@media (max-width:760px){.footer__grid{grid-template-columns:1fr 1fr}}
-@media (max-width:440px){.footer__grid{grid-template-columns:1fr}}
+@media (max-width:900px){.footer__grid{grid-template-columns:1fr 1fr}.footer__grid > div:first-child{grid-column:1 / -1}}
+@media (max-width:900px){.footer__bottom{flex-direction:column;align-items:flex-start}.footer__staff,.footer a.footer__secret{order:0}}
+@media (max-width:560px){.footer__grid{grid-template-columns:1fr}}
 
 /* ============================================================
    SITE-WIDE POLISH  (see modules/polish.js)

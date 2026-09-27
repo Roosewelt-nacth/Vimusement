@@ -28,6 +28,7 @@ window.VIM_SITE = {
     { label: { en: "Sponsorship", ta: "ஸ்பான்சர்ஷிப்" },   file: "sponsors.html",  icon: "star", dock: false },   // reachable from Get Involved; kept in the footer list
     { label: { en: "Find My Donation", ta: "எனது நன்கொடை" }, file: "tickets.html", icon: "search" },
     // { label: { en: "Developers", ta: "டெவலப்பர்கள்" }, file: "developers.html", icon: "code" },   // hidden for now — page still exists, just not linked
+    { label: { en: "Credits", ta: "நன்றிகள்" },           file: "credits.html",   icon: "code", dock: false },   // footer list only, not the dock menu
     { label: { en: "Donate", ta: "நன்கொடை" },             file: "donate.html",    icon: "gift", cta: true }
   ],
 
