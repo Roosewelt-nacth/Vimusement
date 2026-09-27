@@ -160,12 +160,37 @@
           '<div class="footer__bottom">' +
           '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote ? ctx.L(S.footerNote) : "An annual parish fundraiser.") + '</p>' +
           '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a></p>' +
-          '<a class="footer__secret" href="credits.html">' +
+          '<a class="footer__secret" href="credits.html" aria-label="' + ctx.t("footer.credit") + ' Austin">' +
             '<span class="footer__secret-dot" aria-hidden="true"></span>' +
-            '<span class="footer__secret-text">' + ctx.t("footer.credit") + ' <b>Austin</b> &rarr;</span>' +
+            '<span class="footer__secret-text">' + ctx.t("footer.credit") + ' ' +
+              '<svg class="footer__sign-name" viewBox="0 0 132 52" aria-hidden="true"><text x="3" y="40">Austin</text></svg> &rarr;</span>' +
           '</a>' +
           '</div>' +
         '</div>';
+    }
+
+    /* ---------- the signature: a hand-written "Austin" that writes itself once,
+       the first time the footer scrolls into view. The script font only loads
+       when the footer gets close, so no page pays for it up front. ---------- */
+    var sign = ctx.$(".footer__secret");
+    if (sign) {
+      var fontIn = false;
+      var loadFont = function () {
+        if (fontIn) return; fontIn = true;
+        var l = document.createElement("link"); l.rel = "stylesheet";
+        l.href = "https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap";
+        document.head.appendChild(l);
+      };
+      var write = function () {
+        loadFont();
+        var go = function () { sign.classList.add("is-signed"); };
+        if (document.fonts && document.fonts.load) document.fonts.load('46px "Mrs Saint Delafield"').then(go, go); else go();
+      };
+      if (ctx.reducedMotion || !("IntersectionObserver" in window)) { loadFont(); sign.classList.add("is-signed", "is-still"); }
+      else {
+        new IntersectionObserver(function (es, io) { es.forEach(function (e) { if (e.isIntersecting) { loadFont(); } }); }, { rootMargin: "600px 0px" }).observe(sign);
+        new IntersectionObserver(function (es, io) { es.forEach(function (e) { if (e.isIntersecting) { write(); io.disconnect(); } }); }, { threshold: 1 }).observe(sign);
+      }
     }
 
     /* ---------- org lockup at the top of subpage headers ---------- */

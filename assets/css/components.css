@@ -655,6 +655,23 @@ html{scroll-padding-bottom:104px;scroll-padding-top:16px}
   .footer__secret::before{transition:none}
   .footer__secret-dot{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c-primary) 30%,transparent)}
 }
+/* "Austin" as a hand-written signature inside the credit line: its gold outline
+   draws itself once when the footer is first seen, then it fills in and stays */
+.footer__secret-text{display:inline-flex;align-items:center;gap:.35em}
+.footer__sign-name{display:inline-block;height:3.3em;width:auto;margin:-1.2em -.05em -1em;overflow:visible;vertical-align:middle}
+.footer__sign-name text{
+  font-family:"Mrs Saint Delafield",cursive;font-size:46px;
+  fill:var(--c-gold);fill-opacity:0;stroke:var(--c-gold);stroke-width:.7;stroke-linejoin:round;
+  stroke-dasharray:520;stroke-dashoffset:520;
+}
+.footer__secret.is-signed .footer__sign-name text{animation:footer-sign 2.6s cubic-bezier(.45,.05,.35,1) forwards}
+@keyframes footer-sign{
+  0%{stroke-dashoffset:520;fill-opacity:0}
+  72%{stroke-dashoffset:0;fill-opacity:0}
+  100%{stroke-dashoffset:0;fill-opacity:1;stroke-opacity:.2}
+}
+.footer__secret.is-still .footer__sign-name text{animation:none;stroke-dashoffset:0;fill-opacity:1;stroke-opacity:.2}
+@media (prefers-reduced-motion:reduce){.footer__sign-name text{animation:none !important;stroke-dashoffset:0;fill-opacity:1}}
 @media (max-width:900px){.footer__grid{grid-template-columns:1fr 1fr}.footer__grid > div:first-child{grid-column:1 / -1}}
 @media (max-width:900px){.footer__bottom{flex-direction:column;align-items:flex-start}.footer__staff,.footer a.footer__secret{order:0}}
 @media (max-width:560px){.footer__grid{grid-template-columns:1fr}}
