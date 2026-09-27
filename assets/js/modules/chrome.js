@@ -163,34 +163,10 @@
           '<a class="footer__secret" href="credits.html" aria-label="' + ctx.t("footer.credit") + ' Austin">' +
             '<span class="footer__secret-dot" aria-hidden="true"></span>' +
             '<span class="footer__secret-text">' + ctx.t("footer.credit") + ' ' +
-              '<svg class="footer__sign-name" viewBox="0 0 132 52" aria-hidden="true"><text x="3" y="40">Austin</text></svg> &rarr;</span>' +
+              '<svg class="footer__sign-name" viewBox="0 0 165 70" aria-hidden="true"><g transform="skewX(-7) translate(5 0)"><path class="sig-main" d="M6 58 C12 44 20 22 26 12 C28 8 31 8 31 13 C31 26 33 44 36 56 C30 45 17 40 12 43 C22 40 34 39 40 40 C41 46 41 52 44 55 C47 58 51 55 53 48 C54 44 54 41 55 40 C55 46 55 53 58 56 C60 58 63 55 65 50 C67 45 70 40 72 39 C75 43 76 50 74 55 C72 58 67 57 67 54 C70 55 75 54 78 50 C79 40 81 26 82 18 C82 30 82 46 84 55 C86 58 90 56 92 52 C93 47 94 42 95 40 C95 46 95 53 98 56 C100 58 103 55 105 50 C106 45 107 41 108 40 C108 46 108 52 108 56 C109 48 113 40 118 40 C122 40 122 46 122 52 C122 56 126 57 132 52 C140 45 150 44 158 48 C150 60 90 66 30 64"/><path class="sig-bar" d="M75 27 C80 26 86 26 91 27"/><path class="sig-dot" d="M95.6 31.5 l.1 .1"/></g></svg> &rarr;</span>' +
           '</a>' +
           '</div>' +
         '</div>';
-    }
-
-    /* ---------- the signature: a hand-written "Austin" that writes itself once,
-       the first time the footer scrolls into view. The script font only loads
-       when the footer gets close, so no page pays for it up front. ---------- */
-    var sign = ctx.$(".footer__secret");
-    if (sign) {
-      var fontIn = false;
-      var loadFont = function () {
-        if (fontIn) return; fontIn = true;
-        var l = document.createElement("link"); l.rel = "stylesheet";
-        l.href = "https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap";
-        document.head.appendChild(l);
-      };
-      var write = function () {
-        loadFont();
-        var go = function () { sign.classList.add("is-signed"); };
-        if (document.fonts && document.fonts.load) document.fonts.load('46px "Mrs Saint Delafield"').then(go, go); else go();
-      };
-      if (ctx.reducedMotion || !("IntersectionObserver" in window)) { loadFont(); sign.classList.add("is-signed", "is-still"); }
-      else {
-        new IntersectionObserver(function (es, io) { es.forEach(function (e) { if (e.isIntersecting) { loadFont(); } }); }, { rootMargin: "600px 0px" }).observe(sign);
-        new IntersectionObserver(function (es, io) { es.forEach(function (e) { if (e.isIntersecting) { write(); io.disconnect(); } }); }, { threshold: 1 }).observe(sign);
-      }
     }
 
     /* ---------- org lockup at the top of subpage headers ---------- */
