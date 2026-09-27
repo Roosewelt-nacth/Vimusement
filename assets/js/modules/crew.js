@@ -14,7 +14,7 @@ Vim.register("crew", function (ctx) {
   var c = ctx.year.crew || {};
   var raw = c.photos && c.photos.length ? c.photos : (c.photo ? [c.photo] : []);
   var slides = raw.map(function (p, i) {
-    var fallback = "Vimusement " + ctx.year.year + " crew — photo " + (i + 1);
+    var fallback = "Vimusement " + ctx.year.year + " crew, photo " + (i + 1);
     return typeof p === "string"
       ? { src: p, alt: fallback }
       : { src: p.src, alt: ctx.L(p.alt) || fallback };

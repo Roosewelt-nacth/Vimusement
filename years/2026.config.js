@@ -196,8 +196,8 @@ window.VIM_YEARS["2026"] = {
   /* This is a standing yearly commitment, not a one-off — keep the
      wording in the present tense / "every year", not "last year". */
   causeActivitiesEyebrow: { en: "Every year, beyond the fundraiser", ta: "ஒவ்வொரு ஆண்டும், நிதி திரட்டலுக்கு அப்பால்" },
-  causeActivities: { en: "Food donation drives, medical camps, and visits to local orphanages are run every year — not just funded by Vimusement, but organised by the same group, year after year.",
-                      ta: "உணவு நன்கொடை முயற்சிகள், மருத்துவ முகாம்கள் மற்றும் உள்ளூர் அனாதை இல்ல வருகைகள் ஒவ்வொரு ஆண்டும் நடத்தப்படுகின்றன — வெறும் விமுஸ்மென்ட் மூலம் நிதியளிக்கப்படுவது மட்டுமல்ல, அதே குழுவால் ஆண்டுதோறும் ஏற்பாடு செய்யப்படுகிறது." },
+  causeActivities: { en: "Food donation drives, medical camps, and visits to local orphanages are run every year, not just funded by Vimusement but organised by the same group, year after year.",
+                      ta: "உணவு நன்கொடை முயற்சிகள், மருத்துவ முகாம்கள் மற்றும் உள்ளூர் அனாதை இல்ல வருகைகள் ஒவ்வொரு ஆண்டும் நடத்தப்படுகின்றன, வெறும் விமுஸ்மென்ட் மூலம் நிதியளிக்கப்படுவது மட்டுமல்ல, அதே குழுவால் ஆண்டுதோறும் ஏற்பாடு செய்யப்படுகிறது." },
 
   /* Home-page impact strip (the #why section). Numbers count up when
      scrolled into view. Set `text` instead of `n` for a non-numeric
@@ -207,7 +207,6 @@ window.VIM_YEARS["2026"] = {
     stats: [
       { n: 94300, prefix: "₹", label: { en: "given to education and medical support last year", ta: "கடந்த ஆண்டு கல்வி மற்றும் மருத்துவ உதவிக்காக வழங்கப்பட்டது" } },
       { n: 100, suffix: "%", label: { en: "of what’s raised, after event costs, goes to the cause", ta: "நிகழ்வு செலவுகளுக்குப் பிறகு திரட்டப்பட்டதில், நோக்கத்திற்கு செல்கிறது" } },
-      { n: 3, label: { en: "funds, split 40 · 30 · 30 before a rupee is spent", ta: "நிதிகள், ஒரு ரூபாய் செலவாவதற்கு முன்பே 40 · 30 · 30 என பிரிக்கப்படுகின்றன" } },
       { text: "₹0", label: { en: "in payment fees. You pay the parish directly by UPI", ta: "கட்டண கட்டணங்களில். நீங்கள் UPI மூலம் நேரடியாக பங்குக்கு செலுத்துகிறீர்கள்" } }
     ]
   },
@@ -260,7 +259,7 @@ window.VIM_YEARS["2026"] = {
        illustrative; edit freely as ideas come in from the committee. */
     ideas: {
       food: [
-        { en: "Chaat corner — pani puri, bhel, sundal", ta: "சாட் கார்னர் — பானி பூரி, பேல், சுண்டல்" },
+        { en: "Chaat corner: pani puri, bhel, sundal", ta: "சாட் கார்னர்: பானி பூரி, பேல், சுண்டல்" },
         { en: "Filter coffee & masala chai", ta: "ஃபில்டர் காபி & மசாலா தேநீர்" },
         { en: "Ice cream, slush or cold drinks", ta: "ஐஸ்கிரீம், ஸ்லஷ் அல்லது குளிர்பானங்கள்" },
         { en: "Home-style biryani or fried rice", ta: "வீட்டு பிரியாணி அல்லது ஃபிரைடு ரைஸ்" },
@@ -305,17 +304,17 @@ window.VIM_YEARS["2026"] = {
   ],
 
   sponsorship: {
-    intro: { en: "Back Vimusement as a business or a family — a contribution, products, or prizes all help, and every tier gets your name in front of the crowd.",
-             ta: "ஒரு வணிகமாகவோ அல்லது குடும்பமாகவோ விமுஸ்மென்ட்டை ஆதரிக்கவும் — ஒரு பங்களிப்பு, பொருட்கள், அல்லது பரிசுகள் அனைத்தும் உதவும், ஒவ்வொரு நிலையும் கூட்டத்தின் முன் உங்கள் பெயரைக் கொண்டு வரும்." },
+    intro: { en: "Back Vimusement as a business or a family. A contribution, products, or prizes all help, and every tier gets your name in front of the crowd.",
+             ta: "ஒரு வணிகமாகவோ அல்லது குடும்பமாகவோ விமுஸ்மென்ட்டை ஆதரிக்கவும். ஒரு பங்களிப்பு, பொருட்கள், அல்லது பரிசுகள் அனைத்தும் உதவும், ஒவ்வொரு நிலையும் கூட்டத்தின் முன் உங்கள் பெயரைக் கொண்டு வரும்." },
     tiers: [
       { key: "community", amount: { en: "Flexible", ta: "நெகிழ்வானது" },
         name: { en: "Community Partner", ta: "சமூக பங்குதாரர்" },
-        benefits: { en: "Logo on event banners, a mention in our social media posts, and a shout-out on stage — let's talk about what works for you.",
-                    ta: "நிகழ்வு பதாகைகளில் லோகோ, எங்கள் சமூக ஊடக இடுகைகளில் ஒரு குறிப்பு, மேலும் மேடையில் ஒரு குறிப்பு — உங்களுக்கு ஏற்றதைப் பற்றி பேசலாம்." } },
+        benefits: { en: "Logo on event banners, a mention in our social media posts, and a shout-out on stage. Let's talk about what works for you.",
+                    ta: "நிகழ்வு பதாகைகளில் லோகோ, எங்கள் சமூக ஊடக இடுகைகளில் ஒரு குறிப்பு, மேலும் மேடையில் ஒரு குறிப்பு. உங்களுக்கு ஏற்றதைப் பற்றி பேசலாம்." } },
       { key: "product", amount: { en: "Products / vouchers", ta: "பொருட்கள் / வவுச்சர்கள்" },
         name: { en: "Product Partner", ta: "பொருள் பங்குதாரர்" },
-        benefits: { en: "Give what you make or sell — food, drinks, goods — and we promote your brand in return.",
-                    ta: "நீங்கள் தயாரிப்பது அல்லது விற்பதை கொடுங்கள் — உணவு, பானங்கள், பொருட்கள் — நாங்கள் பதிலுக்கு உங்கள் பிராண்டை விளம்பரப்படுத்துவோம்." } },
+        benefits: { en: "Give what you make or sell, like food, drinks or goods, and we promote your brand in return.",
+                    ta: "நீங்கள் தயாரிப்பது அல்லது விற்பதை கொடுங்கள் (உணவு, பானங்கள், பொருட்கள்), நாங்கள் பதிலுக்கு உங்கள் பிராண்டை விளம்பரப்படுத்துவோம்." } },
       { key: "prize",   amount: { en: "Gifts / vouchers", ta: "பரிசுகள் / வவுச்சர்கள்" },
         name: { en: "Prize Partner", ta: "பரிசு பங்குதாரர்" },
         benefits: { en: "Sponsor a game prize, and your brand gets named the moment it's won.",
@@ -326,8 +325,8 @@ window.VIM_YEARS["2026"] = {
         text: { en: "Families and young people from right around Aminjikkarai, all in one place for a day.",
                 ta: "அமின்ஜிக்கரை சுற்றியுள்ள குடும்பங்களும் இளைஞர்களும், ஒரு நாளில் ஒரே இடத்தில்." } },
       { icon: "star", title: { en: "Real, visible branding", ta: "உண்மையான, தெரியும் பிராண்டிங்" },
-        text: { en: "Posters, banners, stage announcements and screens on the day — not just a logo in fine print.",
-                ta: "நாளின் போது சுவரொட்டிகள், பதாகைகள், மேடை அறிவிப்புகள் மற்றும் திரைகள் — வெறும் சிறிய எழுத்தில் ஒரு லோகோ மட்டுமல்ல." } },
+        text: { en: "Posters, banners, stage announcements and screens on the day, not just a logo in fine print.",
+                ta: "நாளின் போது சுவரொட்டிகள், பதாகைகள், மேடை அறிவிப்புகள் மற்றும் திரைகள், வெறும் சிறிய எழுத்தில் ஒரு லோகோ மட்டுமல்ல." } },
       { icon: "heart", title: { en: "It's a donation too", ta: "இது ஒரு நன்கொடையும் கூட" },
         text: { en: "Every rupee (or product) goes into the same pledge Vimusement runs on: 40% education, 30% medical and other needs, 30% youth emergency fund.",
                 ta: "ஒவ்வொரு ரூபாயும் (அல்லது பொருளும்) விமுஸ்மென்ட்டின் அதே உறுதிமொழிக்கு செல்கிறது: 40% கல்வி, 30% மருத்துவம் மற்றும் பிற தேவைகள், 30% இளைஞர் அவசர நிதி." } }
@@ -385,7 +384,8 @@ window.VIM_YEARS["2026"] = {
         sub: { en: "Three-seater", ta: "மூன்று இருக்கை" },
         sponsor: { name: "Chellamani LLP", logo: "assets/img/2026/sponsors/chellamani-logo.png", url: "" } },
       { place: { en: "2nd prize", ta: "2வது பரிசு" }, name: { en: "Air fryer", ta: "ஏர் ஃப்ரையர்" }, icon: "airfryer", photo: "assets/img/2026/prizes/airfryer.jpg", worth: 6000 },
-      { place: { en: "3rd prize", ta: "3வது பரிசு" }, name: { en: "Mixie", ta: "மிக்ஸி" }, icon: "mixer", photo: "assets/img/2026/prizes/mixer.jpg", worth: 4000 },
+      { place: { en: "3rd prize", ta: "3வது பரிசு" }, name: { en: "Mixie", ta: "மிக்ஸி" }, icon: "mixer", photo: "assets/img/2026/prizes/mixer.jpg", worth: 4000,
+        sponsor: { name: "Dr. M Dentistry", logo: "assets/img/2026/sponsors/sponsor-01.png", url: "https://www.drmdentistry.com/" } },
       { place: { en: "4th prize", ta: "4வது பரிசு" }, name: { en: "Cooker", ta: "குக்கர்" }, icon: "cooker", photo: "assets/img/2026/prizes/cooker.jpg", worth: 3000 }
     ],
     /* photo: the prize's picture (assets/img/2026/prizes/). The sofa is the real

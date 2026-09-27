@@ -35,10 +35,10 @@ document.documentElement.className+=" js";
 
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css?v=20260926d">
+<link rel="stylesheet" href="assets/css/components.css?v=20260927a">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/pages/donate.css">
-<link rel="stylesheet" href="assets/css/pages/pledge.css?v=20260926d">
+<link rel="stylesheet" href="assets/css/pages/pledge.css?v=20260927a">
 <link rel="stylesheet" href="assets/css/desk.css">
 </head>
 <body>
@@ -56,19 +56,10 @@ document.documentElement.className+=" js";
 <section class="tile tile--a">
   <div class="wrap wrap--narrow stack" style="--flow:1.6rem">
 
-    <div class="grid grid--auto impact-grid" data-animate="fade-up">
-      <div class="impact-card impact-card--edu">
-        <h3 data-i18n="donate.impact.edu.title">A student who stays in school</h3>
-        <p data-i18n="donate.impact.edu.text">Fees, books and exam costs for a child who would otherwise have to drop out.</p>
-      </div>
-      <div class="impact-card impact-card--med">
-        <h3 data-i18n="donate.impact.med.title">A family not broken by one bill</h3>
-        <p data-i18n="donate.impact.med.text">Fast help the day a sudden hospital bill lands. No forms, no waiting.</p>
-      </div>
-      <div class="impact-card impact-card--help">
-        <h3 data-i18n="donate.impact.help.title">A neighbour who gets through the month</h3>
-        <p data-i18n="donate.impact.help.text">Rent, groceries and essentials for someone in a hard stretch.</p>
-      </div>
+
+    <div class="donate-pledge" data-animate="fade-up">
+      <h2 data-i18n="donate.pledge.title">Where your gift goes</h2>
+      <div data-pledge="bar"></div>
     </div>
 
     <div class="donate-panel" data-animate="fade-up">
@@ -97,7 +88,7 @@ document.documentElement.className+=" js";
       </label>
 
       <label class="field field--text" for="donorPhone">
-        <input id="donorPhone" data-donate-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number (optional — we'll text your confirmation too)" data-i18n-placeholder="donate.field.phone">
+        <input id="donorPhone" data-donate-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number (optional, we'll text your confirmation too)" data-i18n-placeholder="donate.field.phone">
       </label>
 
       <label class="donate-check">
@@ -124,22 +115,14 @@ document.documentElement.className+=" js";
       </div>
     </div>
 
-    <blockquote class="donate-quote" data-animate="fade-up">
-      <span data-i18n="donate.quote.text">“Every rupee, after event costs, is split up front: 40% education, 30% medical and other needs, 30% youth emergency fund.”</span>
-      <cite data-i18n="donate.quote.cite">Every rupee in and out, on the public ledger</cite>
-    </blockquote>
 
-    <div class="donate-pledge" data-animate="fade-up">
-      <h2 data-i18n="donate.pledge.title">Where your gift goes</h2>
-      <div data-pledge="bar"></div>
-    </div>
 
     <div class="donate-panel" data-animate="fade-up">
       <h2 data-i18n="donate.faq.title">Before you give</h2>
       <div class="faq-list">
         <details class="faq-item">
           <summary data-i18n="donate.faq.q1">Is this actually safe?</summary>
-          <p data-i18n="donate.faq.a1">Yes — you pay the parish's own UPI ID directly, in your own banking app. There's no third-party gateway, no card details anywhere, and no middleman holding your money at any point.</p>
+          <p data-i18n="donate.faq.a1">Yes. You pay the parish's own UPI ID directly, in your own banking app. There's no third-party gateway, no card details anywhere, and no middleman holding your money at any point.</p>
         </details>
         <details class="faq-item">
           <summary data-i18n="donate.faq.q2">Where exactly does it go?</summary>
@@ -147,11 +130,11 @@ document.documentElement.className+=" js";
         </details>
         <details class="faq-item">
           <summary data-i18n="donate.faq.q3">Do I get a receipt or confirmation?</summary>
-          <p data-i18n="donate.faq.a3">Yes — once your payment is confirmed, you'll get an email and, if you added a number, a text too. Usually within a day.</p>
+          <p data-i18n="donate.faq.a3">Yes. Once your payment is confirmed, you'll get an email and, if you added a number, a text too. Usually within a day.</p>
         </details>
         <details class="faq-item">
           <summary data-i18n="donate.faq.q4">Does everyone see how much I gave?</summary>
-          <p data-i18n="donate.faq.a4">No — amounts are never shown publicly, only names, and only if you tick the box. You can also give without your name appearing at all.</p>
+          <p data-i18n="donate.faq.a4">No. Amounts are never shown publicly, only names, and only if you tick the box. You can also give without your name appearing at all.</p>
         </details>
       </div>
     </div>
@@ -171,21 +154,21 @@ document.documentElement.className+=" js";
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
 <script defer src="assets/js/core.js"></script>
-<script defer src="assets/js/strings.js?v=20260926d"></script>
-<script defer src="years/2026.config.js?v=20260926d"></script>
+<script defer src="assets/js/strings.js?v=20260927a"></script>
+<script defer src="years/2026.config.js?v=20260927a"></script>
 <script defer src="years/current.js"></script>
-<script defer src="assets/js/site.config.js"></script>
-<script defer src="assets/js/modules/chrome.js?v=20260926d"></script>
+<script defer src="assets/js/site.config.js?v=20260927a"></script>
+<script defer src="assets/js/modules/chrome.js?v=20260927a"></script>
 <script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
 <script defer src="assets/js/modules/lang.js"></script>
-<script defer src="assets/js/modules/langprompt.js"></script>
+<script defer src="assets/js/modules/langprompt.js?v=20260927a"></script>
 <script defer src="assets/js/modules/creditbadge.js"></script>
 <script defer src="assets/js/modules/sponsordeck.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
-<script defer src="assets/js/modules/render.js?v=20260926d"></script>
-<script defer src="assets/js/modules/pledge.js?v=20260926d"></script>
+<script defer src="assets/js/modules/render.js?v=20260927a"></script>
+<script defer src="assets/js/modules/pledge.js?v=20260927a"></script>
 <script defer src="assets/js/modules/motion.js"></script>
 <script defer src="assets/vendor/qrcode-generator.js"></script>
 <script defer src="assets/js/modules/counters.js"></script>

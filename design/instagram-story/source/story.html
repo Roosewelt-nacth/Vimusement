@@ -1,0 +1,342 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Vimusement story</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,600;0,700;1,700&family=Montserrat:wght@500;600;700&display=swap">
+<style>body{margin:0;background:#111;color:#ccc;font:13px system-ui}canvas{width:270px;height:480px;display:block}</style>
+</head><body>
+<p id="msg">…</p>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script src="qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.min.js"></script>
+<script>
+/* Vimusement 2026 · Instagram story (1080×1920, 18 s, 30 fps; the end card holds ~5 s for the QR)
+   Website launch + the 40 · 30 · 30 pledge. Everything is drawn from t (seconds),
+   so every render is identical. Text stays inside Instagram's safe zone (y 250–1620). */
+const W = 1080, H = 1920, FPS = 30, DUR = 18;
+const URL_TEXT = "victoriansyouth.github.io/Vimusement2k26";
+const SITE = "https://victoriansyouth.github.io/Vimusement2k26/";
+const C = { bg:"#070B08", emer:"#1F6B45", gold:"#C9962E", gold2:"#DDAE4C", cream:"#F4EEE2", soft:"#C7D4C2", mute:"#8FA089",
+            edu:"#DDAE4C", med:"#4FD98C", emg:"#E39AA8" };
+const CZ = '"Cinzel", serif', PF = '"Playfair Display", Georgia, serif', MS = '"Montserrat", Arial, sans-serif';
+const cv = document.getElementById("c"), x = cv.getContext("2d");
+
+/* ---------- helpers ---------- */
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = p => 1 - Math.pow(1 - p, 3);                       // ease-out cubic
+const eio = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const back = p => { const c = 1.6; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+function rnd(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function foil(y0, y1) {
+  const g = x.createLinearGradient(0, y0, 0, y1);
+  g.addColorStop(0, "#FFF1C1"); g.addColorStop(.35, "#F0C868"); g.addColorStop(.62, "#C9962E"); g.addColorStop(.8, "#E9C46A"); g.addColorStop(1, "#8E6418");
+  return g;
+}
+function T(str, px, py, font, fill, align = "center", spacing = 0, alpha = 1) {
+  x.save(); x.globalAlpha *= alpha; x.font = font; x.fillStyle = fill; x.textAlign = align; x.textBaseline = "alphabetic";
+  x.letterSpacing = spacing + "px"; x.fillText(str, px, py); x.restore();
+}
+function rr(px, py, w, h, r) { x.beginPath(); x.roundRect(px, py, w, h, r); }
+/* a scene's visibility: fades in from a, out ending at b */
+function vis(t, a, b, fin = .35, fout = .35) { return Math.min(seg(t, a, a + fin), 1 - seg(t, b - fout, b)); }
+
+/* ---------- images + QR ---------- */
+const IMG = {};
+function load(k, src) { return new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.src = src; }); }
+const qr = qrcode(0, "M"); qr.addData(SITE); qr.make();
+
+/* ---------- background: emerald glow, slow gold rays, drifting dust, frame ---------- */
+const dust = (() => { const r = rnd(7); return Array.from({ length: 90 }, () => ({ x: r() * W, y: r() * H, s: 1 + r() * 3.2, v: 12 + r() * 40, ph: r() * 6.28, a: .15 + r() * .5 })); })();
+function background(t) {
+  x.fillStyle = C.bg; x.fillRect(0, 0, W, H);
+  let g = x.createRadialGradient(540, 760, 40, 540, 760, 1150);
+  g.addColorStop(0, "rgba(31,107,69,.62)"); g.addColorStop(.55, "rgba(31,107,69,.14)"); g.addColorStop(1, "rgba(31,107,69,0)");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // rays from above, turning very slowly
+  x.save(); x.translate(540, -260); x.rotate(Math.sin(t * .25) * .05);
+  for (let i = 0; i < 13; i++) {
+    const a = (i - 6) * .085 + Math.PI / 2, w = .022;
+    const rg = x.createRadialGradient(0, 0, 0, 0, 0, 2100);
+    rg.addColorStop(0, "rgba(243,210,122,.09)"); rg.addColorStop(1, "rgba(243,210,122,0)");
+    x.fillStyle = rg; x.beginPath(); x.moveTo(0, 0);
+    x.lineTo(Math.cos(a - w) * 2100, Math.sin(a - w) * 2100); x.lineTo(Math.cos(a + w) * 2100, Math.sin(a + w) * 2100); x.closePath(); x.fill();
+  }
+  x.restore();
+  g = x.createRadialGradient(540, 420, 10, 540, 420, 700);
+  g.addColorStop(0, "rgba(231,192,103,.20)"); g.addColorStop(1, "rgba(231,192,103,0)");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  for (const d of dust) {
+    const yy = ((d.y - t * d.v) % H + H) % H, tw = .55 + .45 * Math.sin(t * 2 + d.ph);
+    x.globalAlpha = d.a * tw; x.fillStyle = "#F3D27A"; x.beginPath(); x.arc(d.x + Math.sin(t * .6 + d.ph) * 10, yy, d.s, 0, 6.283); x.fill();
+  }
+  x.globalAlpha = 1;
+  g = x.createRadialGradient(540, 900, 500, 540, 900, 1250);
+  g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.72)");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // gold frame
+  const fg = x.createLinearGradient(0, 0, W, 0); fg.addColorStop(0, "#8E6418"); fg.addColorStop(.5, "#F7DC8C"); fg.addColorStop(1, "#8E6418");
+  x.strokeStyle = fg; x.globalAlpha = .75; x.lineWidth = 3; rr(34, 34, W - 68, H - 68, 30); x.stroke();
+  x.globalAlpha = .22; x.strokeStyle = C.gold; x.lineWidth = 1.5; rr(50, 50, W - 100, H - 100, 20); x.stroke(); x.globalAlpha = 1;
+}
+function rule(cx, y, half, p) {
+  const h = half * eo(p); if (h <= 0) return;
+  x.save(); x.strokeStyle = C.gold; x.globalAlpha = .8; x.lineWidth = 2; x.beginPath(); x.moveTo(cx - h, y); x.lineTo(cx + h, y); x.stroke();
+  x.translate(cx, y); x.rotate(Math.PI / 4); x.fillStyle = C.gold2; x.fillRect(-8, -8, 16, 16); x.restore();
+}
+
+/* ---------- scene 1: the website is live ---------- */
+function s1(t) {
+  const v = vis(t, 0, 2.9, .01, .4); if (v <= 0) return;
+  x.save(); x.globalAlpha = v; x.translate(0, -40 * seg(t, 2.5, 2.9));
+  const pm = eo(seg(t, .1, .8));
+  if (IMG.mark) { const w = 150 * (.9 + .1 * pm), h = w * IMG.mark.height / IMG.mark.width; x.globalAlpha = v * pm; x.drawImage(IMG.mark, 540 - w / 2, 560 - h / 2, w, h); x.globalAlpha = v; }
+  rule(540, 690, 260, seg(t, .5, 1.2));
+  const p2 = eo(seg(t, .6, 1.3));
+  T("VIMUSEMENT 2026", 540, 815 + 30 * (1 - p2), `700 70px ${CZ}`, foil(755, 820), "center", 9, p2);
+  const p3 = eo(seg(t, 1.0, 1.6)), p4 = eo(seg(t, 1.2, 1.8));
+  T("Our website", 540, 1010 + 40 * (1 - p3), `700 128px ${PF}`, C.cream, "center", 0, p3);
+  T("is live.", 540, 1150 + 40 * (1 - p4), `700 128px ${PF}`, foil(1050, 1160), "center", 0, p4);
+  const p5 = eo(seg(t, 1.5, 2.0));
+  T("AN INITIATIVE OF VICTORIANS YOUTH", 540, 1270, `500 28px ${MS}`, C.mute, "center", 6, p5);
+  // "live now" pill with a pulsing dot
+  const p6 = back(seg(t, 1.7, 2.2));
+  if (p6 > 0) {
+    x.save(); x.translate(540, 1380); x.scale(p6, p6);
+    rr(-170, -38, 340, 76, 38); x.fillStyle = "rgba(31,107,69,.9)"; x.fill(); x.strokeStyle = "rgba(79,217,140,.7)"; x.lineWidth = 2; x.stroke();
+    const pulse = .5 + .5 * Math.sin(t * 7);
+    x.fillStyle = "#4FD98C"; x.globalAlpha = .35 * pulse; x.beginPath(); x.arc(-118, 0, 18, 0, 6.283); x.fill();
+    x.globalAlpha = 1; x.beginPath(); x.arc(-118, 0, 9, 0, 6.283); x.fill();
+    T("LIVE NOW", 22, 11, `700 30px ${MS}`, "#F5FBF3", "center", 5);
+    x.restore();
+  }
+  x.restore();
+}
+
+/* ---------- scene 2: a phone showing the site, feature tags popping in ---------- */
+function screen(sy) {       // the site's mobile layout, drawn in a 438-wide screen, scrolled by sy
+  const w = 438;
+  x.save(); x.translate(0, -sy);
+  let g = x.createLinearGradient(0, 0, 0, 640); g.addColorStop(0, "#0E1712"); g.addColorStop(1, "#0A100C");
+  x.fillStyle = g; x.fillRect(0, 0, w, 2100);
+  g = x.createRadialGradient(300, 260, 10, 300, 260, 380); g.addColorStop(0, "rgba(31,107,69,.55)"); g.addColorStop(1, "rgba(31,107,69,0)");
+  x.fillStyle = g; x.fillRect(0, 0, w, 640);
+  if (IMG.mark) x.drawImage(IMG.mark, 28, 70, 40, 36);
+  T("AN INITIATIVE OF", 80, 86, `500 12px ${MS}`, C.mute, "left", 2); T("VICTORIANS YOUTH", 80, 104, `500 12px ${MS}`, C.mute, "left", 2);
+  T("ANNUAL PARISH FUNDRAISER", 28, 158, `500 12px ${MS}`, C.soft, "left", 2);
+  T("Vimusement", 28, 222, `700 50px ${PF}`, C.cream, "left");
+  T("2026", 28, 280, `700 50px ${PF}`, "#D98A5A", "left");
+  x.fillStyle = "rgba(199,212,194,.55)";
+  [[28, 318, 360], [28, 342, 330], [28, 366, 250]].forEach(([a, b, c]) => { rr(a, b, c, 10, 5); x.fill(); });
+  rr(28, 402, 116, 46, 23); x.fillStyle = C.emer; x.fill(); T("Donate", 86, 432, `600 17px ${MS}`, "#F5FBF3");
+  rr(156, 402, 176, 46, 23); x.strokeStyle = "#4FD98C"; x.lineWidth = 1.5; x.stroke(); T("Volunteer with us", 244, 432, `600 15px ${MS}`, "#4FD98C");
+  T("THE FAIR", 28, 492, `500 11px ${MS}`, C.soft, "left", 1.5);
+  T("Sunday, 25 October", 28, 546, `700 36px ${PF}`, C.cream, "left");
+  // pledge section
+  T("OUR 2026 PLEDGE", 28, 690, `500 13px ${MS}`, C.gold2, "left", 3);
+  T("Every rupee has a job", 28, 736, `700 28px ${PF}`, C.cream, "left");
+  T("before it’s raised.", 28, 772, `700 28px ${PF}`, C.cream, "left");
+  const bw = w - 56, parts = [[.4, C.edu, "40%"], [.3, C.med, "30%"], [.3, C.emg, "30%"]];
+  let bx = 28;
+  parts.forEach(([f, col, lab]) => { const ww = bw * f - 3; rr(bx, 808, ww, 58, 8); x.fillStyle = col; x.fill(); T(lab, bx + 12, 846, `700 22px ${PF}`, "#0B120D", "left"); bx += bw * f; });
+  [["40%", C.edu, "Education for the poor"], ["30%", C.med, "Medical & other needs"], ["30%", C.emg, "Youth Emergency Fund"]].forEach(([p, col, lab], i) => {
+    const yy = 904 + i * 64; rr(28, yy, bw, 54, 10); x.fillStyle = "rgba(255,255,255,.04)"; x.fill();
+    T(p, 44, yy + 37, `700 26px ${PF}`, col, "left"); T(lab, 118, yy + 35, `500 16px ${MS}`, C.soft, "left");
+  });
+  // lucky draw
+  T("LUCKY DRAW", 28, 1150, `500 13px ${MS}`, C.gold2, "left", 3);
+  T("Four prizes worth ₹25,000", 28, 1194, `700 26px ${PF}`, C.cream, "left");
+  rr(28, 1220, bw, 250, 16); x.fillStyle = "#0B130E"; x.fill();
+  if (IMG.sofa) { x.save(); rr(28, 1220, bw, 250, 16); x.clip(); const ih = bw * IMG.sofa.height / IMG.sofa.width; x.drawImage(IMG.sofa, 28, 1220 + (250 - ih) / 2, bw, ih); x.restore(); }
+  x.beginPath(); x.arc(64, 1256, 24, 0, 6.283); x.fillStyle = foil(1232, 1280); x.fill(); T("1ST", 64, 1262, `700 13px ${CZ}`, "#0B120D");
+  T("Sofa · worth ₹12,000", 28, 1512, `700 24px ${PF}`, C.cream, "left");
+  T("₹50 tickets at the church counter", 28, 1544, `500 15px ${MS}`, C.soft, "left");
+  // movies
+  T("MOVIES", 28, 1630, `500 13px ${MS}`, C.gold2, "left", 3);
+  T("Five films. One big screen.", 28, 1674, `700 26px ${PF}`, C.cream, "left");
+  ["#1B3A5C", "#5C1B2E", "#2E4A1B", "#4A3A1B", "#3A1B4A"].forEach((c, i) => {
+    const px = 28 + i * 78; rr(px, 1700, 70, 104, 8); x.fillStyle = c; x.fill();
+    x.beginPath(); x.arc(px + 35, 1740, 16, 0, 6.283); x.fillStyle = "rgba(244,238,226,.7)"; x.fill();
+  });
+  x.restore();
+}
+function chip(label, side, y, p) {
+  if (p <= 0) return;
+  x.save(); x.font = `600 30px ${MS}`; const tw = x.measureText(label).width, w = tw + 92, h = 78;
+  const px = side === "l" ? 70 : W - 70 - w;
+  x.translate(px + w / 2, y); x.scale(back(p), back(p)); x.globalAlpha = clamp(p * 1.6);
+  x.shadowColor = "rgba(0,0,0,.6)"; x.shadowBlur = 30; x.shadowOffsetY = 10;
+  rr(-w / 2, -h / 2, w, h, h / 2); x.fillStyle = "rgba(9,15,11,.94)"; x.fill(); x.shadowColor = "transparent";
+  x.strokeStyle = "rgba(221,174,76,.85)"; x.lineWidth = 2.5; x.stroke();
+  x.fillStyle = C.gold2; x.beginPath(); x.arc(-w / 2 + 40, 0, 9, 0, 6.283); x.fill();
+  T(label, -w / 2 + 66, 11, `600 30px ${MS}`, C.cream, "left");
+  x.restore();
+}
+function s2(t) {
+  const v = vis(t, 2.8, 6.9); if (v <= 0) return;
+  x.save(); x.globalAlpha = v;
+  const ph = eo(seg(t, 2.85, 3.4));
+  T("Everything about the fair,", 540, 330 + 30 * (1 - ph), `700 70px ${PF}`, C.cream, "center", 0, ph);
+  T("in one place.", 540, 420 + 30 * (1 - ph), `700 70px ${PF}`, foil(360, 430), "center", 0, ph);
+  // the phone
+  const pe = eo(seg(t, 2.9, 3.6)), px = 305, py = 520 + 140 * (1 - pe), pw = 470, phh = 960;
+  x.globalAlpha = v * pe;
+  x.save(); x.shadowColor = "rgba(0,0,0,.75)"; x.shadowBlur = 60; x.shadowOffsetY = 30;
+  rr(px, py, pw, phh, 64); x.fillStyle = "#050806"; x.fill(); x.restore();
+  const eg = x.createLinearGradient(px, 0, px + pw, 0); eg.addColorStop(0, "#8E6418"); eg.addColorStop(.5, "#F7DC8C"); eg.addColorStop(1, "#8E6418");
+  rr(px, py, pw, phh, 64); x.strokeStyle = eg; x.lineWidth = 3; x.stroke();
+  x.save(); rr(px + 16, py + 16, pw - 32, phh - 32, 50); x.clip(); x.translate(px + 16, py + 16);
+  screen(1150 * eio(seg(t, 3.7, 6.4)));
+  x.restore();
+  rr(px + pw / 2 - 60, py + 30, 120, 30, 15); x.fillStyle = "#050806"; x.fill();
+  x.globalAlpha = v;
+  chip("Programme & map", "l", 700, seg(t, 3.5, 3.9));
+  chip("5 movies, one big screen", "r", 900, seg(t, 4.1, 4.5));
+  chip("Lucky Draw · win a sofa", "l", 1120, seg(t, 4.7, 5.1));
+  chip("Donate in seconds", "r", 1340, seg(t, 5.3, 5.7));
+  x.restore();
+}
+
+/* ---------- scene 3: the pledge ---------- */
+function s3(t) {
+  const v = vis(t, 6.8, 11.3); if (v <= 0) return;
+  x.save(); x.globalAlpha = v;
+  const a = eo(seg(t, 6.9, 7.3)), b = eo(seg(t, 7.0, 7.6)), c = eo(seg(t, 7.3, 7.8));
+  T("OUR 2026 PLEDGE", 540, 330, `700 38px ${CZ}`, C.gold2, "center", 10, a);
+  T("Every rupee has a job", 540, 450 + 30 * (1 - b), `700 84px ${PF}`, C.cream, "center", 0, b);
+  T("before it’s raised.", 540, 550 + 30 * (1 - b), `700 84px ${PF}`, foil(480, 560), "center", 0, b);
+  T("Everything raised, after event costs,", 540, 650, `500 34px ${MS}`, C.soft, "center", 0, c);
+  T("is split three ways, announced up front.", 540, 698, `500 34px ${MS}`, C.soft, "center", 0, c);
+  const rows = [[40, C.edu, "Education for the poor", "Fees, books and exams"],
+                [30, C.med, "Medical & other needs", "Hospital bills, medicines, essentials"],
+                [30, C.emg, "Youth Emergency Fund", "Held for when it’s needed most"]];
+  rows.forEach(([n, col, ttl, sub], i) => {
+    const p = eo(seg(t, 7.8 + i * .45, 8.4 + i * .45)); if (p <= 0) return;
+    const y = 790 + i * 215;
+    x.save(); x.globalAlpha = v * p; x.translate(-120 * (1 - p), 0);
+    rr(110, y, 860, 185, 28); x.fillStyle = "rgba(20,30,23,.88)"; x.fill();
+    x.strokeStyle = col; x.globalAlpha = v * p * .8; x.lineWidth = 2; x.stroke(); x.globalAlpha = v * p;
+    rr(110, y, 12, 185, 6); x.fillStyle = col; x.fill();
+    T(n + "%", 170, y + 130, `700 118px ${PF}`, col, "left");
+    T(ttl, 450, y + 82, `700 46px ${PF}`, C.cream, "left");
+    T(sub, 450, y + 132, `500 28px ${MS}`, C.soft, "left");
+    x.restore();
+  });
+  // the split bar grows in
+  const bp = seg(t, 9.3, 10.3);
+  if (bp > 0) {
+    let bx = 110; const bw = 860;
+    [[.4, C.edu], [.3, C.med], [.3, C.emg]].forEach(([f, col], i) => {
+      const q = eo(clamp(bp * 3 - i)); const ww = (bw * f - 6) * q;
+      if (ww > 0) { rr(bx, 1470, ww, 60, 12); x.fillStyle = col; x.fill(); }
+      bx += bw * f;
+    });
+    T("= 100% of what’s raised, after costs", 540, 1590, `600 30px ${MS}`, C.gold2, "center", 0, eo(seg(t, 10.0, 10.5)));
+  }
+  x.restore();
+}
+
+/* ---------- scene 4: the public ledger ---------- */
+function s4(t) {
+  const v = vis(t, 11.2, 13.0); if (v <= 0) return;
+  x.save(); x.globalAlpha = v;
+  const a = eo(seg(t, 11.25, 11.7));
+  T("Every rupee in,", 540, 520 + 30 * (1 - a), `700 92px ${PF}`, C.cream, "center", 0, a);
+  T("every rupee out,", 540, 625 + 30 * (1 - a), `700 92px ${PF}`, C.cream, "center", 0, a);
+  T("on a public ledger.", 540, 730 + 30 * (1 - a), `700 92px ${PF}`, foil(660, 740), "center", 0, a);
+  const cp = eo(seg(t, 11.5, 11.9));
+  x.globalAlpha = v * cp; rr(150, 820, 780, 470, 30); x.fillStyle = "rgba(14,22,17,.92)"; x.fill();
+  x.strokeStyle = "rgba(201,150,46,.6)"; x.lineWidth = 2; x.stroke();
+  const items = [["Raised", "+", C.med], ["Event costs", "−", C.soft], ["Paid out · Education", "→", C.edu], ["Paid out · Medical & needs", "→", C.med], ["Held · Youth Emergency Fund", "●", C.emg]];
+  items.forEach(([lab, sym, col], i) => {
+    const p = eo(seg(t, 11.7 + i * .16, 12.0 + i * .16)); if (p <= 0) return;
+    const y = 890 + i * 84;
+    x.globalAlpha = v * p;
+    if (i) { x.fillStyle = "rgba(255,255,255,.07)"; x.fillRect(190, y - 52, 700, 2); }
+    T(sym, 215, y, `700 38px ${MS}`, col, "center");
+    T(lab, 265, y - 2, `600 32px ${MS}`, C.cream, "left");
+    // a tick drawing in on the right
+    x.save(); x.strokeStyle = C.gold2; x.lineWidth = 5; x.lineCap = "round"; x.lineJoin = "round";
+    const k = seg(t, 11.85 + i * .16, 12.15 + i * .16); x.beginPath(); x.moveTo(840, y - 14);
+    if (k > 0) x.lineTo(840 + 14 * clamp(k * 2), y - 14 + 14 * clamp(k * 2));
+    if (k > .5) x.lineTo(854 + 26 * (k - .5) * 2, y - 26 * (k - .5) * 2);
+    x.stroke(); x.restore();
+  });
+  x.globalAlpha = v * eo(seg(t, 12.3, 12.6));
+  T("Amounts shown. Names never.", 540, 1390, `600 36px ${MS}`, C.gold2, "center", 1);
+  x.restore();
+}
+
+/* ---------- scene 5: go to the website ---------- */
+function s5(t) {
+  const v = seg(t, 12.9, 13.3); if (v <= 0) return;
+  x.save(); x.globalAlpha = v;
+  const a = eo(seg(t, 12.95, 13.45));
+  T("EXPLORE THE NEW WEBSITE", 540, 330, `700 36px ${CZ}`, C.gold2, "center", 8, a);
+  T("See it all,", 540, 450 + 30 * (1 - a), `700 104px ${PF}`, C.cream, "center", 0, a);
+  T("see where it goes.", 540, 565 + 30 * (1 - a), `700 104px ${PF}`, foil(490, 575), "center", 0, a);
+  // the address
+  const b = eo(seg(t, 13.2, 13.6));
+  x.globalAlpha = v * b; x.font = `600 34px ${MS}`; const uw = x.measureText(URL_TEXT).width + 90;
+  rr(540 - uw / 2, 630, uw, 90, 45); x.fillStyle = "rgba(31,107,69,.95)"; x.fill(); x.strokeStyle = "rgba(247,220,140,.8)"; x.lineWidth = 2.5; x.stroke();
+  T(URL_TEXT, 540, 688, `600 34px ${MS}`, "#FFFFFF", "center");
+  // QR
+  const c = back(seg(t, 13.4, 13.9));
+  if (c > 0) {
+    x.save(); x.globalAlpha = v; x.translate(540, 930); x.scale(c, c);
+    const s = 300, n = qr.getModuleCount(), m = (s - 36) / n;
+    rr(-s / 2, -s / 2, s, s, 26); x.fillStyle = "#FFFFFF"; x.fill();
+    x.fillStyle = C.bg;
+    for (let r = 0; r < n; r++) for (let q = 0; q < n; q++) if (qr.isDark(r, q)) x.fillRect(-s / 2 + 18 + q * m, -s / 2 + 18 + r * m, m + .4, m + .4);
+    x.restore();
+    T("or scan", 540, 1128, `500 28px ${MS}`, C.soft, "center", 2, v * c);
+  }
+  // tap the link, pointing at the space left for Instagram's link sticker
+  const d = eo(seg(t, 13.7, 14.1));
+  if (d > 0) {
+    T("Tap the link", 540, 1240, `700 50px ${PF}`, C.cream, "center", 0, v * d);
+    const bob = Math.sin(t * 6) * 10;
+    x.save(); x.globalAlpha = v * d; x.strokeStyle = C.gold2; x.lineWidth = 6; x.lineCap = "round"; x.lineJoin = "round";
+    x.beginPath(); x.moveTo(540, 1270 + bob); x.lineTo(540, 1320 + bob); x.moveTo(518, 1300 + bob); x.lineTo(540, 1322 + bob); x.lineTo(562, 1300 + bob); x.stroke(); x.restore();
+  }
+  T("25 October 2026 · Ascension Church, Aminjikkarai", 540, 1560, `500 30px ${MS}`, C.mute, "center", 0, v * eo(seg(t, 13.9, 14.3)));
+  x.restore();
+}
+
+function draw(t) { background(t); s1(t); s2(t); s3(t); s4(t); s5(t); }
+
+/* ---------- boot, preview frames, encode ---------- */
+async function ready() {
+  await Promise.all([load("mark", "mark.png"), load("sofa", "sofa.jpg")]);
+  await Promise.all([`700 40px ${CZ}`, `700 40px ${PF}`, `600 40px ${PF}`, `500 40px ${MS}`, `600 40px ${MS}`, `700 40px ${MS}`].map(f => document.fonts.load(f, "Aa₹%")));
+}
+async function save(name, blob) { await fetch("/save?name=" + encodeURIComponent(name), { method: "POST", body: blob }); }
+window.snap = async function (times, name) {          // contact sheet of stills, for review
+  await ready();
+  const sc = 0.25, cols = times.length, sh = document.createElement("canvas");
+  sh.width = cols * W * sc + (cols - 1) * 10; sh.height = H * sc; const sx = sh.getContext("2d"); sx.fillStyle = "#222"; sx.fillRect(0, 0, sh.width, sh.height);
+  times.forEach((tt, i) => { draw(tt); sx.drawImage(cv, i * (W * sc + 10), 0, W * sc, H * sc); });
+  await save(name, await new Promise(r => sh.toBlob(r, "image/jpeg", .9)));
+  return "ok";
+};
+window.still = async function (t, name) { await ready(); draw(t); await save(name, await new Promise(r => cv.toBlob(r, "image/jpeg", .92))); return "ok"; };
+window.render = async function (name) {
+  await ready();
+  const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: "avc", width: W, height: H, frameRate: FPS }, fastStart: "in-memory" });
+  let err = null;
+  const enc = new VideoEncoder({ output: (ch, meta) => muxer.addVideoChunk(ch, meta), error: e => { err = e; } });
+  enc.configure({ codec: "avc1.640028", width: W, height: H, bitrate: 6.5e6, framerate: FPS, avc: { format: "avc" } });
+  const N = DUR * FPS;
+  for (let i = 0; i < N; i++) {
+    draw(i / FPS);
+    const f = new VideoFrame(cv, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
+    enc.encode(f, { keyFrame: i % FPS === 0 }); f.close();
+    if (i % 15 === 14) { await enc.flush(); document.getElementById("msg").textContent = "frame " + (i + 1) + "/" + N; }
+    if (err) throw err;
+  }
+  await enc.flush(); muxer.finalize();
+  const buf = muxer.target.buffer;
+  await save(name, new Blob([buf], { type: "video/mp4" }));
+  return name + " " + Math.round(buf.byteLength / 1024) + " KB";
+};
+ready().then(() => { draw(1.8); document.getElementById("msg").textContent = "ready"; });
+</script>
+</body></html>

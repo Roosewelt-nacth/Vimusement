@@ -32,18 +32,18 @@ document.documentElement.className+=" js";
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css?v=20260926d">
+<link rel="stylesheet" href="assets/css/components.css?v=20260927a">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/pages/subpage.css">
-<link rel="stylesheet" href="assets/css/pages/movies.css">
+<link rel="stylesheet" href="assets/css/pages/movies.css?v=20260927a">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
 
 <!--
   Movies promo page. The line-up is years/<year>.config.js → program.screenings
-  (title, time, venue, rating, optional poster). Tickets aren't decided yet,
-  so there's no booking or payment here — just "coming soon".
+  (title, time, venue, rating, optional poster). There is no booking or
+  payment here: the films are simply part of the day.
 -->
 <main id="main">
 <header class="cine-hero">
@@ -73,7 +73,7 @@ document.documentElement.className+=" js";
   </div>
 </section>
 
-<!-- ================= WHERE + TICKETS ================= -->
+<!-- ================= WHERE + WHEN ================= -->
 <section class="cine-info">
   <div class="wrap cine-info__grid">
     <article class="cine-card" data-animate="fade-up">
@@ -86,12 +86,6 @@ document.documentElement.className+=" js";
       <p class="cine-card__label" data-i18n="movies.when.label">When</p>
       <h3 class="cine-card__title" data-i18n="movies.when.title">Sunday 25 October</h3>
       <p class="cine-card__text" data-i18n="movies.when.text">Screenings run through the day, from around 10am. Exact show times for each film are coming soon.</p>
-    </article>
-    <article class="cine-card cine-card--tickets" data-animate="fade-up" data-animate-delay="0.12">
-      <p class="cine-card__label" data-i18n="movies.tickets.label">Tickets</p>
-      <h3 class="cine-card__title" data-i18n="movies.tickets.title">Coming soon</h3>
-      <p class="cine-card__text" data-i18n="movies.tickets.text">Ticket details are on the way. Follow us to hear first when show times and tickets are out.</p>
-      <a class="btn btn--gold" data-cine-follow href="#" target="_blank" rel="noopener" data-i18n="movies.tickets.cta">Follow @victorians.youth</a>
     </article>
   </div>
 </section>
@@ -106,20 +100,20 @@ document.documentElement.className+=" js";
 <nav class="dock" data-dock aria-label="Primary"></nav>
 
 <script defer src="assets/js/core.js"></script>
-<script defer src="assets/js/strings.js?v=20260926d"></script>
-<script defer src="years/2026.config.js?v=20260926d"></script>
+<script defer src="assets/js/strings.js?v=20260927a"></script>
+<script defer src="years/2026.config.js?v=20260927a"></script>
 <script defer src="years/current.js"></script>
-<script defer src="assets/js/site.config.js"></script>
-<script defer src="assets/js/modules/chrome.js?v=20260926d"></script>
+<script defer src="assets/js/site.config.js?v=20260927a"></script>
+<script defer src="assets/js/modules/chrome.js?v=20260927a"></script>
 <script defer src="assets/js/modules/i18n.js"></script>
 <script defer src="assets/js/modules/theme.js"></script>
 <script defer src="assets/js/modules/lang.js"></script>
-<script defer src="assets/js/modules/langprompt.js"></script>
+<script defer src="assets/js/modules/langprompt.js?v=20260927a"></script>
 <script defer src="assets/js/modules/creditbadge.js"></script>
 <script defer src="assets/js/modules/sponsordeck.js"></script>
 <script defer src="assets/js/modules/dock.js"></script>
 <script defer src="assets/js/modules/dockswipe.js"></script>
-<script defer src="assets/js/modules/render.js?v=20260926d"></script>
+<script defer src="assets/js/modules/render.js?v=20260927a"></script>
 <script defer src="assets/js/modules/moviespage.js"></script>
 <script defer src="assets/js/modules/motion.js"></script>
 <script defer src="assets/js/modules/polish.js"></script>

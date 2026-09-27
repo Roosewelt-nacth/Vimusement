@@ -55,7 +55,7 @@
     /* ---- href bindings ---- */
     var mailFallback = function (subject) {
       return Y.contactEmail
-        ? "mailto:" + Y.contactEmail + "?subject=" + encodeURIComponent("Vimusement " + Y.year + " — " + subject)
+        ? "mailto:" + Y.contactEmail + "?subject=" + encodeURIComponent("Vimusement " + Y.year + ": " + subject)
         : "#involve";
     };
     ctx.$$("[data-bind-href]").forEach(function (el) {

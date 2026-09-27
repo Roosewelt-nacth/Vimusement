@@ -30,7 +30,7 @@ Vim.register("langprompt", function (ctx) {
   card.setAttribute("aria-label", "Choose your language");
   card.innerHTML =
     '<button type="button" class="lang-prompt__x" data-x aria-label="Dismiss">×</button>' +
-    '<p class="lang-prompt__q">View this site in —</p>' +
+    '<p class="lang-prompt__q">View this site in</p>' +
     '<div class="lang-prompt__row">' +
       '<button type="button" class="btn btn--gold lang-prompt__opt" data-choose="en">English</button>' +
       '<button type="button" class="btn btn--outline lang-prompt__opt" data-choose="ta">தமிழ்</button>' +

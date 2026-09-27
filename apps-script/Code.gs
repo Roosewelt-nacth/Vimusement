@@ -256,10 +256,10 @@ function _sendSms(phone, message) {
         numbers: '91' + num
       }
     });
-    if (res.getResponseCode() >= 300) { _log('system', 'sms fail', num + ' — HTTP ' + res.getResponseCode()); return false; }
+    if (res.getResponseCode() >= 300) { _log('system', 'sms fail', num + ': HTTP ' + res.getResponseCode()); return false; }
     return true;
   } catch (e) {
-    _log('system', 'sms fail', num + ' — ' + (e && e.message || e));
+    _log('system', 'sms fail', num + ': ' + (e && e.message || e));
     return false;
   }
 }
@@ -341,7 +341,7 @@ function _auth(p, needAdmin) {
   if (needAdmin && PROPS.getProperty('ADMIN_KEY') && String(p.k) === PROPS.getProperty('ADMIN_KEY')) {
     return { user: 'admin-key', name: 'Admin (key)', role: 'admin' };
   }
-  throw new Error('not authorised — log in again');
+  throw new Error('not authorised, please log in again');
 }
 
 /* ============================================================
@@ -459,10 +459,10 @@ function donateCash(p) {
     _mail(email, 'Your gift to Vimusement is confirmed 💛',
       _bi(
         'Dear ' + cashFirst + ',\n\nWe\'ve received your gift of ₹' + rupees.toLocaleString('en-IN') +
-        ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n— ' +
+        ' at the Vimusement counter. Reference: ' + ref + '.\n\nThank you for standing with the cause.\n\n' +
         cashCommittee + ' committee',
         'அன்புள்ள ' + cashFirst + ',\n\nவிமுஸ்மென்ட் கவுண்டரில் உங்கள் ₹' + rupees.toLocaleString('en-IN') +
-        ' நன்கொடையை பெற்றுக்கொண்டோம். குறிப்பு எண்: ' + ref + '.\n\nநோக்கத்துடன் நின்றதற்கு நன்றி.\n\n— ' +
+        ' நன்கொடையை பெற்றுக்கொண்டோம். குறிப்பு எண்: ' + ref + '.\n\nநோக்கத்துடன் நின்றதற்கு நன்றி.\n\n' +
         cashCommittee + ' குழு'
       ));
   }
@@ -624,15 +624,15 @@ function _mailTickets(email, name, ids) {
   var html =
     '<div style="font-family:Helvetica,Arial,sans-serif;color:#201b2b;max-width:520px;margin:0 auto">' +
       '<p style="letter-spacing:2px;color:#5a43c9;font-weight:bold;font-size:13px;margin:0 0 4px">VIMUSEMENT ' +
-        new Date().getFullYear() + ' &mdash; LUCKY DRAW</p>' +
+        new Date().getFullYear() + ' · LUCKY DRAW</p>' +
       '<h2 style="margin:0 0 12px;font-size:22px">You\'re in the hat, ' + _esc(first) + '.</h2>' +
       '<p style="color:#4c4557;line-height:1.55">Here ' + (plural ? 'are your ticket numbers' : 'is your ticket number') +
-        ' &mdash; the ' + (plural ? 'designed tickets are' : 'designed ticket is') +
-        ' attached as a PDF you can save or print:</p>' +
+        '. The ' + (plural ? 'designed tickets are' : 'designed ticket is') +
+        ' attached as a PDF you can save or print.</p>' +
       '<p style="text-align:center;margin:16px 0">' + chips + '</p>' +
-      '<p style="color:#4c4557;line-height:1.55">If one of these is drawn <b>live on stage</b> on the night, that\'s you &mdash; ' +
-        'winners are also contacted directly. Thank you for backing the cause.</p>' +
-      '<p style="color:#877e92;font-size:13px;margin-top:20px">&mdash; ' + _esc(fromName) + ' committee</p>' +
+      '<p style="color:#4c4557;line-height:1.55">If one of these is drawn <b>live on stage</b> on the night, that\'s you. ' +
+        'Winners are also contacted directly. Thank you for backing the cause.</p>' +
+      '<p style="color:#877e92;font-size:13px;margin-top:20px">' + _esc(fromName) + ' committee</p>' +
     '</div>';
 
   var opts = { htmlBody: html, name: fromName };
@@ -726,10 +726,10 @@ function drawRecordWinner(p) {
         _mail(email, 'You won at the Vimusement lucky draw! 🎉',
           _bi(
             'Dear ' + winFirst + ',\n\nTicket ' + id + ' has won the ' + prize +
-            ' in the Vimusement lucky draw. Congratulations!\n\nSomeone from the committee will be in touch about collecting your prize.\n\n— ' +
+            ' in the Vimusement lucky draw. Congratulations!\n\nSomeone from the committee will be in touch about collecting your prize.\n\n' +
             winCommittee + ' committee',
             'அன்புள்ள ' + winFirst + ',\n\nவிமுஸ்மென்ட் லக்கி டிராவில் சீட்டு ' + id + ' ' + prize +
-            ' வென்றது. வாழ்த்துக்கள்!\n\nஉங்கள் பரிசை பெறுவது குறித்து குழுவில் இருந்து ஒருவர் தொடர்பு கொள்வார்.\n\n— ' +
+            ' வென்றது. வாழ்த்துக்கள்!\n\nஉங்கள் பரிசை பெறுவது குறித்து குழுவில் இருந்து ஒருவர் தொடர்பு கொள்வார்.\n\n' +
             winCommittee + ' குழு'
           ));
       }
@@ -784,13 +784,13 @@ function processConfirmations() {
       _mail(r[DC.EMAIL - 1], 'Your gift to Vimusement is confirmed 💛',
         _bi(
           'Dear ' + first + ',\n\nWe\'ve received and confirmed your gift of ' + amt + ' to Vimusement.\n' +
-          'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, goes to scholarships, our ' +
-          'medical-emergency fund, and help for neighbours in need — a full account is published after the event.\n\n' +
-          'Thank you for standing with the cause.\n\n— ' + committee + ' committee',
+          'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, is split up front: 40% education for the poor, ' +
+          '30% medical and other needs, 30% youth emergency fund. Every rupee in and out goes on the public ledger.\n\n' +
+          'Thank you for standing with the cause.\n\n' + committee + ' committee',
           'அன்புள்ள ' + first + ',\n\nவிமுஸ்மென்ட்டுக்கான உங்கள் ' + amt + ' நன்கொடையை பெற்று உறுதிப்படுத்தினோம்.\n' +
-          'குறிப்பு எண்: ' + r[DC.REF - 1] + '\n\nநிகழ்வு செலவுகளுக்குப் பிறகு ஒவ்வொரு ரூபாயும் உதவித்தொகை, எங்கள் ' +
-          'மருத்துவ அவசர நிதி, மற்றும் தேவைப்படும் அண்டை வீட்டாருக்கான உதவிக்கு செல்கிறது — நிகழ்வுக்குப் பிறகு முழு கணக்கு வெளியிடப்படும்.\n\n' +
-          'நோக்கத்துடன் நின்றதற்கு நன்றி.\n\n— ' + committee + ' குழு'
+          'குறிப்பு எண்: ' + r[DC.REF - 1] + '\n\nநிகழ்வு செலவுகளுக்குப் பிறகு ஒவ்வொரு ரூபாயும் முன்கூட்டியே பிரிக்கப்படுகிறது: 40% ஏழை மாணவர்களின் கல்வி, ' +
+          '30% மருத்துவம் மற்றும் பிற தேவைகள், 30% இளைஞர் அவசர நிதி. உள்ளே வரும், வெளியே செல்லும் ஒவ்வொரு ரூபாயும் பொது கணக்கேட்டில் இடம்பெறும்.\n\n' +
+          'நோக்கத்துடன் நின்றதற்கு நன்றி.\n\n' + committee + ' குழு'
         ));
       if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1]) +
         ' | விமுஸ்மென்ட்: நன்றி! உங்கள் நன்கொடை உறுதிப்படுத்தப்பட்டது. குறிப்பு: ' + r[DC.REF - 1] + '.');
@@ -1016,7 +1016,7 @@ function _selfTest() {
   var stf = _tab(T_STAFF, STAFF_HEADER);
   if (stf.getLastRow() < 2) {
     stf.appendRow(['roonah', 'Roonah', 'admin', 'Yes', 'add a row per counter volunteer (role = counter). Active = No locks them out.']);
-    Logger.log('Staff tab seeded with admin "roonah" — add your counter volunteers as rows.');
+    Logger.log('Staff tab seeded with admin "roonah". Add your counter volunteers as rows.');
   }
   _tab(T_LOG, LOG_HEADER);   // hidden audit log
   Logger.log('Staff rows: ' + (stf.getLastRow() - 1) + ' · UPI_VPA set: ' + !!PROPS.getProperty('UPI_VPA') +

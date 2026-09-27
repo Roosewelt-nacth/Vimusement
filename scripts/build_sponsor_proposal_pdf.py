@@ -69,7 +69,7 @@ story.append(rule(color=CRIMSON, thickness=1.4, space_before=4, space_after=14))
 
 detail_rows = [
     [Paragraph("WHERE", styles["contactLabel"]), Paragraph("Ascension Church, Metha Nagar, Aminjikkarai, Chennai", styles["body"])],
-    [Paragraph("WHO", styles["contactLabel"]), Paragraph("Families and young people from right across the neighbourhood — hundreds through the gates in one day", styles["body"])],
+    [Paragraph("WHO", styles["contactLabel"]), Paragraph("Families and young people from right across the neighbourhood, with hundreds through the gates in one day", styles["body"])],
     [Paragraph("PURPOSE", styles["contactLabel"]), Paragraph("100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger", styles["body"])],
 ]
 detail_table = Table(detail_rows, colWidths=[26*mm, None])
@@ -83,7 +83,7 @@ story.append(detail_table)
 story.append(Spacer(1, 4*mm))
 story.append(Paragraph("Why partner with us", styles["h2"]))
 for p in [
-    "A local, built-in crowd — no footfall to chase, just show up and be seen",
+    "A local, built-in crowd. No footfall to chase, just show up and be seen",
     "A family + youth audience, right around Aminjikkarai",
     "Real on-ground brand visibility: posters, banners, stalls",
     "Social media exposure across our event pages",
@@ -95,7 +95,7 @@ for p in [
 
 story.append(Spacer(1, 8*mm))
 quote_box = Table([[Paragraph(
-    "“We’re not just asking for funding — we can give your brand real visibility "
+    "“We’re not just asking for funding. We can give your brand real visibility "
     "through our posters, social media, stage announcements and, depending on the "
     "partnership, product integration.”", styles["quote"])]], colWidths=[PAGE_W - 2*MARGIN])
 quote_box.setStyle(TableStyle([
@@ -119,9 +119,9 @@ story.append(rule(color=CRIMSON, thickness=1.4, space_before=4, space_after=16))
 
 tiers = [
     ("Community Partner", "Flexible",
-     "Logo on event banners, a mention across our social media, and a shout-out on stage — let's talk about what works for you."),
+     "Logo on event banners, a mention across our social media, and a shout-out on stage. Let's talk about what works for you."),
     ("Product Partner", "Products / vouchers",
-     "Give what you make or sell — food, drinks, goods — and we promote your brand in return. Great for restaurants, cafés and shops."),
+     "Give what you make or sell, like food, drinks or goods, and we promote your brand in return. Great for restaurants, cafés and shops."),
     ("Prize Partner", "Gifts / vouchers",
      "Sponsor a game prize, and your brand gets named the moment it's won."),
 ]
@@ -148,7 +148,7 @@ for name, amount, benefit in tiers:
 story.append(Spacer(1, 6*mm))
 story.append(Paragraph(
     "Not sure which fits? Message us and we'll shape a package around what works for your "
-    "business — a mix of the above is always an option.", styles["bodySoft"]))
+    "business. A mix of the above is always an option.", styles["bodySoft"]))
 
 story.append(Spacer(1, 12*mm))
 contact_table = Table(

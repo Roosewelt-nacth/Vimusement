@@ -67,3 +67,25 @@ Figma, treat Figma as the master copy.
 - **The air fryer, mixie and cooker are Pexels stock photos**, free to use with no credit needed. Swap them for the real prizes once they're photographed. The cooker photo shows a NANDI logo.
 
 `build_poster.py` crops these and embeds them in the SVGs.
+
+## Instagram story (website launch + the 40 · 30 · 30 pledge)
+
+`instagram-story/vimusement-story.mp4` is 1080 × 1920, 18 s, H.264, no sound.
+
+- **Scenes:**
+  1. "Our website is live"
+  2. A phone showing the site, with feature tags
+  3. The pledge
+  4. The public ledger
+  5. The website address, a QR code, and "Tap the link"
+- **Text** stays out of the areas Instagram covers at the top and bottom.
+
+**Posting:** add the video to your story, then add a **Link** sticker set to
+`https://victoriansyouth.github.io/Vimusement2k26/`. Place it just under
+"Tap the link". Add music in Instagram if you like. The file is under 16 MB,
+so it also works as a WhatsApp status.
+
+**To re-render** after a change:
+1. Serve `instagram-story/source/` over a local web server, for example `python -m http.server`.
+2. Open `story.html`.
+3. In the console, run `render("vimusement-story.mp4")`. The page saves the file through a `/save` endpoint, so either add one to your server or change `save()` to download the file instead.

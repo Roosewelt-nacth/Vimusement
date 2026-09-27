@@ -18,7 +18,7 @@ CREAM   = "FBF6F1"
 LINE    = "E7D8D2"
 
 SITE_URL = "https://victoriansyouth.github.io/Vimusement2k26/sponsors.html"
-SITE_NOTE = "the site is on a temporary/testing link right now — swap this before final print"
+SITE_NOTE = "the site is on a temporary/testing link right now, swap this before final print"
 
 def add_hyperlink(paragraph, url, text, color=CRIMSON, underline=True):
     part = paragraph.part
@@ -161,7 +161,7 @@ subtitle(doc, "A Community Fundraising Carnival")
 rule(doc)
 
 detail_row(doc, "Where", "Ascension Church, Metha Nagar, Aminjikkarai, Chennai")
-detail_row(doc, "Who", "Families and young people from right across the neighbourhood — hundreds through the gates in one day")
+detail_row(doc, "Who", "Families and young people from right across the neighbourhood, with hundreds through the gates in one day")
 detail_row(doc, "Purpose", "100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger")
 
 p = para(doc, space_before=10, space_after=8)
@@ -169,7 +169,7 @@ r = p.add_run("Why partner with us")
 set_run(r, size=15, color=INK, bold=True, font="Georgia")
 
 for line in [
-    "A local, built-in crowd — no footfall to chase, just show up and be seen",
+    "A local, built-in crowd. No footfall to chase, just show up and be seen",
     "A family + youth audience, right around Aminjikkarai",
     "Real on-ground brand visibility: posters, banners, stalls",
     "Social media exposure across our event pages",
@@ -180,7 +180,7 @@ for line in [
     bullet(doc, line)
 
 doc.add_paragraph().paragraph_format.space_after = Pt(6)
-quote_block(doc, "We're not just asking for funding — we can give your brand real visibility "
+quote_block(doc, "We're not just asking for funding. We can give your brand real visibility "
                   "through our posters, social media, stage announcements and, depending on the "
                   "partnership, product integration.")
 
@@ -199,16 +199,16 @@ rule(doc)
 
 tier_block(doc, "Community Partner", "Flexible",
     "Logo on event banners, a mention in our social media posts, and a shout-out "
-    "on stage — let's talk about what works for you.")
+    "on stage. Let's talk about what works for you.")
 tier_block(doc, "Product Partner", "Products / vouchers",
-    "Give what you make or sell — food, drinks, goods — and we promote your "
+    "Give what you make or sell, like food, drinks or goods, and we promote your "
     "brand in return. Great for restaurants, cafés and shops.")
 tier_block(doc, "Prize Partner", "Gifts / vouchers",
     "Sponsor a game prize, and your brand gets named the moment it's won.", last=True)
 
 p = para(doc, space_before=4, space_after=16)
 r = p.add_run("Not sure which fits? Message us and we'll shape a package around what "
-              "works for your business — a mix of the above is always an option.")
+              "works for your business. A mix of the above is always an option.")
 set_run(r, size=10, color=INK_SOFT)
 
 # contact box

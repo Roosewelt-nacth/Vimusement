@@ -250,14 +250,15 @@ def plaque(x, w, key, lh, name, what):
     y, h = spy + 45, 160
     href, ratio = LOGO[key]
     lw = lh * ratio
-    tx = x + 40 + lw + 40
+    tx = x + 32 + lw + 28
     return (f'<rect x="{x:.0f}" y="{y}" width="{w:.0f}" height="{h}" rx="30" fill="url(#card)" stroke="{GOLD}" stroke-opacity=".5" stroke-width="3"/>'
-            + f'<image x="{x + 40:.0f}" y="{y + (h - lh) / 2:.0f}" width="{lw:.0f}" height="{lh}" href="{href}"/>'
-            + text(tx, y + 74, name, 60, CREAM, DISPLAY, 700)
-            + text(tx, y + 124, what, 38, SOFT, SANS, 500))
-pw2 = (W - 2 * M - gap) / 2
-sponsor += (plaque(M, pw2, "cc", 124, "Chellamani LLP", "Grand prize: the sofa")
-            + plaque(M + pw2 + gap, pw2, "ge", 84, "George Enterprises", "Air fryer, mixie and cooker"))
+            + f'<image x="{x + 32:.0f}" y="{y + (h - lh) / 2:.0f}" width="{lw:.0f}" height="{lh}" href="{href}"/>'
+            + text(tx, y + 72, name, 50, CREAM, DISPLAY, 700)
+            + text(tx, y + 120, what, 36, SOFT, SANS, 500))
+pw3 = (W - 2 * M - 2 * gap) / 3
+sponsor += (plaque(M, pw3, "cc", 120, "Chellamani LLP", "Grand prize: the sofa")
+            + plaque(M + pw3 + gap, pw3, "ge", 60, "George Enterprises", "Air fryer & cooker")
+            + plaque(M + 2 * (pw3 + gap), pw3, "drm", 104, "Dr. M Dentistry", "3rd prize: the mixie"))
 
 # ---------------------------------------------------------------- the ticket
 ty, th, tx0, tx1, perf = 3205, 310, M, W - M, 880

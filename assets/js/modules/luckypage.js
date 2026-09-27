@@ -101,24 +101,22 @@ Vim.register("luckypage", function (ctx) {
         .join('<span class="lucky-credit__sep" aria-hidden="true">·</span>');
     credit.hidden = false;
   }
+  /* one compact thank-you: every prize sponsor on a single row, logo + name + what they gave */
   if (sponsors.length && thanks) {
-    thanks.innerHTML = sponsors.map(function (x) {
-      var sp = x.s;
-      var text = ctx.t("lucky.sponsor.text")
-        .replace(/\{prizes\}/g, prizeList(x.prizes))
-        .replace(/\{verb\}/g, ctx.t(x.prizes.length === 1 ? "lucky.sponsor.verb1" : "lucky.sponsor.verbN"))
-        .replace(/\{name\}/g, sp.name)
-        .replace(/\.\./g, ".");   // a name ending in "." + "." shouldn't make ".."
-      return '<aside class="lucky-thanks" data-animate="zoom-in">' +
-        '<div class="lucky-thanks__mark">' + spMark(sp, "lucky-thanks__logo") + '</div>' +
-        '<div class="lucky-thanks__body">' +
-          '<p class="lucky-thanks__eyebrow">' + esc(ctx.t("lucky.sponsor.eyebrow")) + '</p>' +
-          '<h3 class="lucky-thanks__title">' + esc(fill("lucky.sponsor.title", sp)) + '</h3>' +
-          '<p class="lucky-thanks__text">' + esc(text) + '</p>' +
-          '<p class="lucky-thanks__ask">' + esc(ctx.t("lucky.sponsor.ask")) + '</p>' +
-          (sp.url ? '<a class="btn btn--pill-ghost" href="' + esc(sp.url) + '" target="_blank" rel="noopener">' + esc(fill("lucky.sponsor.visit", sp)) + ' ↗</a>' : '') +
-        '</div></aside>';
-    }).join("");
+    var cap = function (x) { return x.charAt(0).toUpperCase() + x.slice(1); };
+    thanks.innerHTML = '<aside class="lucky-thanks" data-animate="fade-up">' +
+      '<div class="lucky-thanks__head">' +
+        '<p class="lucky-thanks__eyebrow">' + esc(ctx.t("lucky.sponsor.eyebrow")) + '</p>' +
+        '<h3 class="lucky-thanks__title">' + esc(ctx.t("lucky.thanks.title")) + '</h3>' +
+      '</div>' +
+      '<ul class="lucky-thanks__row">' + sponsors.map(function (x) {
+        var sp = x.s, inner =
+          '<span class="lucky-thanks__mark">' + spMark(sp, "lucky-thanks__logo") + '</span>' +
+          '<span class="lucky-thanks__who"><b>' + esc(sp.name) + '</b><small>' + esc(cap(prizeList(x.prizes).trim())) + '</small></span>';
+        return '<li>' + (sp.url ? '<a href="' + esc(sp.url) + '" target="_blank" rel="noopener">' + inner + '</a>' : inner) + '</li>';
+      }).join("") + '</ul>' +
+      '<p class="lucky-thanks__ask">' + esc(ctx.t("lucky.sponsor.ask")) + '</p>' +
+    '</aside>';
     thanks.hidden = false;
   }
 
