@@ -181,3 +181,4 @@
 @media (prefers-reduced-motion:reduce){
   .avatar-view__dialog{transition:opacity var(--dur-2) var(--ease-out);transform:none!important}
 }
+.dossier-ask{margin:1.4rem 0 .7rem;color:var(--c-ink-soft);font-size:var(--fs-sm)}

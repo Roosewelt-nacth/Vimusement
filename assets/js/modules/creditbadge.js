@@ -8,6 +8,10 @@
    nudges without nagging.
    ============================================================ */
 Vim.register("creditbadge", function (ctx) {
+  /* switched off for now (2026-09-27): only the footer link points at the
+     credits page. Set to true to bring the pop-up back. */
+  var ENABLED = false;
+  if (!ENABLED) return;
   var SEEN_KEY = "vim-credit-badge-seen";
 
   var p = location.pathname.split("/").pop();

@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Launch · Vimusement 2026</title>
+<link rel="icon" type="image/png" href="assets/img/shared/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@600&family=Montserrat:wght@300;400;600&display=swap">
+<!--
+  "Light up Vimusement", the launch moment after mass (hidden from the menu).
+  Open full screen (F or F11). Father presses the button (or Space / Enter):
+    3 · 2 · 1 (the hall counts along) → the brass lamp lights, wick by wick →
+    the carnival behind it warms up in gold: the string of lights, the Ferris wheel,
+    the carousel, the stalls and the church windows →
+    "Vimusement 2026 is live." → the scan screen: QR, the pledge, live supporters,
+    and a button into the website.
+  Design rules follow DESIGN.md (the Apple analysis the site is built on): one
+  interactive colour (the emerald pill), no shadows on chrome, weights 300/400/600,
+  tight display type, one easing curve for every transition.
+  Keys: M sound on/off · R back to the start (rehearsal) · F full screen.
+-->
+<style>
+:root{
+  --bg:#050A07; --ink:#F4EEE2; --soft:#C7D4C2; --mute:#8FA089; --gold:#DDAE4C;
+  --primary:#1F6B45; --primary-on-dark:#4FD98C; --hair:rgba(244,238,226,.14);
+  --ease:cubic-bezier(.28,.11,.32,1);           /* the one curve: every transition uses it */
+  --t:900ms;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Montserrat",system-ui,sans-serif;font-weight:400;overflow:hidden;
+  -webkit-font-smoothing:antialiased;user-select:none}
+canvas#world{position:fixed;inset:0;z-index:0;display:block;width:100vw;height:100vh}
+p,h1{margin:0}
+
+/* stages crossfade: opacity + a small rise + a soft focus pull, all on one curve */
+.stage{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;text-align:center;pointer-events:none;
+  opacity:1;transform:none;filter:none;transition:opacity var(--t) var(--ease),transform var(--t) var(--ease),filter var(--t) var(--ease)}
+.stage.off{opacity:0;transform:translateY(14px) scale(.985);filter:blur(8px)}
+.stage.on-pointer{pointer-events:auto}
+
+.eyebrow{font-family:"Cinzel",serif;font-weight:700;letter-spacing:.3em;padding-left:.3em;font-size:max(12px,min(1.25vw,2.2vh));color:var(--gold)}
+.display{font-family:"Playfair Display",Georgia,serif;font-weight:600;letter-spacing:-.012em;line-height:1.07}
+.tagline{font-weight:300;font-size:max(15px,min(1.6vw,2.9vh));color:var(--soft);line-height:1.47}
+
+/* the one button grammar: an emerald pill, 17px/400, press = scale(.95) */
+.pill{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;gap:.5em;cursor:pointer;text-decoration:none;
+  font:400 max(15px,min(1.2vw,2.2vh))/1 "Montserrat",system-ui,sans-serif;letter-spacing:-.01em;
+  min-height:44px;padding:.72em 1.45em;border-radius:9999px;border:1px solid transparent;background:var(--primary);color:#fff;
+  transition:transform .2s var(--ease),background .3s var(--ease),opacity var(--t) var(--ease)}
+.pill:hover{background:#237a4f}
+.pill:active{transform:scale(.95)}
+.pill:focus-visible{outline:2px solid var(--primary-on-dark);outline-offset:3px}
+.pill--ghost{background:transparent;color:var(--primary-on-dark);border-color:var(--primary-on-dark)}
+.pill--ghost:hover{background:rgba(79,217,140,.1)}
+.pill--hero{font-weight:300;font-size:max(16px,min(1.35vw,2.5vh));padding:.8em 1.75em}
+
+/* 1 · the start */
+#s-intro{justify-content:flex-start;padding-top:max(44px,8vh)}
+/* the name leads; everything under it steps down */
+.name{font-size:min(6.6vw,11.5vh);letter-spacing:-.018em}
+.name span{color:var(--gold)}
+.subhead{font-size:min(2.7vw,4.8vh);color:var(--ink);margin-top:1.2vh;letter-spacing:-.01em}
+.subhead--live{color:var(--gold);font-size:min(3.6vw,6.4vh)}
+#s-intro .tagline{margin-top:1.2vh;font-size:max(14px,min(1.35vw,2.4vh))}
+.start{position:fixed;left:50%;bottom:max(24px,4.2vh);transform:translateX(-50%);z-index:7}
+.start.gone{opacity:0;pointer-events:none}
+
+/* 2 · 3 · 2 · 1 */
+#s-count{justify-content:center}
+#num{font-family:"Playfair Display",serif;font-weight:600;font-size:min(30vw,48vh);line-height:1;letter-spacing:-.02em;color:var(--ink)}
+#num.beat{animation:beat 1s var(--ease) both}
+@keyframes beat{0%{opacity:0;transform:scale(1.08);filter:blur(10px)}28%{opacity:1;transform:scale(1);filter:blur(0)}72%{opacity:1;transform:scale(.985);filter:blur(0)}100%{opacity:0;transform:scale(.96);filter:blur(8px)}}
+
+/* 3 · it's live */
+#s-live-title{justify-content:flex-start;padding-top:max(52px,9vh)}
+#s-live-title .name{font-size:min(7.4vw,13vh)}
+#s-live-title .tagline{margin-top:1.4vh;font-size:max(14px,min(1.45vw,2.6vh))}
+
+/* 4 · scan + go */
+#s-scan{justify-content:center;padding:6vh 5vw 8vh}
+.panel{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4.5vw;align-items:center;padding:4.5vh 4vw;border-radius:18px;
+  background:rgba(5,10,7,.62);border:1px solid var(--hair);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+  max-width:min(1180px,92vw)}
+.qrcol{display:flex;flex-direction:column;align-items:center}
+.qr{background:#fff;border-radius:18px;padding:14px;border:1px solid var(--hair)}
+.qr canvas{display:block;width:min(30vh,21vw);height:min(30vh,21vw)}
+.scan{font-family:"Playfair Display",serif;font-weight:600;letter-spacing:-.01em;font-size:min(2.4vw,4.2vh);margin-top:2.4vh}
+.url{margin-top:.9vh;font-size:max(12px,min(1.05vw,1.9vh));color:var(--soft)}
+.info{text-align:left}
+.info h1{font-size:min(3.1vw,5.6vh);margin-top:1.1vh}
+.info h1 span{color:var(--gold)}
+.info .tagline{margin:1.6vh 0 2.4vh;font-size:max(13px,min(1.2vw,2.2vh))}
+.split{display:flex;gap:3px;height:min(5.2vh,50px);border-radius:10px;overflow:hidden}
+.split span{display:flex;align-items:center;padding:0 .9em;color:#0B120D;font-family:"Playfair Display",serif;font-weight:600;font-size:min(1.4vw,2.6vh)}
+.split-labels{display:flex;gap:3px;margin-top:.9vh;font-size:max(11px,min(.9vw,1.7vh));color:var(--soft)}
+.split-labels span{padding-left:.15em}
+.live{display:flex;align-items:center;gap:1vw;margin-top:2.6vh;padding:1.3vh 1.3vw;border-radius:12px;border:1px solid var(--hair)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--primary-on-dark);flex:none;animation:breathe 2.4s var(--ease) infinite}
+@keyframes breathe{50%{opacity:.35}}
+.live b{font-family:"Playfair Display",serif;font-weight:600;font-size:min(3vw,5.4vh);line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.live small{display:block;font-size:max(11px,min(.95vw,1.8vh));color:var(--soft);margin-top:.3vh}
+.names{min-height:1.4em;margin-top:1.1vh;font-size:max(11px,min(1vw,1.9vh));color:var(--ink);transition:opacity .6s var(--ease)}
+.ctas{display:flex;gap:12px;margin-top:2.8vh;flex-wrap:wrap}
+.keys{position:fixed;right:28px;bottom:22px;z-index:7;font-size:11px;color:rgba(143,160,137,.45);letter-spacing:.02em}
+@media (max-aspect-ratio:1/1){.panel{grid-template-columns:1fr;text-align:center}.info{text-align:center}.ctas{justify-content:center}}
+@media (prefers-reduced-motion:reduce){:root{--t:1ms}#num.beat{animation-duration:1ms}}
+</style>
+</head>
+<body>
+<canvas id="world" aria-hidden="true"></canvas>
+
+<section class="stage" id="s-intro">
+  <h1 class="display name">Vimusement <span>2026</span></h1>
+  <p class="display subhead">Let’s light it up.</p>
+  <p class="tagline">Our new website is ready. Light the lamp to launch it.</p>
+</section>
+<button class="pill pill--hero start" id="start">Light the lamp</button>
+
+<section class="stage off" id="s-count" aria-live="assertive"><b id="num">3</b></section>
+
+<section class="stage off" id="s-live-title">
+  <h1 class="display name">Vimusement <span>2026</span></h1>
+  <p class="display subhead subhead--live">is live.</p>
+  <p class="tagline">Take out your phones. The fair starts here.</p>
+</section>
+
+<section class="stage off" id="s-scan">
+  <div class="panel">
+    <div class="qrcol">
+      <div class="qr"><canvas id="qr" width="400" height="400"></canvas></div>
+      <p class="scan">Scan to explore</p>
+      <p class="url">victoriansyouth.github.io/Vimusement2k26</p>
+    </div>
+    <div class="info">
+      <p class="eyebrow" style="padding-left:0">OUR 2026 PLEDGE</p>
+      <h1 class="display">Every rupee has a job<br><span>before it’s raised.</span></h1>
+      <p class="tagline">Everything raised, after event costs, is split up front. Every rupee in and out goes on a public ledger.</p>
+      <div class="split"><span style="flex:40;background:#DDAE4C">40%</span><span style="flex:30;background:#4FD98C">30%</span><span style="flex:30;background:#E39AA8">30%</span></div>
+      <div class="split-labels"><span style="flex:40">Education for the poor</span><span style="flex:30">Medical &amp; other needs</span><span style="flex:30">Youth Emergency Fund</span></div>
+      <div class="live"><span class="dot"></span><div><b id="count">0</b><small id="countLabel">supporters so far · be the first to give</small></div></div>
+      <p class="names" id="names"></p>
+      <div class="ctas">
+        <a class="pill" id="go" href="index.html">Explore the website</a>
+        <a class="pill pill--ghost" href="donate.html">Donate</a>
+      </div>
+    </div>
+  </div>
+</section>
+<p class="keys" id="keys">F full screen · M sound · R restart</p>
+
+<script src="assets/vendor/qrcode-generator.js"></script>
+<script src="years/2026.config.js?v=20260927a"></script>
+<script src="years/current.js"></script>
+<script>
+(function () {
+  var SITE = "https://victoriansyouth.github.io/Vimusement2k26/";
+  var API = ((window.VIM_YEAR || {}).api || "").trim();
+  var $ = function (id) { return document.getElementById(id); };
+  var cv = $("world"), x = cv.getContext("2d"), W = 0, H = 0, U = 1;
+  function size() { W = innerWidth; H = innerHeight; U = Math.min(W / 1600, H / 900);
+    cv.width = W * devicePixelRatio; cv.height = H * devicePixelRatio; x.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); }
+  size(); addEventListener("resize", size);
+
+  /* ---------- time + easing ---------- */
+  var T0 = performance.now(), now = 0, phase = "ready", tLit = 1e9, tScan = 1e9, sound = true;
+  var ease = function (p) { p = Math.max(0, Math.min(1, p)); return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; };
+  function warm(delay, dur) { return ease((now - tLit - delay) / (dur || 1.1)); }        // 0→1 after the lamp is lit
+
+  /* ---------- sound (Web Audio, no files): soft ticks, one gold chime ---------- */
+  var AC = null;
+  function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } return AC; }
+  function tone(f, t0, dur, vol) { var A = ac(); if (!A || !sound) return; var o = A.createOscillator(), g = A.createGain(), t = A.currentTime + t0;
+    o.type = "sine"; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .03); g.gain.exponentialRampToValueAtTime(.0008, t + dur);
+    o.connect(g); g.connect(A.destination); o.start(t); o.stop(t + dur + .05); }
+  var tick = function (last) { tone(last ? 784 : 587.3, 0, .55, .13); };
+  var chime = function () { [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach(function (f, i) { tone(f, i * .15, 3, .085); }); };
+
+  /* ---------- palette: tonal emerald silhouettes, gold light only ---------- */
+  var FAR = "#0A1811", MID = "#0E2218", NEAR = "#122A1E", GLOW = "255,214,140";
+  function floorY() { return H * .84; }
+  function drift(depth) { return Math.sin(now * .06) * 8 * U * depth; }                       // a very slow parallax breath
+
+  function sky() {
+    x.fillStyle = "#050A07"; x.fillRect(0, 0, W, H);
+    var L = warm(.1, 1.8), g = x.createRadialGradient(W / 2, H * .6, 10, W / 2, H * .6, Math.max(W, H) * .8);
+    g.addColorStop(0, "rgba(31,107,69," + (.28 + .16 * L) + ")"); g.addColorStop(.6, "rgba(31,107,69," + (.06 + .05 * L) + ")"); g.addColorStop(1, "rgba(31,107,69,0)");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    if (L > 0) {                              // the lamp's warmth spreads over the grounds
+      var w = x.createRadialGradient(W / 2, floorY() - H * .12, 10, W / 2, floorY() - H * .12, W * .6);
+      w.addColorStop(0, "rgba(" + GLOW + "," + .14 * L + ")"); w.addColorStop(1, "rgba(" + GLOW + ",0)"); x.fillStyle = w; x.fillRect(0, 0, W, H);
+    }
+    var s = 7, r = function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+    for (var i = 0; i < 80; i++) { var sx = r() * W, sy = r() * H * .5, sp = .3 + r(), tw = .3 + .7 * Math.abs(Math.sin(now * sp + i));
+      x.fillStyle = "rgba(244,238,226," + .18 * tw + ")"; x.fillRect(sx, sy, 1.4, 1.4); }
+  }
+  function glowDot(px, py, r, L) {
+    if (L <= 0) { x.fillStyle = "rgba(150,140,110,.28)"; x.beginPath(); x.arc(px, py, r, 0, 6.283); x.fill(); return; }
+    var g = x.createRadialGradient(px, py, 0, px, py, r * 6.5); g.addColorStop(0, "rgba(" + GLOW + "," + .85 * L + ")"); g.addColorStop(.3, "rgba(240,200,104," + .25 * L + ")"); g.addColorStop(1, "rgba(240,200,104,0)");
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 6.5, 0, 6.283); x.fill();
+    x.globalAlpha = Math.min(1, .3 + L); x.fillStyle = "#FFF8E1"; x.beginPath(); x.arc(px, py, r, 0, 6.283); x.fill(); x.globalAlpha = 1;
+  }
+
+  /* far row: small tents and booths along the back of the grounds */
+  function farRow() {
+    var fy = floorY(), dx = drift(.4), L = warm(2.2, 1.6);
+    x.fillStyle = FAR;
+    for (var i = 0; i < 14; i++) {
+      var cx = (i + .5) / 14 * W + dx, w = (70 + (i * 37) % 50) * U, h = (48 + (i * 53) % 44) * U;
+      if (Math.abs(cx - W / 2) < W * .1) continue;               // leave the lamp clear
+      x.beginPath(); x.moveTo(cx - w / 2, fy); x.lineTo(cx - w / 2, fy - h * .55); x.lineTo(cx, fy - h); x.lineTo(cx + w / 2, fy - h * .55); x.lineTo(cx + w / 2, fy); x.closePath(); x.fill();
+      if (L > 0) { x.fillStyle = "rgba(" + GLOW + "," + .22 * L + ")"; x.fillRect(cx - w * .16, fy - h * .45, w * .32, h * .45); x.fillStyle = FAR; }
+    }
+  }
+  /* the Ferris wheel, turning slowly; its rim lights warm up one by one */
+  function ferris() {
+    var fy = floorY(), r = Math.min(H * .19, W * .11), cx = W * .15 + drift(.8), cy = fy - r - 26 * U;
+    var spin = now * .05 + (now > tLit ? (now - tLit) * .04 : 0), L = warm(.9, 1.4);
+    x.strokeStyle = MID; x.lineCap = "round";
+    x.lineWidth = 9 * U; x.beginPath(); x.moveTo(cx - r * .62, fy); x.lineTo(cx, cy); x.lineTo(cx + r * .62, fy); x.stroke();
+    x.lineWidth = 3.5 * U; x.beginPath(); x.arc(cx, cy, r, 0, 6.283); x.stroke();
+    x.lineWidth = 1.6 * U; x.beginPath(); x.arc(cx, cy, r * .82, 0, 6.283); x.stroke();
+    for (var i = 0; i < 16; i++) { var a = spin + i * Math.PI / 8; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); x.stroke(); }
+    for (var k = 0; k < 8; k++) { var b = spin + k * Math.PI / 4, gx = cx + Math.cos(b) * r, gy = cy + Math.sin(b) * r;
+      x.fillStyle = MID; x.beginPath(); x.roundRect(gx - 10 * U, gy + 2 * U, 20 * U, 15 * U, 4 * U); x.fill(); }
+    for (var j = 0; j < 32; j++) { var c = spin + j * Math.PI / 16, on = warm(.9 + j * .03, .5);
+      glowDot(cx + Math.cos(c) * r, cy + Math.sin(c) * r, 2.2 * U + .6, on * (.75 + .25 * Math.sin(now * 2 + j))); }
+    glowDot(cx, cy, 4 * U + 1, L);
+  }
+  /* the carousel: a scalloped canopy on a pole, bulbs along the valance */
+  function carousel() {
+    var fy = floorY(), cx = W * .33 + drift(.7), w = 250 * U, top = fy - 250 * U, L = warm(1.3, 1.2);
+    x.fillStyle = MID;
+    x.fillRect(cx - 3 * U, top - 34 * U, 6 * U, 40 * U);                               // finial pole
+    x.beginPath(); x.moveTo(cx, top - 6 * U); x.quadraticCurveTo(cx + w * .2, top + 40 * U, cx + w / 2, top + 78 * U); x.lineTo(cx - w / 2, top + 78 * U);
+    x.quadraticCurveTo(cx - w * .2, top + 40 * U, cx, top - 6 * U); x.fill();          // canopy
+    for (var i = 0; i < 10; i++) { var sx = cx - w / 2 + (i + .5) * w / 10; x.beginPath(); x.arc(sx, top + 78 * U, w / 20, 0, Math.PI); x.fill(); }   // scallops
+    x.fillStyle = NEAR; x.fillRect(cx - w * .42, top + 90 * U, w * .84, 8 * U);        // top ring
+    for (var p = 0; p < 5; p++) { var px = cx - w * .36 + p * w * .18; x.fillRect(px - 2 * U, top + 96 * U, 4 * U, fy - top - 130 * U);
+      var bob = Math.sin(now * 1.2 + p) * 6 * U;                                        // horses rise and fall
+      x.beginPath(); x.ellipse(px, top + 160 * U + bob, 17 * U, 9 * U, 0, 0, 6.283); x.fill(); }
+    x.fillStyle = MID; x.beginPath(); x.roundRect(cx - w * .48, fy - 34 * U, w * .96, 34 * U, 6 * U); x.fill();   // platform
+    for (var j = 0; j <= 12; j++) glowDot(cx - w / 2 + j * w / 12, top + 84 * U, 2.1 * U + .6, warm(1.3 + Math.abs(j - 6) * .05, .6) * (.8 + .2 * Math.sin(now * 3 + j)));
+    if (L > 0) { var g = x.createRadialGradient(cx, top + 150 * U, 0, cx, top + 150 * U, w * .6); g.addColorStop(0, "rgba(" + GLOW + "," + .16 * L + ")"); g.addColorStop(1, "rgba(" + GLOW + ",0)");
+      x.fillStyle = g; x.fillRect(cx - w, top, w * 2, fy - top); }
+  }
+  /* two stall booths with tonal striped awnings */
+  function booths() {
+    var fy = floorY();
+    [[.62, 150, 1.6], [.72, 128, 1.8]].forEach(function (b, n) {
+      var cx = W * b[0] + drift(.65), w = b[1] * U, h = 150 * U, L = warm(b[2], 1);
+      x.fillStyle = MID; x.fillRect(cx - w / 2, fy - h, 5 * U, h); x.fillRect(cx + w / 2 - 5 * U, fy - h, 5 * U, h);
+      x.fillRect(cx - w / 2, fy - 60 * U, w, 60 * U);                                   // counter
+      for (var i = 0; i < 6; i++) { x.fillStyle = i % 2 ? MID : NEAR; x.beginPath();
+        x.moveTo(cx - w / 2 - 8 * U + i * (w + 16 * U) / 6, fy - h); x.lineTo(cx - w / 2 - 8 * U + (i + 1) * (w + 16 * U) / 6, fy - h);
+        x.lineTo(cx - w / 2 - 8 * U + (i + 1) * (w + 16 * U) / 6, fy - h + 34 * U); x.quadraticCurveTo(cx - w / 2 - 8 * U + (i + .5) * (w + 16 * U) / 6, fy - h + 44 * U, cx - w / 2 - 8 * U + i * (w + 16 * U) / 6, fy - h + 34 * U); x.fill(); }
+      if (L > 0) { x.fillStyle = "rgba(" + GLOW + "," + .5 * L + ")"; x.fillRect(cx - w / 2 + 8 * U, fy - h + 48 * U, w - 16 * U, 34 * U);
+        glowDot(cx, fy - h + 52 * U, 3 * U + .8, L); }
+    });
+  }
+  /* the church, with its spire and cross; windows warm last */
+  function church() {
+    var fy = floorY(), cx = W * .87 + drift(.55), w = 180 * U, h = 140 * U, L = warm(2.0, 1.4);
+    x.fillStyle = MID;
+    x.fillRect(cx - w / 2, fy - h, w, h);
+    x.beginPath(); x.moveTo(cx - w / 2 - 8 * U, fy - h); x.lineTo(cx, fy - h - 64 * U); x.lineTo(cx + w / 2 + 8 * U, fy - h); x.fill();
+    var tw = 52 * U; x.fillRect(cx - tw / 2, fy - h - 150 * U, tw, 96 * U);
+    x.beginPath(); x.moveTo(cx - tw / 2 - 5 * U, fy - h - 150 * U); x.lineTo(cx, fy - h - 262 * U); x.lineTo(cx + tw / 2 + 5 * U, fy - h - 150 * U); x.fill();
+    x.fillRect(cx - 2.5 * U, fy - h - 300 * U, 5 * U, 42 * U); x.fillRect(cx - 13 * U, fy - h - 289 * U, 26 * U, 5 * U);
+    var win = function (wx, top, ww, hh, a) { x.fillStyle = "rgba(" + GLOW + "," + a + ")"; x.beginPath(); x.moveTo(wx - ww / 2, top + hh); x.lineTo(wx - ww / 2, top + ww / 2);
+      x.arc(wx, top + ww / 2, ww / 2, Math.PI, 0); x.lineTo(wx + ww / 2, top + hh); x.closePath(); x.fill(); };
+    var a = .08 + .72 * L;
+    [-54, -18, 18, 54].forEach(function (o) { win(cx + o * U, fy - 110 * U, 18 * U, 42 * U, a); });
+    win(cx, fy - 64 * U, 36 * U, 64 * U, a * .9);
+    x.fillStyle = "rgba(" + GLOW + "," + a + ")"; x.beginPath(); x.arc(cx, fy - h - 104 * U, 11 * U, 0, 6.283); x.fill();
+  }
+  /* one catenary of warm bulbs across the grounds, warming from the centre outwards */
+  function lightString() {
+    var y0 = H * .5, sag = H * .11, n = 34, dx = drift(.9);
+    x.strokeStyle = "rgba(221,174,76,.22)"; x.lineWidth = 1;
+    x.beginPath(); x.moveTo(W * .03 + dx, y0); x.quadraticCurveTo(W / 2 + dx, y0 + sag * 2, W * .97 + dx, y0); x.stroke();
+    for (var i = 1; i < n; i++) { var t = i / n, bx = (1 - t) * (1 - t) * W * .03 + 2 * (1 - t) * t * W / 2 + t * t * W * .97 + dx;
+      var by = (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * (y0 + sag * 2) + t * t * y0 + 5;
+      glowDot(bx, by, 3 * U + 1, warm(.5 + Math.abs(t - .5) * 1.8, .7) * (.82 + .18 * Math.sin(now * 2 + i * 1.3))); }
+  }
+  function ground() {
+    var fy = floorY(), L = warm(.2, 1.6);
+    var g = x.createLinearGradient(0, fy, 0, H); g.addColorStop(0, "#07110B"); g.addColorStop(1, "#030604"); x.fillStyle = g; x.fillRect(0, fy, W, H - fy);
+    x.fillStyle = "rgba(221,174,76," + (.14 + .2 * L) + ")"; x.fillRect(W * .06, fy, W * .88, 1);
+    if (L > 0) { var r = x.createRadialGradient(W / 2, fy, 0, W / 2, fy, W * .32); r.addColorStop(0, "rgba(" + GLOW + "," + .18 * L + ")"); r.addColorStop(1, "rgba(" + GLOW + ",0)");
+      x.fillStyle = r; x.beginPath(); x.ellipse(W / 2, fy + 4, W * .32, 36 * U + 8, 0, 0, 6.283); x.fill(); }
+  }
+
+  /* ---------- the brass kuthuvilakku (the product: it gets the one soft shadow) ---------- */
+  var WICKS = [-.34, -.17, 0, .17, .34];
+  function lampGeom() { var h = Math.min(H * .385, W * .25); return { h: h, cx: W / 2, base: floorY() + 4 * U, bowlY: floorY() + 4 * U - h * .66 }; }
+  function lamp(fade) {
+    if (fade <= 0) return;
+    var G = lampGeom(), h = G.h, cx = G.cx, b = G.base, s = h / 500;
+    x.save(); x.globalAlpha = fade;
+    x.fillStyle = "rgba(0,0,0,.35)"; x.beginPath(); x.ellipse(cx + 3 * s, b + 4 * s, 170 * s, 22 * s, 0, 0, 6.283); x.fill();   // resting shadow
+    if (now > tLit) { var gl = ease((now - tLit) / 1.8), gg = x.createRadialGradient(cx, G.bowlY, 10, cx, G.bowlY, h * 1.15);
+      gg.addColorStop(0, "rgba(255,200,100," + .32 * gl + ")"); gg.addColorStop(.45, "rgba(240,170,60," + .09 * gl + ")"); gg.addColorStop(1, "rgba(240,170,60,0)");
+      x.fillStyle = gg; x.fillRect(cx - h * 1.3, G.bowlY - h * 1.2, h * 2.6, h * 2.4); }
+    var brass = x.createLinearGradient(cx - 120 * s, 0, cx + 120 * s, 0);
+    brass.addColorStop(0, "#6E4A12"); brass.addColorStop(.3, "#E9C46A"); brass.addColorStop(.5, "#FFF1C1"); brass.addColorStop(.7, "#C9962E"); brass.addColorStop(1, "#5A3C0E");
+    x.fillStyle = brass; x.strokeStyle = "rgba(60,38,8,.5)"; x.lineWidth = 1.1 * s;
+    function ell(y, rx, ry) { x.beginPath(); x.ellipse(cx, y, rx, ry, 0, 0, 6.283); x.fill(); x.stroke(); }
+    function trap(y0, w0, y1, w1) { x.beginPath(); x.moveTo(cx - w0, y0); x.lineTo(cx + w0, y0); x.lineTo(cx + w1, y1); x.lineTo(cx - w1, y1); x.closePath(); x.fill(); x.stroke(); }
+    ell(b - 8 * s, 150 * s, 22 * s); trap(b - 10 * s, 150 * s, b - 40 * s, 118 * s); ell(b - 40 * s, 118 * s, 16 * s);
+    trap(b - 42 * s, 100 * s, b - 70 * s, 70 * s); ell(b - 70 * s, 70 * s, 11 * s);
+    trap(b - 72 * s, 24 * s, b - 300 * s, 16 * s);
+    [110, 170, 235, 290].forEach(function (k, i) { ell(b - k * s, (i % 2 ? 30 : 38) * s, 9 * s); });
+    var by = G.bowlY;
+    trap(by + 26 * s, 34 * s, by, 170 * s); ell(by, 170 * s, 30 * s);
+    WICKS.forEach(function (w) { var px = cx + w * h * .95, py = by - 4 * s + Math.abs(w) * 40 * s;
+      x.beginPath(); x.moveTo(px - 14 * s, py + 6 * s); x.quadraticCurveTo(px, py - 18 * s, px + 14 * s, py + 6 * s); x.closePath(); x.fill(); x.stroke(); });
+    trap(by - 26 * s, 12 * s, by - 150 * s, 9 * s); ell(by - 60 * s, 22 * s, 6 * s); ell(by - 115 * s, 18 * s, 5 * s);
+    x.beginPath(); x.moveTo(cx, by - 230 * s); x.quadraticCurveTo(cx + 40 * s, by - 185 * s, cx + 20 * s, by - 150 * s); x.lineTo(cx - 20 * s, by - 150 * s);
+    x.quadraticCurveTo(cx - 40 * s, by - 185 * s, cx, by - 230 * s); x.fill(); x.stroke();
+    x.beginPath(); x.arc(cx, by - 238 * s, 9 * s, 0, 6.283); x.fill(); x.stroke();
+    WICKS.forEach(function (w, i) {                          // flames, centre first, then outwards
+      var t = now - tLit - [2, 1, 3, 0, 4].indexOf(i) * .32; if (t < 0) return;
+      var grow = ease(t / .6), px = cx + w * h * .95, py = by - 14 * s + Math.abs(w) * 40 * s;
+      var fl = 1 + .06 * Math.sin(now * 13 + i * 3) + .035 * Math.sin(now * 23 + i), fh = 58 * s * grow * fl, fw = 13 * s * grow;
+      var g2 = x.createRadialGradient(px, py - fh * .4, 0, px, py - fh * .4, fh * 1.6); g2.addColorStop(0, "rgba(255,200,90,.46)"); g2.addColorStop(1, "rgba(255,160,40,0)");
+      x.fillStyle = g2; x.beginPath(); x.arc(px, py - fh * .4, fh * 1.6, 0, 6.283); x.fill();
+      var g3 = x.createLinearGradient(0, py - fh, 0, py); g3.addColorStop(0, "#FFF6C8"); g3.addColorStop(.45, "#FFC24A"); g3.addColorStop(1, "#D9661E");
+      x.fillStyle = g3; x.beginPath(); x.moveTo(px, py - fh);
+      x.bezierCurveTo(px + fw * 1.4, py - fh * .45, px + fw, py, px, py); x.bezierCurveTo(px - fw, py, px - fw * 1.4, py - fh * .45, px, py - fh); x.fill();
+      x.fillStyle = "rgba(255,255,240,.85)"; x.beginPath(); x.ellipse(px, py - fh * .3, fw * .32, fh * .22, 0, 0, 6.283); x.fill();
+    });
+    x.restore();
+  }
+
+  /* ---------- gold embers: a soft rise from the lamp, never confetti ---------- */
+  var embers = [];
+  function ember(px, py, lively) {
+    var a = -Math.PI / 2 + (Math.random() - .5) * (lively ? 1.6 : .5), v = (lively ? .9 + Math.random() * 1.8 : .25 + Math.random() * .45) * (U + .4);
+    embers.push({ x: px, y: py, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, decay: lively ? .007 + Math.random() * .006 : .0035 + Math.random() * .003,
+                  r: (1 + Math.random() * 1.8) * (U + .3), sway: Math.random() * 6 });
+  }
+
+  /* ---------- the frame loop ---------- */
+  function frame(ms) {
+    now = (ms - T0) / 1000;
+    sky(); farRow(); lightString(); ferris(); carousel(); booths(); church(); ground();
+    var fade = phase === "scan" ? 1 - ease((now - tScan) / 1.2) : 1;
+    lamp(fade);
+    if (now > tLit + .5 && phase !== "scan" && Math.random() < .5) { var G = lampGeom(); ember(G.cx + (Math.random() - .5) * G.h * .7, G.bowlY - 18 * U, false); }
+    if (now > tLit + 1 && Math.random() < .08) ember(Math.random() * W, H * (.55 + Math.random() * .28), false);
+    embers = embers.filter(function (p) {
+      p.x += p.vx + Math.sin(now * 1.4 + p.sway) * .14; p.y += p.vy; p.vy *= .996; p.life -= p.decay;
+      var g = x.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3); g.addColorStop(0, "rgba(" + GLOW + ",.95)"); g.addColorStop(1, "rgba(240,200,104,0)");
+      x.globalAlpha = Math.max(0, p.life) * .85; x.fillStyle = g; x.beginPath(); x.arc(p.x, p.y, p.r * 3, 0, 6.283); x.fill(); x.globalAlpha = 1;
+      return p.life > 0 && p.y > -20;
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------- the sequence ---------- */
+  var timers = [];
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function stage(id, on) { $(id).classList.toggle("off", !on); $(id).classList.toggle("on-pointer", on && id === "s-scan"); }
+  function start() {
+    if (phase !== "ready") return; phase = "count"; ac();
+    stage("s-intro", false); $("start").classList.add("gone"); stage("s-count", true);
+    [3, 2, 1].forEach(function (n, i) { later(function () { var b = $("num"); b.textContent = n; b.classList.remove("beat"); void b.offsetWidth; b.classList.add("beat"); tick(n === 1); }, 150 + i * 1000); });
+    later(function () {                                                          // the lamp lights
+      stage("s-count", false); phase = "lit"; tLit = now; chime();
+      var G = lampGeom(); for (var i = 0; i < 70; i++) ember(G.cx + (Math.random() - .5) * G.h * .8, G.bowlY - 10 * U, true);
+    }, 3150);
+    later(function () { stage("s-live-title", true); }, 5300);
+    later(function () { stage("s-live-title", false); }, 10200);
+    later(function () { phase = "scan"; tScan = now; stage("s-scan", true); startLive(); setTimeout(function () { $("go").focus({ preventScroll: true }); }, 1000); }, 10900);
+  }
+  function reset() {
+    timers.forEach(clearTimeout); timers = []; phase = "ready"; tLit = 1e9; tScan = 1e9; embers = [];
+    ["s-count", "s-live-title", "s-scan"].forEach(function (id) { stage(id, false); }); stage("s-intro", true); $("start").classList.remove("gone");
+  }
+  $("start").addEventListener("click", start);
+  addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    if ((e.key === " " || e.key === "Enter") && phase === "ready") { e.preventDefault(); start(); }
+    else if (k === "m") { sound = !sound; $("keys").textContent = "F full screen · M sound " + (sound ? "on" : "off") + " · R restart"; }
+    else if (k === "r") reset();
+    else if (k === "f") { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {}); else document.exitFullscreen(); }
+  });
+
+  /* ---------- QR ---------- */
+  var q = qrcode(0, "M"); q.addData(SITE); q.make();
+  (function () { var c = $("qr"), cx = c.getContext("2d"), n = q.getModuleCount(), m = c.width / n;
+    cx.fillStyle = "#fff"; cx.fillRect(0, 0, c.width, c.height); cx.fillStyle = "#050A07";
+    for (var r = 0; r < n; r++) for (var k = 0; k < n; k++) if (q.isDark(r, k)) cx.fillRect(Math.floor(k * m), Math.floor(r * m), Math.ceil(m), Math.ceil(m)); })();
+
+  /* ---------- live supporters (names only, never amounts; the Donate page's public list) ---------- */
+  function jsonp(action) {
+    return new Promise(function (ok, no) {
+      if (!API) return no(new Error("no api"));
+      var cb = "vimcb_" + Math.random().toString(36).slice(2), s = document.createElement("script");
+      var t = setTimeout(function () { done(); no(new Error("timeout")); }, 15000);
+      function done() { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } s.remove(); }
+      window[cb] = function (d) { done(); ok(d); };
+      s.onerror = function () { done(); no(new Error("network")); };
+      s.src = API + (API.indexOf("?") > -1 ? "&" : "?") + "action=" + action + "&callback=" + cb;
+      document.head.appendChild(s);
+    });
+  }
+  var shown = 0, names = [], ni = 0, liveOn = false;
+  function setCount(to) {
+    var from = shown, t0 = performance.now();
+    (function step(n) { var p = ease((n - t0) / 1200); $("count").textContent = Math.round(from + (to - from) * p); if (p < 1) requestAnimationFrame(step); })(t0);
+    if (to > shown && shown > 0) { chime(); var G = lampGeom(); for (var i = 0; i < 30; i++) ember(W * (.3 + Math.random() * .4), H * .8, true); }
+    shown = to;
+    $("countLabel").textContent = to === 0 ? "supporters so far · be the first to give" : (to === 1 ? "supporter so far · thank you" : "supporters so far · thank you");
+  }
+  function poll() { jsonp("donors").then(function (d) { var list = (d && d.donors) || [], n = (d && d.count) || list.length; if (n !== shown) setCount(n); names = list.slice(0, 30); }).catch(function () {}); }
+  function rotate() { var el = $("names"); if (!names.length) { el.textContent = ""; return; } el.style.opacity = 0;
+    setTimeout(function () { el.textContent = "♥ " + names[ni % names.length]; el.style.opacity = 1; ni++; }, 600); }
+  function startLive() { if (liveOn) return; liveOn = true; poll(); setInterval(poll, 20000); setInterval(rotate, 3800); }
+})();
+</script>
+</body>
+</html>

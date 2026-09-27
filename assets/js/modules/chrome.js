@@ -78,7 +78,10 @@
          read as the same signal in two spots. Always present, which
          is also why moreHTML itself is no longer conditional on
          secondary.length — there's now always at least one item. */
-      var creditsLinkHTML =
+      /* switched off for now (2026-09-27): the credits page is reached only from
+         the link at the very bottom of the footer. Set to true to bring it back. */
+      var SHOW_CREDITS_IN_DOCK = false;
+      var creditsLinkHTML = !SHOW_CREDITS_IN_DOCK ? "" :
         '<a class="dock__more-link dock__more-credit" role="menuitem" href="credits.html"' +
           (here === "credits.html" ? ' aria-current="page"' : '') + '>' +
           '<span class="dock__more-credit-icon">' + svg("code") + '<span class="dock__more-credit-dot" aria-hidden="true"></span></span>' +
