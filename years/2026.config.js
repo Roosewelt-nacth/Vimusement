@@ -172,8 +172,8 @@ window.VIM_YEARS["2026"] = {
     { key: "education", share: 40, icon: "cap", color: "#DDAE4C",
       title: { en: "Education for the poor", ta: "ஏழை மாணவர்களின் கல்வி" },
       short: { en: "Education", ta: "கல்வி" },
-      text: { en: "School fees, books and exam costs for students who’d otherwise drop out, including children from single-parent and hardworking families.",
-              ta: "படிப்பை நிறுத்திவிடக்கூடிய மாணவர்களுக்கு பள்ளி கட்டணம், புத்தகங்கள் மற்றும் தேர்வுச் செலவுகள், தனிப் பெற்றோர் மற்றும் கடின உழைப்பாளர் குடும்பங்களின் குழந்தைகள் உட்பட." },
+      text: { en: "School fees, books and exam costs for students who need support, including children from single-parent and hardworking families.",
+              ta: "உதவி தேவைப்படும் மாணவர்களுக்கு பள்ளி கட்டணம், புத்தகங்கள் மற்றும் தேர்வுச் செலவுகள், தனிப் பெற்றோர் மற்றும் கடின உழைப்பாளர் குடும்பங்களின் குழந்தைகள் உட்பட." },
       stat: { en: "₹34,300 given last year", ta: "கடந்த ஆண்டு ₹34,300 வழங்கப்பட்டது" } },
     { key: "medical", share: 30, icon: "heart", color: "#4FD98C",
       title: { en: "Medical & other needs", ta: "மருத்துவம் & பிற தேவைகள்" },
@@ -190,8 +190,8 @@ window.VIM_YEARS["2026"] = {
   ],
 
   causeImpactTotal: "₹94,300",
-  causeNote: { en: "That's ₹34,300 towards school and exam costs, and ₹60,000 towards medical emergencies, including a heart operation. No names, no fuss: just money that reached people who needed it, put to use last year.",
-               ta: "அதாவது ₹34,300 பள்ளி மற்றும் தேர்வு செலவுகளுக்கும், ₹60,000 மருத்துவ அவசரநிலைகளுக்கும் (இதய அறுவை சிகிச்சை உட்பட). பெயர்கள் இல்லை, பகட்டு இல்லை: தேவைப்பட்டவர்களை சென்றடைந்த பணம், கடந்த ஆண்டு பயன்படுத்தப்பட்டது." },
+  causeNote: { en: "That's ₹34,300 towards the education of four students, two of them from single-parent families, and ₹60,000 for two medical cases: a heart operation and a medical emergency. No names, no fuss: just money that reached people who needed it, put to use last year.",
+               ta: "அதாவது ₹34,300 நான்கு மாணவர்களின் கல்விக்கு (அவர்களில் இருவர் தனிப் பெற்றோர் குடும்பங்களைச் சேர்ந்தவர்கள்), ₹60,000 இரண்டு மருத்துவ தேவைகளுக்கு: ஒரு இதய அறுவை சிகிச்சை மற்றும் ஒரு மருத்துவ அவசரநிலை. பெயர்கள் இல்லை, பகட்டு இல்லை: தேவைப்பட்டவர்களை சென்றடைந்த பணம், கடந்த ஆண்டு பயன்படுத்தப்பட்டது." },
 
   /* This is a standing yearly commitment, not a one-off — keep the
      wording in the present tense / "every year", not "last year". */

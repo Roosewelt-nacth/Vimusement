@@ -135,16 +135,16 @@ m.append(f'<line x1="{M}" y1="222" x2="{W-M}" y2="222" stroke="{INK}" stroke-opa
 # headline + the one true story that makes it real
 m.append(text(M, 340, "Your rupee can change", 92, INK, DISPLAY, 400))
 m.append(text(M, 438, "someone's year.", 92, PINK, DISPLAY, 400))
-s1, s1e = wrap(M, 510, "Last year, what this parish gave kept students in school and helped pay for a heart "
-               "operation. This year, one day of games, food and films can do it again.", 27, SOFT, 88, line_h=40)
+s1, s1e = wrap(M, 510, "Last year, what this parish gave supported four students with their education and covered "
+               "two medical cases, one of them a heart operation. This year, one day of games, food and films can do it again.", 27, SOFT, 88, line_h=40)
 m.append(s1)
 
 # last year: three figures, equal weight, same style
 y = s1e + 84
 m.append(label(M, y, "LAST YEAR, YOU MADE THIS HAPPEN"))
-stats = [(PINK, "₹94,300", "raised and given out, every rupee accounted for"),
-         (TEAL, "₹34,300", "school fees and exam costs for students"),
-         (ORANGE, "₹60,000", "medical bills, including a heart operation")]
+stats = [(PINK, "₹94,300", "given last year to education and medical help"),
+         (TEAL, "₹34,300", "education for four students, two from single-parent families"),
+         (ORANGE, "₹60,000", "two medical cases: a heart operation and an emergency")]
 gap = 40
 sw_ = (CW - 2 * gap) / 3
 for i, (c, n, t) in enumerate(stats):
@@ -159,7 +159,7 @@ y = y + 268
 m.append(label(M, y, "OUR 2026 PROMISE"))
 m.append(text(M, y + 40, "Everything raised, after event costs, is split three ways, as announced before the fair.", 25, SOFT))
 py = y + 80
-pledge = [(PINK, "cap", "40%", "Education", "School fees, books and exam costs for children who'd otherwise drop out."),
+pledge = [(PINK, "cap", "40%", "Education", "School fees, books and exam costs for students who need support."),
           (TEAL, "heart", "30%", "Medical Care & Needs", "Hospital bills and essentials for families going through a hard stretch."),
           (ORANGE, "shield", "30%", "Emergency Fund", "Held in reserve and released the moment it's needed most.")]
 for i, (c, ic, pct, name, desc) in enumerate(pledge):
