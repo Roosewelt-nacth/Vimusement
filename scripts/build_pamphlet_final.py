@@ -1,18 +1,21 @@
-"""Vimusement 2026 · the sponsor/donation pamphlet (Bold Pop theme) —
-one A4 sheet, front side, as an editable SVG.
+"""Vimusement 2026 · the donation pamphlet (Bold Pop theme) — one A4
+sheet, single continuous page, as an editable SVG.
 
   python scripts/build_pamphlet_final.py
 
 Output: design/donation-pamphlet/final-bold-pop-A4.svg
 
-Top two-thirds: the case for giving.
+One page, one job: get someone from "reading this" to "paid" in under
+a minute, with nothing to fill in, tear off, or hand back.
   headline -> what last year's money did (three figures, equal weight)
-  -> the 40 · 30 · 30 promise -> three trust points -> one call to action
-  (a QR straight to the Donate page).
-Bottom third, below a tear line: a pledge card on a light background (so
-it can be written on in pen). Name, phone, what they'd like to do, and an
-amount, where every amount says what it buys. Filled in and handed to a
-volunteer, or photographed and sent on WhatsApp.
+  -> the 40 · 30 · 30 promise -> three trust points -> one big call to
+  action: a QR straight to the Donate page, branded with the V mark so
+  it reads as ours at a glance, with an impact ladder underneath it
+  (amount -> what it buys) as a reading reference, not a form.
+
+There used to be a tear-off pledge card below this — cut it. It asked
+the reader to do the work (write, tear, hand over, and someone has to
+collect and enter it later) that the QR already does in one scan.
 
 Every rupee figure and percentage on the sheet uses the same number
 style (Anton), so they all read as one family.
@@ -26,12 +29,10 @@ OUT = os.path.join(REPO, "design", "donation-pamphlet", "final-bold-pop-A4.svg")
 W, H = 2100, 2970
 M = 90
 CW = W - 2 * M
-STUB_H = 950
-PERF_Y = H - STUB_H
 
 INK, SOFT, MUTE, LINE = "#1A1A2E", "#4A4A5E", "#8A8AA0", "#D9D9E3"
 PINK, ORANGE, TEAL, YELLOW = "#FF3E7F", "#FF8A00", "#00C2A8", "#FFD400"
-BG, CARD, STUB_BG = "#FFFFFF", "#FBF9F6", "#FFF9EF"
+BG, CARD = "#FFFFFF", "#FBF9F6"
 DISPLAY, CAPS, SANS = "Anton", "Poppins", "Inter"
 
 DONATE_URL = "https://victoriansyouth.github.io/Vimusement2k26/donate.html"
@@ -97,27 +98,158 @@ def image(path, x, y, h):
     return f'<image x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" href="data:image/png;base64,{data}"/>', w
 
 
-def qr_svg(data, x, y, size, dark):
-    qr = qrcode.QRCode(border=1, box_size=1, error_correction=qrcode.constants.ERROR_CORRECT_M)
+def qr_svg(data, x, y, size, dark, logo_path=None, logo_frac=0.24):
+    """A QR with, optionally, a brand mark sitting in the middle —
+    ERROR_CORRECT_H tolerates the centre being covered, so it still
+    scans fine. Makes the code read as "ours" before anyone even
+    scans it, instead of a generic black-and-white square."""
+    ec = qrcode.constants.ERROR_CORRECT_H if logo_path else qrcode.constants.ERROR_CORRECT_M
+    qr = qrcode.QRCode(border=1, box_size=1, error_correction=ec)
     qr.add_data(data); qr.make(fit=True)
     m = qr.get_matrix(); cell = size / len(m)
-    return "".join(f'<rect x="{x + c*cell:.2f}" y="{y + r*cell:.2f}" width="{cell*1.02:.2f}" height="{cell*1.02:.2f}" fill="{dark}"/>'
-                   for r, row in enumerate(m) for c, on in enumerate(row) if on)
+    out = "".join(f'<rect x="{x + c*cell:.2f}" y="{y + r*cell:.2f}" width="{cell*1.02:.2f}" height="{cell*1.02:.2f}" fill="{dark}"/>'
+                  for r, row in enumerate(m) for c, on in enumerate(row) if on)
+    if logo_path:
+        ls = size * logo_frac
+        lx, ly = x + size / 2 - ls / 2, y + size / 2 - ls / 2
+        pad = ls * 0.2
+        out += f'<rect x="{lx - pad:.1f}" y="{ly - pad:.1f}" width="{ls + 2*pad:.1f}" height="{ls + 2*pad:.1f}" rx="14" fill="#FFFFFF"/>'
+        img_tag, _ = image(logo_path, lx, ly, ls)
+        out += img_tag
+    return out
 
 
-def box(x, y, size=26, color=INK):
-    return f'<rect x="{x}" y="{y - size + 4}" width="{size}" height="{size}" rx="5" fill="#FFFFFF" stroke="{color}" stroke-width="2.4"/>'
+# ======================= SECTIONS =======================
+# Each section is a function of its top y that returns (svg pieces, height).
+# The page is laid out in two passes: measure every section, then share
+# whatever height is left over equally between them, so the sheet is
+# always filled edge to edge with no dead band anywhere.
+
+def sec_headline(y):
+    o = [num(M, y + 120, "Last year, ₹94,300.", 124, INK),
+         num(M, y + 250, "This year, more.", 124, PINK)]
+    s, se = wrap(M, y + 330, "All of it came from one day of games and food on the church grounds. "
+                 "Come on 25 October, bring your family, and help us beat it.", 30, SOFT, 80, line_h=44)
+    o.append(s)
+    return o, se - y + 14
 
 
-def field(x, y, lab, x2):
-    return label(x, y, lab, MUTE, 16) + f'<line x1="{x + 110}" y1="{y + 4}" x2="{x2}" y2="{y + 4}" stroke="{INK}" stroke-opacity=".45" stroke-width="2"/>'
+def sec_stats(y):
+    o = [label(M, y + 22, "LAST YEAR, YOU MADE THIS HAPPEN")]
+    stats = [(PINK, "₹34,300", "education for four students, two from single-parent families"),
+             (TEAL, "₹60,000", "two medical cases: a heart operation and an emergency")]
+    g = 60
+    sw = (CW - g) / 2
+    end = y
+    for i, (c, n, t) in enumerate(stats):
+        x = M + i * (sw + g)
+        o.append(f'<rect x="{x}" y="{y + 52}" width="{sw}" height="10" fill="{c}"/>')
+        o.append(num(x, y + 192, n, 124))
+        w_, we = wrap(x, y + 246, t, 27, SOFT, 50, line_h=38)
+        o.append(w_)
+        end = max(end, we)
+    return o, end - y + 12
 
+
+PLEDGE = [(PINK, "cap", "40%", "Education", "School fees, books and exam costs for students who need support."),
+          (TEAL, "heart", "30%", "Medical Care & Needs", "Hospital bills and essentials for families going through a hard stretch."),
+          (ORANGE, "shield", "30%", "Emergency Fund", "Held in reserve and released the moment it's needed most.")]
+
+
+def sec_promise(y):
+    o = [label(M, y + 22, "OUR 2026 PROMISE"),
+         text(M, y + 70, "Everything raised, after event costs, is split three ways, as announced before the fair.", 28, SOFT)]
+    g = 40
+    sw = (CW - 2 * g) / 3
+    py, h = y + 112, 290
+    for i, (c, ic, pct, name, desc) in enumerate(PLEDGE):
+        x = M + i * (sw + g)
+        o.append(f'<rect x="{x}" y="{py}" width="{sw}" height="{h}" rx="16" fill="{CARD}" stroke="{c}" stroke-width="2.5"/>')
+        o.append(f'<path d="M{x} {py+16} a16 16 0 0 1 16 -16 h{sw-32} a16 16 0 0 1 16 16 v-6 h-{sw} z" fill="{c}"/>')
+        o.append(num(x + 32, py + 108, pct, 80, c))
+        o.append(f'<circle cx="{x + sw - 84}" cy="{py + 92}" r="60" fill="{c}"/>')
+        o.append(icon(ic, x + sw - 84, py + 92, 68, "#FFFFFF", 1.9))
+        o.append(text(x + 32, py + 170, name, 27, INK, CAPS, 700))
+        d_, _ = wrap(x + 32, py + 212, desc, 21, SOFT, 42, line_h=30)
+        o.append(d_)
+    return o, 112 + h
+
+
+def sec_trust(y):
+    trust = ["No fees. You pay the parish directly by UPI.",
+             "Every rupee in and out is recorded on a public ledger.",
+             "Your amount is never shown. Only your name, if you like."]
+    g = 40
+    sw = (CW - 2 * g) / 3
+    o = []
+    for i, t in enumerate(trust):
+        x = M + i * (sw + g)
+        o.append(f'<circle cx="{x + 40}" cy="{y + 40}" r="40" fill="{TEAL}"/>')
+        o.append(icon("check", x + 40, y + 40, 48, "#FFFFFF", 2.6))
+        t_, _ = wrap(x + 102, y + 34, t, 23, INK, 34, weight=600, line_h=32)
+        o.append(t_)
+    return o, 90
+
+
+LADDER = [("₹250", "a week of groceries"),
+          ("₹500", "exam fees & textbooks"),
+          ("₹1,000", "a term's school fees"),
+          ("₹5,000", "eases a hospital bill"),
+          ("₹10,000", "emergency help, on the spot")]
+
+
+def sec_cta(y):
+    """the one ask, and the only QR on the sheet"""
+    c = []
+    lx = M + 64
+    c.append(label(lx, y + 88, "GIVE IN UNDER A MINUTE", YELLOW, 22))
+    c.append(text(lx, y + 196, "Scan. Pay by UPI.", 100, "#FFFFFF", DISPLAY, 400))
+    c.append(text(lx, y + 306, "Done.", 100, YELLOW, DISPLAY, 400))
+    t_, te = wrap(lx, y + 372, "No app to install. No form to fill in. Your bank app already does the rest.",
+                  27, "#C9C9DA", 42, line_h=38)
+    c.append(t_)
+    sy = te + 70
+    c.append(label(lx, sy, "TO SPONSOR AS A BUSINESS, TALK TO", "#C9C9DA", 17))
+    for i, (who, ph) in enumerate(PEOPLE):
+        x = lx + i * 480
+        c.append(icon("phone", x + 20, sy + 46, 42, YELLOW))
+        c.append(text(x + 60, sy + 56, who, 26, "#FFFFFF", SANS, 700))
+        c.append(num(x + 60 + len(who) * 16 + 18, sy + 56, ph, 28, "#FFFFFF"))
+
+    qs = 540
+    qx, qy = W - M - 64 - qs, y + 64
+    c.append(f'<rect x="{qx - 22}" y="{qy - 22}" width="{qs + 44}" height="{qs + 44}" rx="20" fill="#FFFFFF"/>')
+    c.append(qr_svg(DONATE_URL, qx, qy, qs, INK, logo_path="assets/img/shared/victorians-mark.png"))
+    c.append(label(qx + qs / 2, qy + qs + 70, "SCAN TO DONATE", YELLOW, 22, "middle"))
+
+    # amount -> what it buys, as something to read, not fill in
+    ly = max(sy + 110, qy + qs + 120)
+    c.append(f'<line x1="{lx}" y1="{ly}" x2="{W - M - 64}" y2="{ly}" stroke="#FFFFFF" stroke-opacity=".16" stroke-width="2"/>')
+    c.append(label(lx, ly + 62, "WHAT YOUR AMOUNT DOES", "#C9C9DA", 17))
+    lw_ = (CW - 128) / len(LADDER)
+    end = ly
+    for i, (a, d) in enumerate(LADDER):
+        x = lx + i * lw_
+        if i:
+            c.append(f'<line x1="{x - 22}" y1="{ly + 96}" x2="{x - 22}" y2="{ly + 206}" stroke="#FFFFFF" stroke-opacity=".16" stroke-width="2"/>')
+        c.append(num(x, ly + 146, a, 54, YELLOW))
+        d_, de = wrap(x, ly + 188, d, 21, "#C9C9DA", 20, line_h=28)
+        c.append(d_)
+        end = max(end, de)
+    h = end - y + 64
+    return [f'<rect x="{M}" y="{y}" width="{CW}" height="{h}" rx="24" fill="{INK}"/>'] + c, h
+
+
+# ======================= LAYOUT =======================
+TOP, BOTTOM = 222, H - 130          # below the header rule / above the footer line
+sections = [sec_headline, sec_stats, sec_promise, sec_trust, sec_cta]
+heights = [f(0)[1] for f in sections]
+gap = max(40, (BOTTOM - TOP - sum(heights)) / len(sections))
 
 body = []
 body.append(layer("cut-guide", f'<rect x="1" y="1" width="{W-2}" height="{H-2}" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="1" stroke-dasharray="6 6"/>'))
 
-# ======================= THE CASE FOR GIVING =======================
-m = [f'<rect x="0" y="0" width="{W}" height="{PERF_Y}" fill="{BG}"/>',
+m = [f'<rect x="0" y="0" width="{W}" height="{H}" fill="{BG}"/>',
      f'<rect x="0" y="0" width="{W}" height="14" fill="{PINK}"/>',
      f'<rect x="0" y="14" width="{W}" height="10" fill="{YELLOW}"/>',
      f'<rect x="0" y="24" width="{W}" height="8" fill="{TEAL}"/>']
@@ -130,146 +262,18 @@ m.append(text(hx, 132, "VIMUSEMENT 2026", 50, INK, DISPLAY, 400, spacing=3))
 m.append(text(hx, 170, "Victorians Youth · Ascension Church, Aminjikkarai", 20, SOFT, SANS, 500))
 m.append(label(W - M, 132, "GIVE · SPONSOR · BE PART OF IT", PINK, 22, "end"))
 m.append(text(W - M, 170, "Sunday 25 October 2026", 20, SOFT, SANS, 600, "end"))
-m.append(f'<line x1="{M}" y1="222" x2="{W-M}" y2="222" stroke="{INK}" stroke-opacity=".12" stroke-width="2"/>')
+m.append(f'<line x1="{M}" y1="{TOP}" x2="{W-M}" y2="{TOP}" stroke="{INK}" stroke-opacity=".12" stroke-width="2"/>')
 
-# headline + the one true story that makes it real
-m.append(text(M, 340, "Your rupee can change", 92, INK, DISPLAY, 400))
-m.append(text(M, 438, "someone's year.", 92, PINK, DISPLAY, 400))
-s1, s1e = wrap(M, 510, "Last year, what this parish gave supported four students with their education and covered "
-               "two medical cases, one of them a heart operation. This year, one day of games, food and films can do it again.", 27, SOFT, 88, line_h=40)
-m.append(s1)
-
-# last year: three figures, equal weight, same style
-y = s1e + 84
-m.append(label(M, y, "LAST YEAR, YOU MADE THIS HAPPEN"))
-stats = [(PINK, "₹94,300", "given last year to education and medical help"),
-         (TEAL, "₹34,300", "education for four students, two from single-parent families"),
-         (ORANGE, "₹60,000", "two medical cases: a heart operation and an emergency")]
-gap = 40
-sw_ = (CW - 2 * gap) / 3
-for i, (c, n, t) in enumerate(stats):
-    x = M + i * (sw_ + gap)
-    m.append(f'<rect x="{x}" y="{y + 30}" width="{sw_}" height="8" fill="{c}"/>')
-    m.append(num(x, y + 128, n, 80))
-    w_, _ = wrap(x, y + 172, t, 21, SOFT, 40, line_h=30)
-    m.append(w_)
-
-# the 2026 promise
-y = y + 268
-m.append(label(M, y, "OUR 2026 PROMISE"))
-m.append(text(M, y + 40, "Everything raised, after event costs, is split three ways, as announced before the fair.", 25, SOFT))
-py = y + 80
-pledge = [(PINK, "cap", "40%", "Education", "School fees, books and exam costs for students who need support."),
-          (TEAL, "heart", "30%", "Medical Care & Needs", "Hospital bills and essentials for families going through a hard stretch."),
-          (ORANGE, "shield", "30%", "Emergency Fund", "Held in reserve and released the moment it's needed most.")]
-for i, (c, ic, pct, name, desc) in enumerate(pledge):
-    x = M + i * (sw_ + gap)
-    m.append(f'<rect x="{x}" y="{py}" width="{sw_}" height="236" rx="16" fill="{CARD}" stroke="{c}" stroke-width="2.5"/>')
-    m.append(f'<path d="M{x} {py+16} a16 16 0 0 1 16 -16 h{sw_-32} a16 16 0 0 1 16 16 v-6 h-{sw_} z" fill="{c}"/>')
-    m.append(num(x + 30, py + 92, pct, 64, c))
-    m.append(f'<circle cx="{x + sw_ - 78}" cy="{py + 82}" r="54" fill="{c}"/>')
-    m.append(icon(ic, x + sw_ - 78, py + 82, 62, "#FFFFFF", 1.9))
-    m.append(text(x + 30, py + 140, name, 24, INK, CAPS, 700))
-    d_, _ = wrap(x + 30, py + 176, desc, 19, SOFT, 44, line_h=27)
-    m.append(d_)
-
-# three trust points
-ty = py + 236 + 78
-trust = ["No fees. You pay the parish directly by UPI.",
-         "Every rupee in and out is recorded on a public ledger.",
-         "Your amount is never shown. Only your name, if you like."]
-for i, t in enumerate(trust):
-    x = M + i * (sw_ + gap)
-    m.append(f'<circle cx="{x + 38}" cy="{ty - 8}" r="38" fill="{TEAL}"/>')
-    m.append(icon("check", x + 38, ty - 8, 46, "#FFFFFF", 2.6))
-    t_, _ = wrap(x + 96, ty, t, 21, INK, 38, weight=600, line_h=30)
-    m.append(t_)
-
-# one call to action
-cy = ty + 88
-ch = 500
-m.append(f'<rect x="{M}" y="{cy}" width="{CW}" height="{ch}" rx="22" fill="{INK}"/>')
-m.append(label(M + 60, cy + 72, "GIVE IN UNDER A MINUTE", YELLOW, 20))
-m.append(text(M + 60, cy + 158, "Scan. Pay by UPI.", 76, "#FFFFFF", DISPLAY, 400))
-m.append(text(M + 60, cy + 240, "Done.", 76, YELLOW, DISPLAY, 400))
-t_, t_e = wrap(M + 60, cy + 298, "No app to install. No fees. Prefer to give on paper? Fill in the pledge card below "
-               "and hand it to any Victorians Youth volunteer.", 22, "#C9C9DA", 64, line_h=32)
-m.append(t_)
-py2 = t_e + 66
-m.append(label(M + 60, py2, "TO SPONSOR, TALK TO", "#C9C9DA", 16))
-for i, (who, ph) in enumerate(PEOPLE):
-    x = M + 60 + i * 470
-    m.append(icon("phone", x + 20, py2 + 42, 40, YELLOW))
-    m.append(text(x + 58, py2 + 52, who + "  " + ph, 24, "#FFFFFF", SANS, 600))
-
-qs = 360
-qx, qy = W - M - 60 - qs, cy + 50
-m.append(f'<rect x="{qx - 18}" y="{qy - 18}" width="{qs + 36}" height="{qs + 36}" rx="16" fill="#FFFFFF"/>')
-m.append(qr_svg(DONATE_URL, qx, qy, qs, INK))
-m.append(label(qx + qs / 2, qy + qs + 58, "SCAN TO DONATE", YELLOW, 18, "middle"))
+y = TOP
+for f in sections:
+    y += gap
+    o, h = f(y)
+    m.extend(o)
+    y += h
 
 body.append(layer("case-for-giving", "".join(m)))
-
-# ======================= TEAR LINE =======================
-p = []
-for xn in (M, W - M):
-    p.append(f'<circle cx="{xn}" cy="{PERF_Y}" r="22" fill="{BG}" stroke="{INK}" stroke-opacity=".25" stroke-width="2"/>')
-p.append(f'<line x1="{M + 30}" y1="{PERF_Y}" x2="{W - M - 30}" y2="{PERF_Y}" stroke="{INK}" stroke-opacity=".55" stroke-width="2.5" stroke-dasharray="14 12"/>')
-p.append(text(W / 2, PERF_Y - 22, "TEAR HERE, FILL IN, HAND TO A VOLUNTEER", 16, MUTE, CAPS, 700, "middle", 2))
-body.append(layer("tear-line", "".join(p)))
-
-# ======================= THE PLEDGE CARD =======================
-s = [f'<rect x="0" y="{PERF_Y}" width="{W}" height="{STUB_H}" fill="{STUB_BG}"/>',
-     f'<rect x="0" y="{PERF_Y}" width="{W}" height="10" fill="{PINK}"/>']
-sy = PERF_Y + 60
-lockup, lw2 = image("assets/img/shared/victorians.png", M, sy, 150)
-s.append(lockup)
-tx = M + lw2 + 44
-s.append(text(tx, sy + 64, "I'M IN.", 70, INK, DISPLAY, 400))
-s.append(label(tx + 250, sy + 60, "VIMUSEMENT 2026 · PLEDGE CARD", PINK, 18))
-w_, _ = wrap(tx, sy + 112, "Fill this in and hand it to any Victorians Youth volunteer, or send a photo of it "
-             "to Fredrica or Samuel on WhatsApp. We'll follow up within a day.", 23, SOFT, 92, line_h=33)
-s.append(w_)
-
-fy = sy + 235
-s.append(field(M, fy, "NAME", M + 900))
-s.append(field(M + 1000, fy, "PHONE", W - M))
-
-cy2 = fy + 88
-colB = M + 760
-s.append(label(M, cy2, "I'D LIKE TO", TEAL, 18))
-s.append(label(colB, cy2, "AMOUNT AND WHAT IT DOES", TEAL, 18))
-ways = ["Donate", "Sponsor the fair", "Give my time on the day", "Give products or prizes"]
-for i, w in enumerate(ways):
-    yy = cy2 + 62 + i * 64
-    s.append(box(M, yy))
-    s.append(text(M + 44, yy, w, 23, INK, SANS, 600))
-amounts = [("₹250", "a week of groceries for a family"),
-           ("₹500", "exam fees and textbooks for a student"),
-           ("₹1,000", "a term's school fees for a child"),
-           ("₹5,000", "help ease the burden of a hospital bill"),
-           ("₹10,000", "emergency help when it's needed most")]
-for i, (a, d) in enumerate(amounts):
-    yy = cy2 + 62 + i * 64
-    s.append(box(colB, yy))
-    s.append(num(colB + 44, yy + 2, a, 34))
-    s.append(text(colB + 210, yy, d, 21, SOFT))
-yy = cy2 + 62 + len(amounts) * 64
-s.append(box(colB, yy))
-s.append(text(colB + 44, yy, "Other", 23, INK, SANS, 600))
-s.append(num(colB + 130, yy + 2, "₹", 34))
-s.append(f'<line x1="{colB + 158}" y1="{yy + 4}" x2="{colB + 520}" y2="{yy + 4}" stroke="{INK}" stroke-opacity=".45" stroke-width="2"/>')
-
-vy = yy + 84
-s.append(f'<line x1="{M}" y1="{vy - 42}" x2="{W - M}" y2="{vy - 42}" stroke="{INK}" stroke-opacity=".18" stroke-width="2" stroke-dasharray="6 8"/>')
-s.append(label(M, vy, "FOR VOLUNTEER USE", MUTE, 15))
-s.append(field(M + 320, vy, "TAKEN BY", M + 900))
-s.append(field(M + 980, vy, "DATE", M + 1380))
-s.append(box(M + 1460, vy)); s.append(text(M + 1500, vy, "UPI", 20, INK, SANS, 600))
-s.append(box(M + 1600, vy)); s.append(text(M + 1640, vy, "Cash", 20, INK, SANS, 600))
-s.append(text(W / 2, H - 50, "Thank you. Every rupee after event costs goes to the cause.", 20, MUTE, SANS, 500, "middle",
-              extra=' font-style="italic"'))
-body.append(layer("pledge-card", "".join(s)))
+body.append(layer("footer", text(W / 2, H - 60, "Thank you. Every rupee after event costs goes to the cause.",
+                                  22, MUTE, SANS, 500, "middle", extra=' font-style="italic"')))
 
 fam_q = "&amp;".join(("family=Anton", "family=Poppins:wght@400;500;600;700", "family=Inter:wght@400;500;600;700"))
 svg = f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"

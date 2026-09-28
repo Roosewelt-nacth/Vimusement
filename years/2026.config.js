@@ -184,8 +184,8 @@ window.VIM_YEARS["2026"] = {
     { key: "emergency", share: 30, icon: "shield", color: "#E39AA8",
       title: { en: "Emergency Fund", ta: "அவசர நிதி" },
       short: { en: "Emergency fund", ta: "அவசர நிதி" },
-      text: { en: "Held in reserve by Victorians Youth and released only when it’s needed most, for any of the causes: the operation that can’t wait, the fee due tomorrow.",
-              ta: "விக்டோரியன்ஸ் இளைஞர்களால் இருப்பில் வைக்கப்பட்டு, மிகவும் தேவைப்படும்போது மட்டுமே எந்த நோக்கத்திற்கும் வழங்கப்படும்: காத்திருக்க முடியாத அறுவை சிகிச்சை, நாளை கட்ட வேண்டிய கட்டணம்." },
+      text: { en: "Held in reserve and released only when it’s needed most, for any of the causes: the operation that can’t wait, the fee due tomorrow.",
+              ta: "இருப்பில் வைக்கப்பட்டு, மிகவும் தேவைப்படும்போது மட்டுமே எந்த நோக்கத்திற்கும் வழங்கப்படும்: காத்திருக்க முடியாத அறுவை சிகிச்சை, நாளை கட்ட வேண்டிய கட்டணம்." },
       stat: { en: "Released only when it’s needed most", ta: "மிகவும் தேவைப்படும்போது மட்டுமே வழங்கப்படும்" } }
   ],
 
