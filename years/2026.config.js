@@ -435,6 +435,11 @@ window.VIM_YEARS["2026"] = {
      shows the count per room until the committee locks the line-up.
      ~9 screenings across the two rooms. */
   program: {
+    /* Entry price per screening, in rupees, shown as a chip on movies.html.
+       Set to 0 or delete this line to hide the chip (e.g. if screenings end
+       up included free with entry). */
+    screeningPrice: 100,
+
     /* The shape of the day. Shown as a ribbon on the Programme page, with a
        live "you are here" marker during the fair itself. Times are "HH:MM"
        (24h, local). Adjust once the running order is set. */

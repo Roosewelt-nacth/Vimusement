@@ -7,15 +7,15 @@
         the i-dot), with a small gold nib on the tip of the ink leaving a short
         trail of sparks. Hover replays it.
      2. Press and hold the signature (long-press on phones): it flips up into
-        a small card with photo, name, role, Instagram and the credits page.
-        A normal tap still just opens the credits page.
+        a small card with photo, name, role and Instagram. A normal tap does
+        nothing but replay the signature — there is no page it goes to.
      3. The hidden roll: tap the footer's small print 5 times quickly, or
         type "austin", for a short cinema-style end-credits roll.
    The signature is one hand-drawn pen path (no font), so the ink and the nib
    move together exactly.
    ============================================================ */
 Vim.register("creditsig", function (ctx) {
-  var link = ctx.$(".footer__secret");
+  var link = ctx.$(".footer__secret");   // a <button> now — the site links to credits.html nowhere
   if (!link) return;
   var svg = link.querySelector(".footer__sign-name");
   var holder = link.querySelector(".footer__secret-text");
@@ -92,7 +92,6 @@ Vim.register("creditsig", function (ctx) {
       '<p class="sigcard__role">' + ctx.t("credits.hero.role") + '</p>' +
       '<div class="sigcard__row">' +
         '<a class="sigcard__btn" href="' + IG + '" target="_blank" rel="noopener">Instagram</a>' +
-        '<a class="sigcard__btn sigcard__btn--ghost" href="credits.html">Full credits</a>' +
       '</div>';
     var left = Math.max(12, Math.min(innerWidth - 292, r.left + r.width / 2 - 140));
     card.style.left = left + "px"; card.style.bottom = (innerHeight - r.top + 10) + "px";

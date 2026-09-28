@@ -210,6 +210,8 @@ Vim.register("moviespage", function (ctx) {
       [rooms.length === 1 ? venueLabel(rooms[0]) : String(rooms.length || "?"), rooms.length === 1 ? ctx.t("movies.chip.room") : ctx.t("movies.chip.rooms")],
       [ctx.t("movies.chip.dateVal"), ctx.t("movies.chip.date")]
     ];
+    var price = P.screeningPrice;
+    if (price) rows.push(["₹" + price, ctx.t("movies.chip.price")]);
     chips.innerHTML = rows.map(function (r) { return '<li class="cine-chip"><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>'; }).join("");
   }
 

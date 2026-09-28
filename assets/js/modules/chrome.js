@@ -71,22 +71,6 @@
          directly on the bar, at any screen size — they only ever
          live in this "More" popover instead */
       var moreLabel = ctx.t("nav.more");
-      /* the credits link isn't a real site.config page — it's the
-         same "who built this" destination as the footer crack, just
-         placed somewhere that doesn't need scrolling to reach. The
-         pulsing dot on its icon mirrors that footer badge so the two
-         read as the same signal in two spots. Always present, which
-         is also why moreHTML itself is no longer conditional on
-         secondary.length — there's now always at least one item. */
-      /* switched off for now (2026-09-27): the credits page is reached only from
-         the link at the very bottom of the footer. Set to true to bring it back. */
-      var SHOW_CREDITS_IN_DOCK = false;
-      var creditsLinkHTML = !SHOW_CREDITS_IN_DOCK ? "" :
-        '<a class="dock__more-link dock__more-credit" role="menuitem" href="credits.html"' +
-          (here === "credits.html" ? ' aria-current="page"' : '') + '>' +
-          '<span class="dock__more-credit-icon">' + svg("code") + '<span class="dock__more-credit-dot" aria-hidden="true"></span></span>' +
-          '<span>' + ctx.t("footer.creditsNav") + '</span>' +
-        '</a>';
       var moreHTML =
         '<div class="dock__more-wrap">' +
           '<button class="dock__more" type="button" data-dock-more aria-haspopup="true" aria-expanded="false" aria-label="' + moreLabel + '">' +
@@ -105,7 +89,6 @@
                bar version is hidden (see .dock__more-lang in components.css). */
             '<button type="button" role="menuitem" class="dock__more-link dock__more-lang" data-lang-toggle>' +
               svg("lang") + '<span data-lang-toggle-text></span></button>' +
-            creditsLinkHTML +
           '</div>' +
         '</div>';
 
@@ -130,7 +113,7 @@
     if (foot) {
       var year = Y.year || new Date().getFullYear();
       var ig = (S.social || {}).instagram || "";
-      var nav = pages.map(function (p) {
+      var nav = pages.map(function (p) {   // credits.html is never in VIM_SITE.pages — see site.config.js
         return '<a href="' + p.file + '">' + ctx.L(p.label) + '</a>';
       }).join("");
       var org = S.org || {};
@@ -160,11 +143,6 @@
           '<div class="footer__bottom">' +
           '<p class="footer__fine">Vimusement ' + year + ' · ' + (S.footerNote ? ctx.L(S.footerNote) : "An annual parish fundraiser.") + '</p>' +
           '<p class="footer__staff">' + ctx.t("footer.staffLine") + ' <a href="counter.html">' + ctx.t("footer.staffDesk") + '</a></p>' +
-          '<a class="footer__secret" href="credits.html" aria-label="' + ctx.t("footer.credit") + ' Austin">' +
-            '<span class="footer__secret-dot" aria-hidden="true"></span>' +
-            '<span class="footer__secret-text">' + ctx.t("footer.credit") + ' ' +
-              '<svg class="footer__sign-name" viewBox="0 0 165 70" aria-hidden="true"><g transform="skewX(-7) translate(5 0)"><path class="sig-main" d="M6 58 C12 44 20 22 26 12 C28 8 31 8 31 13 C31 26 33 44 36 56 C30 45 17 40 12 43 C22 40 34 39 40 40 C41 46 41 52 44 55 C47 58 51 55 53 48 C54 44 54 41 55 40 C55 46 55 53 58 56 C60 58 63 55 65 50 C67 45 70 40 72 39 C75 43 76 50 74 55 C72 58 67 57 67 54 C70 55 75 54 78 50 C79 40 81 26 82 18 C82 30 82 46 84 55 C86 58 90 56 92 52 C93 47 94 42 95 40 C95 46 95 53 98 56 C100 58 103 55 105 50 C106 45 107 41 108 40 C108 46 108 52 108 56 C109 48 113 40 118 40 C122 40 122 46 122 52 C122 56 126 57 132 52 C140 45 150 44 158 48 C150 60 90 66 30 64"/><path class="sig-bar" d="M75 27 C80 26 86 26 91 27"/><path class="sig-dot" d="M95.6 31.5 l.1 .1"/></g></svg> &rarr;</span>' +
-          '</a>' +
           '</div>' +
         '</div>';
     }
