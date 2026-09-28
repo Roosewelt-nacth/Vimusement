@@ -241,6 +241,13 @@
       return (list || []).filter(function (x) { return String(x.venue) === String(venue); });
     }
     var stalls = M.stalls || {};
+    /* booking mode (stalls.html, <div data-venuemap data-venuemap-book>): open
+       stalls glow, and an open stall's panel gets a "Book this spot" button that
+       opens WhatsApp with the stall number already in the message */
+    var book = host.hasAttribute("data-venuemap-book");
+    var bookWa = (((Y.stalls || {}).contactWhatsApp) || "").split("?")[0];
+    function taken(n) { var i = stalls[n] || stalls[+n]; return !!(i && (i.for || i.name)); }
+    function tt(key, fallback) { var v = ctx.t(key); return v === key ? fallback : v; }
     function select(id) {
       var stallN = /^s(\d+)$/.exec(id);
       var z = stallN ? null : byId[id];
@@ -259,10 +266,17 @@
         if (info && (info.for || info.name)) {
           sh += '<p class="vm-panel__blurb">' + esc(info.for || info.name) +
             (info.by ? ' &middot; ' + esc(info.by) : '') + '</p>';
+        } else if (book) {
+          var msg = tt("stallbook.msg", "Hi Janet, I'd like to book stall {n} at Vimusement 2026.").replace("{n}", n);
+          sh += '<p class="vm-panel__open"><span class="vm-panel__open-dot" aria-hidden="true"></span>' + esc(tt("stallbook.open", "Open")) + '</p>' +
+            '<p class="vm-panel__blurb">' + esc(tt("stallbook.rates", "Full stall from ₹5,500, half from ₹3,500. Benches and power included.")) + '</p>' +
+            (bookWa ? '<a class="btn btn--gold vm-panel__book" target="_blank" rel="noopener" href="' + esc(bookWa + "?text=" + encodeURIComponent(msg)) + '">' +
+              esc(tt("stallbook.cta", "Book this spot")) + '</a>' : '');
         } else {
           sh += '<p class="vm-panel__empty">' + ctx.t("venuemap.notAssigned") + '</p>';
         }
         panel.innerHTML = sh;
+        if (book && !ctx.reducedMotion) { panel.classList.remove("is-swap"); void panel.offsetWidth; panel.classList.add("is-swap"); }
         return;
       }
 
@@ -294,6 +308,14 @@
     }
 
     // start on the entry / first zone so the panel is never empty
-    select(zones[0].id);
+    if (book) {
+      host.classList.add("is-booking");
+      ctx.$$(".vm-zone--stall", planBox).forEach(function (g) {
+        var n = g.getAttribute("data-zone").slice(1);
+        g.classList.toggle("is-open", !taken(n));
+      });
+    }
+    if (book) { for (var k = 1; k <= 27; k++) if (!taken(k)) { select("s" + k); break; } }
+    else select(zones[0].id);
   });
 })();
