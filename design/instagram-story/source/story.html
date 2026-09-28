@@ -137,7 +137,7 @@ function screen(sy) {       // the site's mobile layout, drawn in a 438-wide scr
   const bw = w - 56, parts = [[.4, C.edu, "40%"], [.3, C.med, "30%"], [.3, C.emg, "30%"]];
   let bx = 28;
   parts.forEach(([f, col, lab]) => { const ww = bw * f - 3; rr(bx, 808, ww, 58, 8); x.fillStyle = col; x.fill(); T(lab, bx + 12, 846, `700 22px ${PF}`, "#0B120D", "left"); bx += bw * f; });
-  [["40%", C.edu, "Education for the poor"], ["30%", C.med, "Medical & other needs"], ["30%", C.emg, "Youth Emergency Fund"]].forEach(([p, col, lab], i) => {
+  [["40%", C.edu, "Education for the poor"], ["30%", C.med, "Medical & other needs"], ["30%", C.emg, "Emergency Fund"]].forEach(([p, col, lab], i) => {
     const yy = 904 + i * 64; rr(28, yy, bw, 54, 10); x.fillStyle = "rgba(255,255,255,.04)"; x.fill();
     T(p, 44, yy + 37, `700 26px ${PF}`, col, "left"); T(lab, 118, yy + 35, `500 16px ${MS}`, C.soft, "left");
   });
@@ -207,7 +207,7 @@ function s3(t) {
   T("is split three ways, announced up front.", 540, 698, `500 34px ${MS}`, C.soft, "center", 0, c);
   const rows = [[40, C.edu, "Education for the poor", "Fees, books and exams"],
                 [30, C.med, "Medical & other needs", "Hospital bills, medicines, essentials"],
-                [30, C.emg, "Youth Emergency Fund", "Held for when it’s needed most"]];
+                [30, C.emg, "Emergency Fund", "Held for when it’s needed most"]];
   rows.forEach(([n, col, ttl, sub], i) => {
     const p = eo(seg(t, 7.8 + i * .45, 8.4 + i * .45)); if (p <= 0) return;
     const y = 790 + i * 215;
@@ -245,7 +245,7 @@ function s4(t) {
   const cp = eo(seg(t, 11.5, 11.9));
   x.globalAlpha = v * cp; rr(150, 820, 780, 470, 30); x.fillStyle = "rgba(14,22,17,.92)"; x.fill();
   x.strokeStyle = "rgba(201,150,46,.6)"; x.lineWidth = 2; x.stroke();
-  const items = [["Raised", "+", C.med], ["Event costs", "−", C.soft], ["Paid out · Education", "→", C.edu], ["Paid out · Medical & needs", "→", C.med], ["Held · Youth Emergency Fund", "●", C.emg]];
+  const items = [["Raised", "+", C.med], ["Event costs", "−", C.soft], ["Paid out · Education", "→", C.edu], ["Paid out · Medical & needs", "→", C.med], ["Held · Emergency Fund", "●", C.emg]];
   items.forEach(([lab, sym, col], i) => {
     const p = eo(seg(t, 11.7 + i * .16, 12.0 + i * .16)); if (p <= 0) return;
     const y = 890 + i * 84;

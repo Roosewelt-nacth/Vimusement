@@ -182,7 +182,7 @@ window.VIM_YEARS["2026"] = {
               ta: "மருத்துவமனை கட்டணம், மருந்துகள் மற்றும் சிகிச்சை, மேலும் கடினமான காலகட்டத்தில் இருக்கும் குடும்பங்களுக்கு வாடகை, மளிகை மற்றும் அத்தியாவசியப் பொருட்கள்." },
       stat: { en: "₹60,000 given last year", ta: "கடந்த ஆண்டு ₹60,000 வழங்கப்பட்டது" } },
     { key: "emergency", share: 30, icon: "shield", color: "#E39AA8",
-      title: { en: "Youth Emergency Fund", ta: "இளைஞர் அவசர நிதி" },
+      title: { en: "Emergency Fund", ta: "அவசர நிதி" },
       short: { en: "Emergency fund", ta: "அவசர நிதி" },
       text: { en: "Held in reserve by Victorians Youth and released only when it’s needed most, for any of the causes: the operation that can’t wait, the fee due tomorrow.",
               ta: "விக்டோரியன்ஸ் இளைஞர்களால் இருப்பில் வைக்கப்பட்டு, மிகவும் தேவைப்படும்போது மட்டுமே எந்த நோக்கத்திற்கும் வழங்கப்படும்: காத்திருக்க முடியாத அறுவை சிகிச்சை, நாளை கட்ட வேண்டிய கட்டணம்." },
@@ -328,8 +328,8 @@ window.VIM_YEARS["2026"] = {
         text: { en: "Posters, banners, stage announcements and screens on the day, not just a logo in fine print.",
                 ta: "நாளின் போது சுவரொட்டிகள், பதாகைகள், மேடை அறிவிப்புகள் மற்றும் திரைகள், வெறும் சிறிய எழுத்தில் ஒரு லோகோ மட்டுமல்ல." } },
       { icon: "heart", title: { en: "It's a donation too", ta: "இது ஒரு நன்கொடையும் கூட" },
-        text: { en: "Every rupee (or product) goes into the same pledge Vimusement runs on: 40% education, 30% medical and other needs, 30% youth emergency fund.",
-                ta: "ஒவ்வொரு ரூபாயும் (அல்லது பொருளும்) விமுஸ்மென்ட்டின் அதே உறுதிமொழிக்கு செல்கிறது: 40% கல்வி, 30% மருத்துவம் மற்றும் பிற தேவைகள், 30% இளைஞர் அவசர நிதி." } }
+        text: { en: "Every rupee (or product) goes into the same pledge Vimusement runs on: 40% education, 30% medical and other needs, 30% emergency fund.",
+                ta: "ஒவ்வொரு ரூபாயும் (அல்லது பொருளும்) விமுஸ்மென்ட்டின் அதே உறுதிமொழிக்கு செல்கிறது: 40% கல்வி, 30% மருத்துவம் மற்றும் பிற தேவைகள், 30% அவசர நிதி." } }
     ]
   },
 

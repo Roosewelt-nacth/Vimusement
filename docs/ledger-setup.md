@@ -7,7 +7,7 @@ front:
 |---|---|---|
 | Education for the poor | 40% | `Education` |
 | Medical & other needs | 30% | `Medical` |
-| Youth Emergency Fund (held in reserve, used when it's needed most) | 30% | `Emergency` |
+| Emergency Fund (held in reserve, used when it's needed most) | 30% | `Emergency` |
 
 The homepage, the Cause page, the Donate page and the posters all show this
 split. The Cause page also has a **public ledger** at `cause.html#ledger`

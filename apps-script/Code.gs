@@ -785,11 +785,11 @@ function processConfirmations() {
         _bi(
           'Dear ' + first + ',\n\nWe\'ve received and confirmed your gift of ' + amt + ' to Vimusement.\n' +
           'Reference: ' + r[DC.REF - 1] + '\n\nEvery rupee, after event costs, is split up front: 40% education for the poor, ' +
-          '30% medical and other needs, 30% youth emergency fund. Every rupee in and out goes on the public ledger.\n\n' +
+          '30% medical and other needs, 30% emergency fund. Every rupee in and out goes on the public ledger.\n\n' +
           'Thank you for standing with the cause.\n\n' + committee + ' committee',
           'அன்புள்ள ' + first + ',\n\nவிமுஸ்மென்ட்டுக்கான உங்கள் ' + amt + ' நன்கொடையை பெற்று உறுதிப்படுத்தினோம்.\n' +
           'குறிப்பு எண்: ' + r[DC.REF - 1] + '\n\nநிகழ்வு செலவுகளுக்குப் பிறகு ஒவ்வொரு ரூபாயும் முன்கூட்டியே பிரிக்கப்படுகிறது: 40% ஏழை மாணவர்களின் கல்வி, ' +
-          '30% மருத்துவம் மற்றும் பிற தேவைகள், 30% இளைஞர் அவசர நிதி. உள்ளே வரும், வெளியே செல்லும் ஒவ்வொரு ரூபாயும் பொது கணக்கேட்டில் இடம்பெறும்.\n\n' +
+          '30% மருத்துவம் மற்றும் பிற தேவைகள், 30% அவசர நிதி. உள்ளே வரும், வெளியே செல்லும் ஒவ்வொரு ரூபாயும் பொது கணக்கேட்டில் இடம்பெறும்.\n\n' +
           'நோக்கத்துடன் நின்றதற்கு நன்றி.\n\n' + committee + ' குழு'
         ));
       if (r[DC.PHONE - 1]) _sendSms(r[DC.PHONE - 1], 'Vimusement: thank you! Your gift is confirmed. Ref: ' + r[DC.REF - 1] + '. View: ' + _ticketLink(r[DC.PHONE - 1]) +

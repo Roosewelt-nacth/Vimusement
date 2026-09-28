@@ -313,7 +313,7 @@ event_sponsor = (f'<path d="M{M} {by_mid}H{bx - 60:.0f}M{bx + by_w + 60:.0f} {by
                  + text(bx, by_mid + 15, lab, 42, GOLD2, CAPS, 700, spacing=12)
                  + f'<image x="{bx + lab_w + 44:.0f}" y="{by_y}" width="{by_h * ratio:.0f}" height="{by_h}" href="{href}"/>')
 
-footer = text(W / 2, H - 122, "Every rupee raised, after costs: 40% education  ·  30% medical and other needs  ·  30% youth emergency fund",
+footer = text(W / 2, H - 122, "Every rupee raised, after costs: 40% education  ·  30% medical and other needs  ·  30% emergency fund",
               34, MUTE, SANS, 500, "middle")
 
 svg = f'''<?xml version="1.0" encoding="UTF-8"?>

@@ -16,7 +16,7 @@ What happens: a big **3 · 2 · 1** (the hall counts along), the lamp lights wic
 
 > Before you leave, one more thing. This year, Vimusement has a new home online.
 > On it you'll find everything about the fair on the 25th of October: the programme and a map of the grounds, the movie line-up, the Lucky Draw prizes, and ways to volunteer or run a stall.
-> And most importantly, it shows where every rupee goes. This year we are announcing it up front: forty percent for the education of the poor, thirty percent for medical and other needs, and thirty percent for the Youth Emergency Fund. Every rupee in and out will be shown on a public ledger.
+> And most importantly, it shows where every rupee goes. This year we are announcing it up front: forty percent for the education of the poor, thirty percent for medical and other needs, and thirty percent for the Emergency Fund. Every rupee in and out will be shown on a public ledger.
 > To launch it, may I request Father to come forward and light the lamp. When the numbers appear, let's all count down together!
 
 **Father presses LIGHT THE LAMP; everyone counts 3, 2, 1**
@@ -40,7 +40,7 @@ What happens: a big **3 · 2 · 1** (the hall counts along), the lamp lights wic
 > 💛 *Our 2026 pledge:* everything raised, after event costs, goes
 > 40% to education for the poor
 > 30% to medical & other needs
-> 30% to the Youth Emergency Fund
+> 30% to the Emergency Fund
 > and every rupee in and out is on a public ledger.
 >
 > Please share with family and friends 🙏

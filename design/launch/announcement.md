@@ -22,7 +22,7 @@ It also tells you, up front, where every rupee goes. Everything we raise, after
 event costs, is shared like this:
 **40 percent** for the education of poor children,
 **30 percent** for medical and other needs,
-and **30 percent** for the Youth Emergency Fund, kept aside for when help is
+and **30 percent** for the Emergency Fund, kept aside for when help is
 needed most.
 
 Every rupee in and every rupee out will be shown on a **public ledger** on the
@@ -68,7 +68,7 @@ AV அறையில் ஐந்து திரைப்படங்கள்
 நிகழ்வு செலவுகளுக்குப் பிறகு திரட்டப்படும் தொகை இவ்வாறு பகிரப்படும்:
 **40 சதவீதம்** ஏழை மாணவர்களின் கல்விக்கு,
 **30 சதவீதம்** மருத்துவம் மற்றும் பிற தேவைகளுக்கு,
-**30 சதவீதம்** இளைஞர் அவசர நிதிக்கு, மிகவும் தேவைப்படும் நேரத்திற்காக
+**30 சதவீதம்** அவசர நிதிக்கு, மிகவும் தேவைப்படும் நேரத்திற்காக
 ஒதுக்கி வைக்கப்படும்.
 
 உள்ளே வரும், வெளியே செல்லும் ஒவ்வொரு ரூபாயும் இணையதளத்தில்

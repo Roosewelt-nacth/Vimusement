@@ -162,7 +162,7 @@ rule(doc)
 
 detail_row(doc, "Where", "Ascension Church, Metha Nagar, Aminjikkarai, Chennai")
 detail_row(doc, "Who", "Families and young people from right across the neighbourhood, with hundreds through the gates in one day")
-detail_row(doc, "Purpose", "100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger")
+detail_row(doc, "Purpose", "100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% emergency fund, with every rupee on a public ledger")
 
 p = para(doc, space_before=10, space_after=8)
 r = p.add_run("Why partner with us")

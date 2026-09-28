@@ -70,7 +70,7 @@ story.append(rule(color=CRIMSON, thickness=1.4, space_before=4, space_after=14))
 detail_rows = [
     [Paragraph("WHERE", styles["contactLabel"]), Paragraph("Ascension Church, Metha Nagar, Aminjikkarai, Chennai", styles["body"])],
     [Paragraph("WHO", styles["contactLabel"]), Paragraph("Families and young people from right across the neighbourhood, with hundreds through the gates in one day", styles["body"])],
-    [Paragraph("PURPOSE", styles["contactLabel"]), Paragraph("100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% youth emergency fund, with every rupee on a public ledger", styles["body"])],
+    [Paragraph("PURPOSE", styles["contactLabel"]), Paragraph("100% of what's raised, after costs, split up front: 40% education for the poor, 30% medical and other needs, 30% emergency fund, with every rupee on a public ledger", styles["body"])],
 ]
 detail_table = Table(detail_rows, colWidths=[26*mm, None])
 detail_table.setStyle(TableStyle([
