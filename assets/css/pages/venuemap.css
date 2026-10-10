@@ -139,3 +139,14 @@
 @media (prefers-reduced-motion:reduce){
   .vm-zone > rect{transition:none}
 }
+
+/* v8 plan: games, food counters, static service boxes, names under stall numbers, roster */
+.vm-svg .vm-sub{font-size:8.5px;font-weight:500;letter-spacing:.01em}
+.vm-zone--game > rect{fill:color-mix(in srgb,var(--c-gold,#C9962E) 18%,var(--c-surface));stroke:color-mix(in srgb,var(--c-gold,#C9962E) 70%,var(--vm-zone-edge))}
+.vm-zone--food > rect{fill:color-mix(in srgb,var(--c-primary) 12%,var(--c-surface))}
+.vm-static > rect{fill:var(--c-surface);stroke:var(--vm-zone-edge);stroke-width:1}
+.vm-static > text{font-size:10px;fill:var(--vm-note);pointer-events:none}
+.vm-roster{list-style:none;margin:1.25rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.4rem .75rem}
+.vm-roster__b{display:flex;align-items:center;gap:.6rem;width:100%;padding:.45rem .65rem;border:1px solid var(--vm-zone-edge);border-radius:8px;background:transparent;color:var(--vm-zone-ink);font:inherit;font-size:.9rem;text-align:left;cursor:pointer}
+.vm-roster__b:hover,.vm-roster__b:focus-visible{border-color:var(--vm-active);outline:none}
+.vm-roster__n{display:inline-grid;place-items:center;min-width:1.7rem;height:1.7rem;border-radius:6px;background:var(--vm-zone);font-family:var(--font-mono);font-weight:600;font-size:.8rem}
