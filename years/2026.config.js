@@ -534,7 +534,7 @@ window.VIM_YEARS["2026"] = {
       "5":  { short: "Chakkara-|pani", for: "Wooden toys and drinks",  name: "Chakkarapani's" },
       "6":  { short: "Pavazham",      for: "Sarees",                  name: "Pavazham Boutique" },
       "7":  { short: "ARUWYE",        for: "Bags, purses and home products", name: "ARUWYE" },
-      "8":  { short: "LGT +|open half", open: true, lines: [{ name: "LGT Holidays", for: "Travel" }] },
+      "8":  { short: "LGT +|open", open: true, lines: [{ name: "LGT Holidays", for: "Travel" }] },
       "9": { short: "Henna +|Jeff",  lines: [{ name: "BrownMoon Henna", for: "Mehndi" }, { name: "Jeff's stall", for: "Being confirmed", tbc: true }] },
       "20": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
       "21": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
