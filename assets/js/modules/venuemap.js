@@ -40,7 +40,7 @@
   }
 
   /* Grounds plan, traced from the committee's layout sketch. viewBox
-     0 0 640 900 (portrait). 27 numbered slots 1 to 27 (committee layout v12: the corner slots are
+     0 0 720 900 (portrait). 27 numbered slots 1 to 27 (committee layout v12: the corner slots are
      dropped; stalls, games 12 to 19, food counters 26 and 27) around a centred "Center of
      Attraction", the church block up top (Basement + Gifts & tickets +
      Chapel), the AV Room (upstairs) beside stalls 16–19, Food Counter,
@@ -49,14 +49,14 @@
      Replace wholesale by setting venueMap.planImage to a traced SVG that
      keeps the same data-zone ids. */
   var STALLS = [
-    [1, 548, 650, 74, 74, "stall"],
-    [2, 548, 576, 74, 74, "stall"],
-    [3, 548, 502, 74, 74, "stall"],
-    [4, 548, 428, 74, 74, "stall"],
-    [5, 548, 354, 74, 74, "stall"],
-    [6, 548, 280, 74, 74, "stall"],
-    [7, 505, 280, 43, 96, "stall"],
-    [8, 462, 280, 43, 96, "stall"],
+    [1, 610, 669, 74, 77, "stall"],
+    [2, 610, 592, 74, 77, "stall"],
+    [3, 610, 514, 74, 78, "stall"],
+    [4, 610, 436, 74, 78, "stall"],
+    [5, 610, 358, 74, 78, "stall"],
+    [6, 610, 280, 74, 78, "stall"],
+    [7, 536, 224, 74, 56, "stall"],
+    [8, 462, 224, 74, 56, "stall"],
     [9, 404, 482, 82, 66, "stall"],
     [10, 404, 548, 82, 66, "stall"],
     [11, 404, 614, 82, 66, "stall"],
@@ -112,14 +112,14 @@
     }).join("");
 
     return '' +
-    '<svg class="vm-svg" viewBox="0 0 640 900" role="group" aria-label="Grounds plan">' +
+    '<svg class="vm-svg" viewBox="0 0 720 900" role="group" aria-label="Grounds plan">' +
       '<defs><pattern id="vmGrass" width="24" height="24" patternUnits="userSpaceOnUse">' +
         '<rect width="24" height="24" fill="var(--vm-grass)"/>' +
         '<circle cx="6" cy="6" r="1" fill="var(--vm-grass-dot)"/>' +
         '<circle cx="17" cy="16" r="1" fill="var(--vm-grass-dot)"/>' +
       '</pattern></defs>' +
 
-      '<rect x="12" y="12" width="616" height="864" rx="16" fill="url(#vmGrass)" stroke="var(--vm-edge)"/>' +
+      '<rect x="12" y="12" width="696" height="864" rx="16" fill="url(#vmGrass)" stroke="var(--vm-edge)"/>' +
       /* the entry gap at the foot */
       '<rect x="470" y="872" width="120" height="10" fill="var(--vm-grass)"/>' +
       '<text x="530" y="892" class="vm-note" text-anchor="middle">' + t("ENTRY") + '</text>' +
