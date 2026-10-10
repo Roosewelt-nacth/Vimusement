@@ -40,10 +40,10 @@
   }
 
   /* Grounds plan, traced from the committee's layout sketch. viewBox
-     0 0 640 900 (portrait). 29 numbered slots (1–29, committee layout v8:
-     stalls, games 13–20, food counters 27–29) around a centred "Center of
+     0 0 640 900 (portrait). 27 numbered slots 1 to 27 (committee layout v12: the corner slots are
+     dropped; stalls, games 12 to 19, food counters 26 and 27) around a centred "Center of
      Attraction", the church block up top (Basement + Gifts & tickets +
-     Chapel), the AV Room (upstairs) beside stalls 17–20, Food Counter,
+     Chapel), the AV Room (upstairs) beside stalls 16–19, Food Counter,
      Entry at the foot. Every interactive area is
      <g class="vm-zone" data-zone="…">; stalls are data-zone="s1".."s27".
      Replace wholesale by setting venueMap.planImage to a traced SVG that
@@ -55,29 +55,27 @@
     [4, 548, 428, 74, 74, "stall"],
     [5, 548, 354, 74, 74, "stall"],
     [6, 548, 280, 74, 74, "stall"],
-    [7, 548, 224, 74, 56, "stall"],
-    [8, 474, 224, 74, 56, "stall"],
-    [9, 400, 224, 74, 56, "stall"],
-    [10, 404, 420, 82, 66, "stall"],
-    [11, 404, 486, 82, 66, "stall"],
-    [12, 404, 552, 82, 66, "stall"],
-    [13, 404, 618, 82, 66, "game"],
-    [14, 344, 746, 142, 60, "game"],
-    [15, 206, 746, 138, 60, "game"],
-    [16, 106, 746, 100, 60, "game"],
-    [17, 22, 726, 84, 80, "game"],
-    [18, 22, 646, 84, 80, "game"],
-    [19, 22, 566, 84, 80, "game"],
-    [20, 22, 486, 84, 80, "game"],
-    [21, 22, 382, 84, 60, "stall"],
-    [22, 22, 322, 84, 60, "stall"],
-    [23, 22, 262, 84, 60, "stall"],
-    [24, 22, 202, 84, 60, "stall"],
-    [25, 22, 142, 84, 60, "stall"],
-    [26, 22, 82, 84, 60, "stall"],
-    [27, 22, 22, 84, 60, "food"],
-    [28, 112, 22, 86, 60, "food"],
-    [29, 198, 22, 86, 60, "food"]
+    [7, 474, 224, 74, 56, "stall"],
+    [8, 400, 224, 74, 56, "stall"],
+    [9, 404, 420, 82, 66, "stall"],
+    [10, 404, 486, 82, 66, "stall"],
+    [11, 404, 552, 82, 66, "stall"],
+    [12, 404, 618, 82, 66, "game"],
+    [13, 360, 746, 126, 60, "game"],
+    [14, 233, 746, 127, 60, "game"],
+    [15, 106, 746, 127, 60, "game"],
+    [16, 22, 681, 84, 65, "game"],
+    [17, 22, 616, 84, 65, "game"],
+    [18, 22, 551, 84, 65, "game"],
+    [19, 22, 486, 84, 65, "game"],
+    [20, 22, 382, 84, 60, "stall"],
+    [21, 22, 322, 84, 60, "stall"],
+    [22, 22, 262, 84, 60, "stall"],
+    [23, 22, 202, 84, 60, "stall"],
+    [24, 22, 142, 84, 60, "stall"],
+    [25, 22, 82, 84, 60, "stall"],
+    [26, 112, 22, 86, 60, "food"],
+    [27, 198, 22, 86, 60, "food"]
   ];
 
   function box(id, x, y, w, h, label, cls) {
@@ -138,7 +136,7 @@
       stat(296, 444, 44, 32, "Gate", true) +
       stat(400, 128, 148, 86, "Service yard|staff only", true) +
       stat(170, 190, 120, 90, "Seating|(food court)") +
-      /* AV Room is upstairs (3rd floor), above stalls 17 to 20 */
+      /* AV Room is upstairs (3rd floor), above stalls 16 to 19 */
       box("av",       22, 446, 84, 36, t("AV Room|3rd floor"), "vm-zone--up") +
       box("center", 170, 480, 170, 200, t("Center of|Attraction"), "vm-zone--hero") +
       box("entry",  430, 816, 150, 44, t("Entry")) +
@@ -378,7 +376,7 @@
         g.classList.toggle("is-open", bookable(n) || (kindOf[n] === "stall" && !!(stalls[n] && stalls[n].open)));
       });
     }
-    if (book) { for (var k = 1; k <= 29; k++) if (bookable(k)) { select("s" + k); break; } }
+    if (book) { for (var k = 1; k <= 27; k++) if (bookable(k)) { select("s" + k); break; } }
     else select(zones[0].id);
   });
 })();

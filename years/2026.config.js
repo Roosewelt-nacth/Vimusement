@@ -484,9 +484,9 @@ window.VIM_YEARS["2026"] = {
 
   /* ---------- VENUE MAP  (the grounds plan on the Programme page) ----------
      The plan is drawn in modules/venuemap.js, traced from the committee's
-     layout v8: 29 numbered slots (stalls, games 13–20, food counters 27–29)
+     layout v8: 27 numbered slots (stalls, games 12 to 19, food counters 26 and 27)
      around the Center of Attraction, the church block up top, the AV Room
-     above stalls 17–20, Entry at the foot.
+     above stalls 16–19, Entry at the foot.
 
      zones[]  — the named (non-stall) areas. `id` must match a data-zone in
                 the SVG; `venue` is matched against program[].venue above —
@@ -509,11 +509,11 @@ window.VIM_YEARS["2026"] = {
         blurb: { en: "Breakfast from 7:30, then snacks and meals all day. Cashless UPI.",
                  ta: "7:30 முதல் காலை உணவு, பின்னர் நாள் முழுவதும் சிற்றுண்டி மற்றும் உணவுகள். பணமில்லா UPI." } },
       { id: "basement", label: { en: "Basement", ta: "பேஸ்மென்ட்" }, venue: "Basement",
-        blurb: { en: "No screenings down here this year. Every film is in the AV room, above stalls 17–20.",
-                 ta: "இந்த ஆண்டு இங்கே திரையிடல் இல்லை. எல்லா படங்களும் கடைகள் 17–20க்கு மேலுள்ள AV அறையில்." } },
+        blurb: { en: "No screenings down here this year. Every film is in the AV room, above stalls 16–19.",
+                 ta: "இந்த ஆண்டு இங்கே திரையிடல் இல்லை. எல்லா படங்களும் கடைகள் 16–19க்கு மேலுள்ள AV அறையில்." } },
       { id: "av",       label: { en: "AV Room", ta: "AV அறை" }, venue: "AV Room",
-        blurb: { en: "Every screening is here, on the third floor above stalls 17–20. Follow the signs.",
-                 ta: "எல்லா திரையிடல்களும் இங்கே, கடைகள் 17–20க்கு மேல் மூன்றாவது மாடியில். அடையாளங்களை பின்பற்றவும்." } },
+        blurb: { en: "Every screening is here, on the third floor above stalls 16–19. Follow the signs.",
+                 ta: "எல்லா திரையிடல்களும் இங்கே, கடைகள் 16–19க்கு மேல் மூன்றாவது மாடியில். அடையாளங்களை பின்பற்றவும்." } },
       { id: "church",   label: { en: "Church", ta: "தேவாலயம்" }, venue: "Church",
         blurb: { en: "Evening mass at 6. Open through the day for a quiet moment.",
                  ta: "மாலை 6 மணிக்கு திருப்பலி. அமைதியான தருணத்திற்கு நாள் முழுவதும் திறந்திருக்கும்." } },
@@ -523,7 +523,7 @@ window.VIM_YEARS["2026"] = {
         blurb: { en: "Event tees and the Victorians Youth table. Game tokens are handed out here too.",
                  ta: "நிகழ்வு டீ-சட்டைகள் மற்றும் விக்டோரியன்ஸ் யூத் மேசை. விளையாட்டு டோக்கன்களும் இங்கே கொடுக்கப்படும்." } }
     ],
-    /* committee layout v11, 2026-10-10. Business names and what they sell only
+    /* committee layout v12, 2026-10-10. Business names and what they sell only
        (no phones or fees on the public site). `lines` = several halves in one slot;
        `open: true` = a half is still free; `tbc` = not confirmed, hidden from the roster. */
     stalls: {
@@ -534,13 +534,13 @@ window.VIM_YEARS["2026"] = {
       "5":  { short: "Chakkara-|pani", for: "Wooden toys and drinks",  name: "Chakkarapani's" },
       "6":  { short: "Pavazham",      for: "Sarees",                  name: "Pavazham Boutique" },
       "7":  { short: "ARUWYE",        for: "Bags, purses and home products", name: "ARUWYE" },
-      "9":  { short: "LGT +|open half", open: true, lines: [{ name: "LGT Holidays", for: "Travel" }] },
-      "10": { short: "Henna +|Jeff",  lines: [{ name: "BrownMoon Henna", for: "Mehndi" }, { name: "Jeff's stall", for: "Being confirmed", tbc: true }] },
-      "21": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
-      "22": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
-      "23": { short: "Bun Bun +|hot dogs", lines: [{ name: "Bun Bun", for: "Desserts, rose milk and cut fruit" }, { name: "Hot dog stall", for: "Being confirmed", tbc: true }] },
-      "24": { short: "Suganthi +|Busy Bakers", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and pickles" }, { name: "Busy Bakers", for: "Cakes, muffins and bakes" }] },
-      "25": { short: "Jayanthi",      for: "Home-made cakes",         name: "Jayanthi's Home Made Cakes" }
+      "8":  { short: "LGT +|open half", open: true, lines: [{ name: "LGT Holidays", for: "Travel" }] },
+      "9": { short: "Henna +|Jeff",  lines: [{ name: "BrownMoon Henna", for: "Mehndi" }, { name: "Jeff's stall", for: "Being confirmed", tbc: true }] },
+      "20": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
+      "21": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
+      "22": { short: "Bun Bun +|hot dogs", lines: [{ name: "Bun Bun", for: "Desserts, rose milk and cut fruit" }, { name: "Hot dog stall", for: "Being confirmed", tbc: true }] },
+      "23": { short: "Suganthi +|Busy Bakers", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and pickles" }, { name: "Busy Bakers", for: "Cakes, muffins and bakes" }] },
+      "24": { short: "Jayanthi",      for: "Home-made cakes",         name: "Jayanthi's Home Made Cakes" }
     }
   }
 };
