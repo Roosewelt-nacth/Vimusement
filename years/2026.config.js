@@ -261,7 +261,7 @@ window.VIM_YEARS["2026"] = {
       food: [
         { en: "Chaat corner: pani puri, bhel, sundal", ta: "சாட் கார்னர்: பானி பூரி, பேல், சுண்டல்" },
         { en: "Filter coffee & masala chai", ta: "ஃபில்டர் காபி & மசாலா தேநீர்" },
-        { en: "Ice cream, slush or cold drinks", ta: "ஐஸ்கிரீம், ஸ்லஷ் அல்லது குளிர்பானங்கள்" },
+        { en: "Dosa, appam or other tiffin items", ta: "தோசை, ஆப்பம் அல்லது டிபன் வகைகள்" },
         { en: "Home-style biryani or fried rice", ta: "வீட்டு பிரியாணி அல்லது ஃபிரைடு ரைஸ்" },
         { en: "Bakes, cupcakes & desserts", ta: "பேக்குகள், கப்கேக்குகள் & இனிப்புகள்" },
         { en: "Momos or other street snacks", ta: "மோமோஸ் அல்லது தெரு தின்பண்டங்கள்" }
