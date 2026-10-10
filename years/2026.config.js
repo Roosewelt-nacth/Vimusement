@@ -523,17 +523,17 @@ window.VIM_YEARS["2026"] = {
         blurb: { en: "Event tees and the Victorians Youth table. Game tokens are handed out here too.",
                  ta: "நிகழ்வு டீ-சட்டைகள் மற்றும் விக்டோரியன்ஸ் யூத் மேசை. விளையாட்டு டோக்கன்களும் இங்கே கொடுக்கப்படும்." } }
     ],
-    /* committee layout v8, 2026-10-10. Business names and what they sell only
+    /* committee layout v9, 2026-10-10. Business names and what they sell only
        (no phones or fees on the public site). `lines` = several halves in one slot;
        `open: true` = a half is still free; `tbc` = not confirmed, hidden from the roster. */
     stalls: {
       "1":  { short: "George|Ent.",   for: "Electronics & appliances", name: "George Enterprise" },
       "2":  { short: "Janex",         for: "Logistics",               name: "Janex Logistics" },
       "3":  { short: "Reserved",      lines: [{ name: "Reserved", for: "Being confirmed", tbc: true }] },
+      "4":  { short: "LORD",          for: "Handmade crafts and gifts", name: "LORD Mental Health Centre" },
       "5":  { short: "Chakkara-|pani", for: "Wooden toys and drinks",  name: "Chakkarapani's" },
       "6":  { short: "Pavazham",      for: "Sarees",                  name: "Pavazham Boutique" },
       "7":  { short: "ARUWYE",        for: "Bags, purses and home products", name: "ARUWYE" },
-      "8":  { short: "LORD",          for: "Handmade crafts and gifts", name: "LORD Mental Health Centre" },
       "9":  { short: "LGT +|open half", open: true, lines: [{ name: "LGT Holidays", for: "Travel" }] },
       "10": { short: "Henna +|Jeff",  lines: [{ name: "BrownMoon Henna", for: "Mehndi" }, { name: "Jeff's stall", for: "Being confirmed", tbc: true }] },
       "21": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
