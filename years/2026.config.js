@@ -523,7 +523,7 @@ window.VIM_YEARS["2026"] = {
         blurb: { en: "Event tees and the Victorians Youth table. Game tokens are handed out here too.",
                  ta: "நிகழ்வு டீ-சட்டைகள் மற்றும் விக்டோரியன்ஸ் யூத் மேசை. விளையாட்டு டோக்கன்களும் இங்கே கொடுக்கப்படும்." } }
     ],
-    /* committee layout v10, 2026-10-10. Business names and what they sell only
+    /* committee layout v11, 2026-10-10. Business names and what they sell only
        (no phones or fees on the public site). `lines` = several halves in one slot;
        `open: true` = a half is still free; `tbc` = not confirmed, hidden from the roster. */
     stalls: {
@@ -539,9 +539,8 @@ window.VIM_YEARS["2026"] = {
       "21": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
       "22": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
       "23": { short: "Bun Bun +|hot dogs", lines: [{ name: "Bun Bun", for: "Desserts, rose milk and cut fruit" }, { name: "Hot dog stall", for: "Being confirmed", tbc: true }] },
-      "24": { short: "Suganthi +|open half", open: true, lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and pickles" }] },
-      "25": { short: "Jayanthi",      for: "Home-made cakes",         name: "Jayanthi's Home Made Cakes" },
-      "26": { short: "Busy Bakers|+ open half", open: true, lines: [{ name: "Busy Bakers", for: "Cakes, muffins and bakes" }] }
+      "24": { short: "Suganthi +|Busy Bakers", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and pickles" }, { name: "Busy Bakers", for: "Cakes, muffins and bakes" }] },
+      "25": { short: "Jayanthi",      for: "Home-made cakes",         name: "Jayanthi's Home Made Cakes" }
     }
   }
 };
