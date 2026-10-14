@@ -261,7 +261,7 @@ window.VIM_YEARS["2026"] = {
       food: [
         { en: "Chaat corner: pani puri, bhel, sundal", ta: "சாட் கார்னர்: பானி பூரி, பேல், சுண்டல்" },
         { en: "Filter coffee & masala chai", ta: "ஃபில்டர் காபி & மசாலா தேநீர்" },
-        { en: "Dosa, appam or other tiffin items", ta: "தோசை, ஆப்பம் அல்லது டிபன் வகைகள்" },
+        { en: "Ice cream, slush or cold drinks", ta: "ஐஸ்கிரீம், ஸ்லஷ் அல்லது குளிர்பானங்கள்" },
         { en: "Home-style biryani or fried rice", ta: "வீட்டு பிரியாணி அல்லது ஃபிரைடு ரைஸ்" },
         { en: "Bakes, cupcakes & desserts", ta: "பேக்குகள், கப்கேக்குகள் & இனிப்புகள்" },
         { en: "Momos or other street snacks", ta: "மோமோஸ் அல்லது தெரு தின்பண்டங்கள்" }
@@ -523,7 +523,7 @@ window.VIM_YEARS["2026"] = {
         blurb: { en: "Event tees and the Victorians Youth table. Game tokens are handed out here too.",
                  ta: "நிகழ்வு டீ-சட்டைகள் மற்றும் விக்டோரியன்ஸ் யூத் மேசை. விளையாட்டு டோக்கன்களும் இங்கே கொடுக்கப்படும்." } }
     ],
-    /* committee layout v13, 2026-10-10. Business names and what they sell only
+    /* committee layout v14, 2026-10-10. Business names and what they sell only
        (no phones or fees on the public site). `lines` = several halves in one slot;
        `open: true` = a half is still free; `tbc` = not confirmed, hidden from the roster. */
     stalls: {
@@ -534,16 +534,15 @@ window.VIM_YEARS["2026"] = {
       "5":  { short: "Chakkara-|pani", for: "Wooden toys and drinks",  name: "Chakkarapani's" },
       "6":  { short: "Pavazham",      for: "Sarees",                  name: "Pavazham Boutique" },
       "7":  { short: "ARUWYE",        for: "Bags, purses and home products", name: "ARUWYE" },
-      "8":  { short: "LGT +|open", open: true, lines: [{ name: "LGT Holidays", for: "Travel" }] },
+      "8":  { short: "LGT +|NGO", lines: [{ name: "LGT Holidays", for: "Travel" }, { name: "NGO Sisters (Trichy)", for: "NGO stall" }] },
       "9": { short: "Henna +|Jeff",  lines: [{ name: "BrownMoon Henna", for: "Mehndi" }, { name: "Jeff's stall", for: "Being confirmed", tbc: true }] },
       "10": { short: "Dresses +|open half", open: true, lines: [{ name: "Jayanthi's dresses", for: "Dresses and clothing" }] },
-      "11": { short: "NGO +|open half", open: true, lines: [{ name: "NGO Sisters (Trichy)", for: "NGO stall" }] },
+      "11": { short: "Ramya|Events", for: "Popcorn, sweet corn, waffles, fruit salad and a photo booth", name: "Ramya Events" },
       "20": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
       "21": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
       "22": { short: "Bun Bun +|hot dogs", lines: [{ name: "Bun Bun", for: "Desserts, rose milk and cut fruit" }, { name: "Hot dog stall", for: "Being confirmed", tbc: true }] },
       "23": { short: "Suganthi +|Busy Bakers", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and pickles" }, { name: "Busy Bakers", for: "Cakes, muffins and bakes" }] },
-      "24": { short: "Jayanthi +|ice cream?", lines: [{ name: "Jayanthi's Home Made Cakes", for: "Home-made cakes" }, { name: "Ice cream stall", for: "Being confirmed", tbc: true }] },
-      "25": { short: "Ramya|Events", for: "Sweet corn, waffles, fruit salad and a photo booth", name: "Ramya Events" }
+      "24": { short: "Jayanthi +|ice cream?", lines: [{ name: "Jayanthi's Home Made Cakes", for: "Home-made cakes" }, { name: "Ice cream stall", for: "Being confirmed", tbc: true }] }
     }
   }
 };
