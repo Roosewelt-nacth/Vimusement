@@ -541,7 +541,9 @@ window.VIM_YEARS["2026"] = {
       "21": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
       "22": { short: "Bun Bun +|hot dogs", lines: [{ name: "Bun Bun", for: "Desserts, rose milk and cut fruit" }, { name: "Hot dog stall", for: "Being confirmed", tbc: true }] },
       "23": { short: "Suganthi +|Busy Bakers", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and pickles" }, { name: "Busy Bakers", for: "Cakes, muffins and bakes" }] },
-      "24": { short: "Jayanthi +|ice cream?", lines: [{ name: "Jayanthi's Home Made Cakes", for: "Home-made cakes" }, { name: "Ice cream stall", for: "Being confirmed", tbc: true }] }
+      "24": { short: "Jayanthi +|ice cream?", lines: [{ name: "Jayanthi's Home Made Cakes", for: "Home-made cakes" }, { name: "Ice cream stall", for: "Being confirmed", tbc: true }] },
+      "26": { short: "Chukku|Coffee", for: "Tiffin: idli, dosa, poori, pongal, idiyappam, curries and coffee", name: "Chukku Coffee (tiffin stall)" },
+      "27": { short: "with 26", lines: [{ name: "Chukku Coffee (tiffin stall)", for: "Takes both slots, 26 and 27", tbc: true }] }
     }
   }
 };

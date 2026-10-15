@@ -41,7 +41,7 @@
 
   /* Grounds plan, traced from the committee's layout sketch. viewBox
      0 0 720 900 (portrait). 27 numbered slots 1 to 27 (committee layout v12: the corner slots are
-     dropped; stalls, games 12 to 19, food counters 26 and 27) around a centred "Center of
+     dropped; stalls, games 12 to 19, the tiffin stall takes 26 and 27) around a centred "Center of
      Attraction", the church block up top (Basement + Gifts & tickets +
      Chapel), the AV Room (upstairs) beside stalls 16–19, Food Counter,
      Entry at the foot. Every interactive area is
@@ -74,8 +74,8 @@
     [23, 22, 202, 84, 60, "stall"],
     [24, 22, 142, 84, 60, "stall"],
     [25, 22, 82, 84, 60, "stall"],
-    [26, 112, 22, 86, 60, "food"],
-    [27, 198, 22, 86, 60, "food"]
+    [26, 112, 22, 86, 60, "stall"],
+    [27, 198, 22, 86, 60, "stall"]
   ];
 
   function box(id, x, y, w, h, label, cls) {
