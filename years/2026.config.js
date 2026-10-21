@@ -529,7 +529,6 @@ window.VIM_YEARS["2026"] = {
     stalls: {
       "1":  { short: "George|Ent.",   for: "Electronics & appliances", name: "George Enterprise" },
       "2":  { short: "Janex",         for: "Logistics",               name: "Janex Logistics" },
-      "3":  { short: "Ramya +|Ice cream", lines: [{ name: "Ramya Events", for: "Popcorn, cotton candy, waffles, fruit salad and fresh juices" }, { name: "Ice cream stall", for: "Ice cream" }] },
       "4":  { short: "LORD",          for: "Handmade crafts and gifts", name: "LORD Mental Health Centre" },
       "5":  { short: "Chakkara-|pani", for: "Wooden toys and drinks",  name: "Chakkarapani's" },
       "6":  { short: "Pavazham",      for: "Sarees",                  name: "Pavazham Boutique" },
@@ -541,7 +540,8 @@ window.VIM_YEARS["2026"] = {
       "21": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
       "22": { short: "Lucas &|Manam", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }] },
       "23": { short: "Suganthi +|Jayanthi", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and podi" }, { name: "Jayanthi's Home Made Cakes", for: "Home-made cakes" }] },
-      "24": { short: "Busy Bakers +|Kaarigai", lines: [{ name: "Busy Bakers", for: "Cakes, muffins and bakes" }, { name: "Kaarigai", for: "Rolls, buns, momos and desserts" }] },
+      "24": { short: "Busy Bakers +|Kaarigai", lines: [{ name: "Busy Bakers", for: "Cakes, muffins and bakes" }, { name: "Kaarigai", for: "Rolls, buns, momos and gulab jamun" }] },
+      "25": { short: "Ramya +|Ice cream", lines: [{ name: "Ramya Events", for: "Popcorn, cotton candy, waffles, fruit salad and fresh juices" }, { name: "Ice cream stall", for: "Ice cream" }] },
       "26": { short: "Runo Mom|Stall", for: "Tiffin: idli, dosa, poori, pongal, idiyappam, curries and coffee", name: "Runo Mom Stall" },
       "27": { short: "with 26", lines: [{ name: "Runo Mom Stall", for: "Takes both slots, 26 and 27", tbc: true }] }
     }
