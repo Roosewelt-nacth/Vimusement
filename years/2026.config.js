@@ -529,7 +529,7 @@ window.VIM_YEARS["2026"] = {
     stalls: {
       "1":  { short: "George|Ent.",   for: "Electronics & appliances", name: "George Enterprise" },
       "2":  { short: "Janex",         for: "Logistics",               name: "Janex Logistics" },
-      "3":  { short: "Ramya|Events", for: "Popcorn, sweet corn, waffles, fruit salad and a photo booth", name: "Ramya Events" },
+      "3":  { short: "Ramya|Events", for: "Popcorn, waffles and a photo booth", name: "Ramya Events" },
       "4":  { short: "LORD",          for: "Handmade crafts and gifts", name: "LORD Mental Health Centre" },
       "5":  { short: "Chakkara-|pani", for: "Wooden toys and drinks",  name: "Chakkarapani's" },
       "6":  { short: "Pavazham",      for: "Sarees",                  name: "Pavazham Boutique" },
