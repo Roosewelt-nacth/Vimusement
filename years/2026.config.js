@@ -537,10 +537,9 @@ window.VIM_YEARS["2026"] = {
       "9": { short: "Henna +|Jeff",  lines: [{ name: "BrownMoon Henna", for: "Mehndi" }, { name: "Jeff's stall", for: "Being confirmed", tbc: true }] },
       "10": { short: "Dress +|H&V Studio", lines: [{ name: "Jayanthi Dress Stall", for: "Dresses and clothing" }, { name: "H&V Studio", for: "Printed tote bags and custom t-shirts" }] },
       "20": { short: "Lucas &|Busy Bakers", lines: [{ name: "Lucas & Priya's Stall", for: "Snacks" }, { name: "Busy Bakers", for: "Cakes, muffins and bakes" }] },
-      "21": { short: "Super|Hero",    for: "Fries, nuggets and noodles", name: "Super Hero Snacks" },
       "22": { short: "Bun Bun +|hot dogs", lines: [{ name: "Bun Bun", for: "Desserts, rose milk and cut fruit" }, { name: "Hot dog stall", for: "Being confirmed", tbc: true }] },
       "23": { short: "Suganthi +|Jayanthi", lines: [{ name: "Suganthi's Stall", for: "Pudding, millet laddu and podi" }, { name: "Jayanthi's Home Made Cakes", for: "Home-made cakes" }] },
-      "24": { short: "Manam +|Kaarigai", lines: [{ name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }, { name: "Kaarigai", for: "Rolls, buns, momos and gulab jamun" }] },
+      "24": { short: "Manam +|Stephen", lines: [{ name: "Manam Foods (JMJ)", for: "Traditional Tamil snacks" }, { name: "Stephen's Fish Fry", for: "Fish, crab, squid and prawn fry, and dry fish rice" }] },
       "25": { short: "Ice cream +|open half", open: true, lines: [{ name: "Ice cream stall", for: "Ice cream" }] },
       "26": { short: "Runo Mom|Stall", for: "Tiffin: idli, dosa, poori, pongal, idiyappam, curries and coffee", name: "Runo Mom Stall" },
       "27": { short: "with 26", lines: [{ name: "Runo Mom Stall", for: "Takes both slots, 26 and 27", tbc: true }] }
